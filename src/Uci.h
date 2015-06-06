@@ -20,18 +20,20 @@
 #define UCI_H_
 
 #include "IterativeDeeping.h"
-#include "Perft.h"
+
 #include <string.h>
-#include "String.h"
+
 class Uci {
 public:
     Uci();
-    virtual ~ Uci();
-
+    virtual ~Uci();
+    char* command(char* cmd,char* arg);
 private:
     IterativeDeeping* iterativeDeeping;
     bool uciMode;
-    void listner(IterativeDeeping* it);
-    void getToken(istringstream& uip, String& token);
+//    void listner ( IterativeDeeping* it );
+
+
 };
 #endif
+

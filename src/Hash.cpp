@@ -18,13 +18,13 @@
 
 #include "Hash.h"
 
-Hash::Hash():HASH_SIZE(0) {
+Hash::Hash()  : HASH_SIZE(0) {
     hash_array_greater = hash_array_always = nullptr;
 #ifdef DEBUG_MODE
     n_cut_hashA = n_cut_hashE = n_cut_hashB = cutFailed = probeHash = 0;
     n_cut_hash = nRecordHashA = nRecordHashB = nRecordHashE = collisions = 0;
 #endif
-    setHashSize(64);
+    setHashSize(1);
 }
 
 void Hash::clearAge() {
@@ -37,15 +37,14 @@ void Hash::clearHash() {
     if(!HASH_SIZE) {
         return;
     }
-    memset(hash_array_greater, 0, sizeof(_Thash) * HASH_SIZE);
+    memset(hash_array_greater, 0, sizeof(_Thash) *HASH_SIZE);
 }
 
 int Hash::getHashSize() {
     return HASH_SIZE / (1024 * 1000 / (sizeof(_Thash) * 2));
 }
 
-bool
-Hash::setHashSize(int mb) {
+bool Hash::setHashSize(int mb) {
     if(mb < 1 || mb > 32768) {
         return false;
     }
@@ -78,7 +77,7 @@ void Hash::recordHash(bool running, _Thash* phashe_greater, _Thash* phashe_alway
         phashe->from = phashe->to = 0;
     }
     phashe = phashe_always;
-    if(phashe->key && phashe->depth >= depth && phashe->entryAge) {
+    if(phashe->key && phashe->depth >= depth  && phashe->entryAge) {
         INC(collisions);
         return;
     }
@@ -118,3 +117,5 @@ void Hash::dispose() {
 Hash::~Hash() {
     dispose();
 }
+
+

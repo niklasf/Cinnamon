@@ -25,9 +25,9 @@ using namespace _board;
 
 class Hash {
 public:
-    enum:char { hashfEXACT = 1, hashfALPHA = 0, hashfBETA = 2 };
+    enum : char { hashfEXACT = 1, hashfALPHA = 0, hashfBETA = 2 };
     Hash();
-    virtual ~ Hash();
+    virtual ~Hash();
     bool setHashSize(int mb);
     int getHashSize();
     void clearHash();
@@ -40,10 +40,10 @@ protected:
         u64 key;
         short score;
         char depth;
-        uchar from:6;
-        uchar to:6;
-        uchar entryAge:1;
-        uchar flags:2;
+        uchar from : 6;
+        uchar to : 6;
+        uchar entryAge : 1;
+        uchar flags: 2;
     } _Thash;
 #pragma pack(pop)
 
@@ -61,4 +61,6 @@ protected:
 private:
     void dispose();
 };
+
 #endif
+

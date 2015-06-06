@@ -1,0 +1,50 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head><link rel="stylesheet" href="./chessboardjs/css/chessboard.css"></head><body>
+<div>
+
+<p>Cinnamon chess engine</p>
+seconds    
+
+<select name="maxTimeMillsec" id="maxTimeMillsec">
+<option value="1">1</option>
+<option value="2">2</option>
+<option value="3">3</option>
+<option value="5">5</option>
+<option value="10">10</option>
+<option value="30">30</option>
+</select>
+<div id="board" style="width: 400px;"></div>
+<p>Status: <span id="status"></span></p>
+<!-- <p>FEN: <span id="fen"></span></p>-->
+FEN: <input type="text" id="fen" style="width: 300px; readonly"><br>
+PGN: <input type="text" id="pgn" style="width: 300px;" readonly><br>
+
+<input id="startPositionBtn" value="Start Position" type="button">
+<script src="./cinnamon_engine_1_2b.js"></script>
+<script src="./chessboardjs/chess.js"></script>
+<script src="./chessboardjs/json3.min.js"></script>
+<script src="./chessboardjs/jquery-1.10.1.min.js"></script>
+<script src="./chessboardjs/chessboard.js"></script>
+<script src="./cinnamon.js"></script>
+</div>
+<br><br><br>
+code:<br>
+<pre id="line1">&lt;<span class="start-tag">a</span><span class="attribute-name"> href</span>=<span class="attribute-value">"http://chessboardjs.com/"</span>&gt;http://chessboardjs.com/&lt;/<span class="end-tag">a</span></pre>
+<br><code>
+&lt;link rel="stylesheet" href="./chessboardjs/css/chessboard.css"&gt;<br>
+&lt;p&gt;Cinnamon chess engine&lt;/p&gt;<br>
+&lt;div id="board" style="width: 400px"&gt;&lt;/div&gt;<br>
+&lt;p&gt;Status: &lt;span id="status"&gt;&lt;/span&gt;&lt;/p&gt;<br>
+&lt;p&gt;FEN: &lt;span id="fen"&gt;&lt;/span&gt;&lt;/p&gt;<br>
+&lt;p&gt;PGN: &lt;span id="pgn"&gt;&lt;/span&gt;&lt;/p&gt;<br>
+&lt;input type="button" id="startPositionBtn" value="Start Position"
+/&gt;<br>
+&lt;script src="./cinnamon_engine_1_2b.js"&gt;&lt;/script&gt;<br>
+&lt;script src="./chessboardjs/chess.js"&gt;&lt;/script&gt;<br>
+&lt;script src="./chessboardjs/json3.min.js"&gt;&lt;/script&gt;<br>
+&lt;script src="./chessboardjs/jquery-1.10.1.min.js"&gt;&lt;/script&gt;<br>
+&lt;script src="./chessboardjs/chessboard.js"&gt;&lt;/script&gt;<br>
+&lt;script src="./cinnamon.js"&gt;&lt;/script&gt;<br>
+<br>
+</code>
+</body></html>

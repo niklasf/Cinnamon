@@ -23,25 +23,24 @@
 #include "Eval.h"
 #include "namespaces.h"
 #include <climits>
-#include "Tablebase.h"
 
-class Search:public Hash, public Eval {
+
+class Search: public Hash, public Eval {
 
 public:
 
     Search();
-    virtual ~ Search();
+    virtual ~Search();
     void setRunning(int);
-    void setPonder(bool);
-    void setNullMove(bool);
+    void setPonder(bool) ;
+    void setNullMove(bool) ;
     void setMaxTimeMillsec(int);
     int getMaxTimeMillsec();
     void startClock();
     int getRunning();
-    void createGtb();
-    void deleteGtb();
-    Tablebase& getGtb() const;
-    bool getGtbAvailable();
+
+
+
     STATIC_CONST int NULLMOVE_DEPTH = 3;
     STATIC_CONST int NULLMOVES_MIN_PIECE = 3;
     STATIC_CONST int NULLMOVES_R1 = 2;
@@ -61,7 +60,7 @@ protected:
     unsigned cumulativeMovesCount, totGen;
 #endif
 private:
-    Tablebase* gtb = nullptr;
+
     void setMaxDepthSearch(int);
     int getMaxDepthSearch();
     bool ponder;
@@ -71,10 +70,11 @@ private:
     struct timeb startTime;
     bool checkDraw(u64);
     template <int side> int search(int depth, int alpha, int beta, _TpvLine* pline, int, int* mateIn);
-    bool checkInsufficientMaterial(int);
+    bool checkInsufficientMaterial(int) ;
     void sortHashMoves(int listId, _Thash*);
     template <int side> int quiescence(int alpha, int beta, const char promotionPiece, int, int depth);
     void updatePv(_TpvLine* pline, const _TpvLine* line, const _Tmove* move);
 
 };
 #endif
+

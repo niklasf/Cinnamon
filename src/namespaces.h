@@ -25,7 +25,6 @@
 #include <sstream>
 #include <climits>
 #include <fstream>
-#include "stacktrace.h"
 
 using namespace std;
 namespace _board {
@@ -38,7 +37,7 @@ typedef unsigned char uchar;
 typedef long long unsigned u64;
 typedef u64 _Tchessboard[12];
 
-#define assert(a) if(!(a)){  print_stacktrace();cout<<dec<<endl<<_time::getLocalTime()<<" ********************************** assert error in "<<_file::extractFileName(__FILE__)<< " line "<<__LINE__<<" "<<" **********************************"<<endl;cerr<<flush;exit(1);};
+#define assert(a) if(!(a)){  cout<<"error"<<endl;exit(1);};
 
 #ifdef DEBUG_MODE
 #define ASSERT(a) assert(a)
@@ -113,7 +112,7 @@ static const u64 NOTPOW2_60 = 0xefffffffffffffffULL;
 static const u64 NOTPOW2_61 = 0xdfffffffffffffffULL;
 static const u64 NOTPOW2_63 = 0x7fffffffffffffffULL;
 
-static const u64 RANDSIDE[2] = { 0x1cf0862fa4118029ULL, 0xd2a5cab966b3d6cULL };
+static const u64 RANDSIDE[2] = {0x1cf0862fa4118029ULL, 0xd2a5cab966b3d6cULL};
 static const u64 BIG_CENTER = 0x3c3c3c3c0000ULL;
 static const string BOARD[64] = {
     "h1", "g1", "f1", "e1", "d1", "c1", "b1", "a1",
@@ -126,7 +125,7 @@ static const string BOARD[64] = {
     "h8", "g8", "f8", "e8", "d8", "c8", "b8", "a8"
 };
 
-static const char FEN_PIECE[] = { 'p', 'P', 'r', 'R', 'b', 'B', 'n', 'N', 'k', 'K', 'q', 'Q', '-' };
+static const char FEN_PIECE[] = {'p', 'P', 'r', 'R', 'b', 'B', 'n', 'N', 'k', 'K', 'q', 'Q', '-'};
 
 static const int INV_FEN[] = {
     0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
@@ -468,8 +467,8 @@ static const char RANK_AT[64] = {
     6, 6, 6, 6, 6, 6, 6, 6,
     7, 7, 7, 7, 7, 7, 7, 7
 };
-static const char MASK_BIT_SET_COUNT_VERT_UPPER[64] = { 7, 7, 7, 7, 7, 7, 7, 7, 6, 6, 6, 6, 6, 6, 6, 6, 5, 5, 5, 5, 5, 5, 5, 5, 4, 4, 4, 4, 4, 4, 4, 4, 3, 3, 3, 3, 3, 3, 3, 3, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0 };
-static const char MASK_BIT_SET_COUNT_ORIZ_LEFT[64] = { 7, 6, 5, 4, 3, 2, 1, 0, 7, 6, 5, 4, 3, 2, 1, 0, 7, 6, 5, 4, 3, 2, 1, 0, 7, 6, 5, 4, 3, 2, 1, 0, 7, 6, 5, 4, 3, 2, 1, 0, 7, 6, 5, 4, 3, 2, 1, 0, 7, 6, 5, 4, 3, 2, 1, 0, 7, 6, 5, 4, 3, 2, 1, 0 };
+static const char MASK_BIT_SET_COUNT_VERT_UPPER[64] = { 7, 7, 7, 7, 7, 7, 7, 7, 6, 6, 6, 6, 6, 6, 6, 6, 5, 5, 5, 5, 5, 5, 5, 5, 4, 4, 4, 4, 4, 4, 4, 4, 3, 3, 3, 3, 3, 3, 3, 3, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0};
+static const char MASK_BIT_SET_COUNT_ORIZ_LEFT[64] = { 7, 6, 5, 4, 3, 2, 1, 0, 7, 6, 5, 4, 3, 2, 1, 0, 7, 6, 5, 4, 3, 2, 1, 0, 7, 6, 5, 4, 3, 2, 1, 0, 7, 6, 5, 4, 3, 2, 1, 0, 7, 6, 5, 4, 3, 2, 1, 0, 7, 6, 5, 4, 3, 2, 1, 0, 7, 6, 5, 4, 3, 2, 1, 0};
 static const u64 MASK_BIT_SET_VERT_LOWER[64] = {
     0x0ULL, 0x0ULL, 0x0ULL, 0x0ULL, 0x0ULL, 0x0ULL, 0x0ULL, 0x0ULL, 0x1ULL,
     0x2ULL, 0x4ULL, 0x8ULL, 0x10ULL, 0x20ULL, 0x40ULL, 0x80ULL, 0x101ULL,
@@ -703,6 +702,7 @@ static const u64 PAWN_FORK_MASK[2][64] = { {
         0x0002000000000000ULL, 0x0005000000000000ULL,
         0x000A000000000000ULL, 0x0014000000000000ULL, 0x0028000000000000ULL,
         0x0050000000000000ULL, 0x00A0000000000000ULL, 0x0040000000000000ULL
+
     }, {
         0x0000000000000200ULL, 0x0000000000000500ULL, 0x0000000000000A00ULL,
         0x0000000000001400ULL, 0x0000000000002800ULL,
@@ -849,18 +849,12 @@ static const u64 ENPASSANT_MASK[2][64] = { {
 }
 
 using namespace _board;
-
 namespace _time {
-string getLocalTime();
+
 int diffTime(struct timeb a, struct timeb b);
-int getYear();
-int getMonth();
-int getDay();
-} namespace _file {
-bool fileExists(string filename);
-int fileSize(const string& FileName);
-string extractFileName(string path);
-} namespace _random {
+
+}
+namespace _random {
 static const u64 RANDOM_KEY[15][64] = {
 #include "random.inc"
 };
@@ -887,37 +881,37 @@ enum _Tstatus {
 
 static const int MOB_QUEEN[][29] = {
     {0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-    {-10, -9, -5, 0, 3, 6, 7, 10, 11, 12, 15, 18, 28, 30, 32, 35, 40, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61},
-    {-20, -15, -10, 0, 1, 3, 4, 9, 11, 12, 15, 18, 28, 30, 32, 33, 34, 36, 37, 39, 40, 41, 42, 43, 44, 45, 56, 47, 48}
+    { -10, -9, -5, 0, 3, 6, 7, 10, 11, 12, 15, 18, 28, 30, 32, 35, 40, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61},
+    { -20, -15, -10, 0, 1, 3, 4, 9, 11, 12, 15, 18, 28, 30, 32, 33, 34, 36, 37, 39, 40, 41, 42, 43, 44, 45, 56, 47, 48}
 };
 
 static const int MOB_ROOK[][15] = {
-    {-1, 0, 1, 4, 5, 6, 7, 9, 12, 14, 19, 22, 23, 24, 25},
-    {-9, -8, 1, 8, 9, 10, 15, 20, 28, 30, 40, 45, 50, 51, 52},
-    {-15, -10, -5, 0, 9, 11, 16, 22, 30, 32, 40, 45, 50, 51, 52}
+    { -1, 0, 1, 4, 5, 6, 7, 9, 12, 14, 19, 22, 23, 24, 25},
+    { -9, -8, 1, 8, 9, 10, 15, 20, 28, 30, 40, 45, 50, 51, 52},
+    { -15, -10, -5, 0, 9, 11, 16, 22, 30, 32, 40, 45, 50, 51, 52}
 };
 
-static const int MOB_KNIGHT[] = { -8, -4, 7, 10, 15, 20, 30, 35, 40 };
+static const int MOB_KNIGHT[] = { -8, -4, 7, 10, 15, 20, 30, 35, 40};
 
 static const int MOB_BISHOP[][14] = {
-    {-8, -7, 2, 8, 9, 10, 15, 20, 28, 30, 40, 45, 50, 50},
-    {-20, -10, -4, 0, 5, 10, 15, 20, 28, 30, 40, 45, 50, 50},
-    {-20, -10, -4, 0, 3, 8, 13, 18, 25, 30, 40, 45, 50, 50}
+    { -8, -7, 2, 8, 9, 10, 15, 20, 28, 30, 40, 45, 50, 50},
+    { -20, -10, -4, 0, 5, 10, 15, 20, 28, 30, 40, 45, 50, 50},
+    { -20, -10, -4, 0, 3, 8, 13, 18, 25, 30, 40, 45, 50, 50}
 };
 
 static const int MOB_KING[][9] = {
     {1, 2, 2, 1, 0, 0, 0, 0, 0},
-    {-5, 0, 5, 5, 5, 0, 0, 0, 0},
-    {-50, -30, -10, 10, 25, 40, 50, 55, 60}
+    { -5, 0, 5, 5, 5, 0, 0, 0, 0},
+    { -50, -30, -10, 10, 25, 40, 50, 55, 60}
 };
 
 static const int MOB_CASTLE[][3] = {
-    {-50, 30, 50},
-    {-1, 10, 10},
+    { -50, 30, 50},
+    { -1, 10, 10},
     {0, 0, 0}
 };
 
-static const int MOB_PAWNS[] = { -1, 2, 3, 4, 5, 10, 12, 14, 18, 22, 25, 30, 32, 34, 36, 38, 40, 42, 44, 46, 48, 50, 52, 54, 56, 58, 60, 70, 75, 80, 90, 95, 100, 110 };
+static const int MOB_PAWNS[] = { -1, 2, 3, 4, 5, 10, 12, 14, 18, 22, 25, 30, 32, 34, 36, 38, 40, 42, 44, 46, 48, 50, 52, 54, 56, 58, 60, 70, 75, 80, 90, 95, 100, 110};
 
 static const int BONUS_ATTACK_KING[] = { -1, 2, 8, 64, 128, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512 };
 
@@ -1096,3 +1090,4 @@ static const char DISTANCE_KING_ENDING[64] = {
 }
 
 #endif
+

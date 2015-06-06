@@ -27,17 +27,6 @@ ChessBoard::ChessBoard() {
 ChessBoard::~ChessBoard() {
 }
 
-#ifdef DEBUG_MODE
-u64
-ChessBoard::getBitBoard(int side) {
-    return side ? getBitBoard <WHITE> () : getBitBoard <BLACK> ();
-}
-
-int
-ChessBoard::getPieceAt(int side, u64 bitmapPos) {
-    return side ? getPieceAt <WHITE> (bitmapPos) : getPieceAt <BLACK> (bitmapPos);
-}
-#endif
 
 uchar ChessBoard::getRightCastle() {
     return rightCastle;
@@ -50,7 +39,7 @@ void ChessBoard::setRightCastle(uchar r) {
 void ChessBoard::makeZobristKey() {
     zobristKey = 0;
     int i = 0;
-    for(u64 c:chessboard) {
+    for(u64 c : chessboard) {
         while(c) {
             int position = BITScanForward(c);
             updateZobristKey(i, position);
@@ -82,22 +71,6 @@ int ChessBoard::getPieceByChar(char c) {
 }
 
 
-void ChessBoard::display() {
-    cout << "\n     a   b   c   d   e   f   g   h";
-    for(int t = 0; t <= 63; t++) {
-        char x = ' ';
-        if(t % 8 == 0) {
-            cout << "\n   ----+---+---+---+---+---+---+----\n";
-            cout << " " << 8 - RANK_AT[t] << " | ";
-        }
-        x = (x = (x = FEN_PIECE[getPieceAt <WHITE> (POW2[63 - t])]) != '-' ? x : FEN_PIECE[getPieceAt <BLACK> (POW2[63 - t])]) == '-' ? ' ' : x;
-        x != ' ' ? cout << x : POW2[t] & WHITE_SQUARES ? cout << " " : cout << ".";
-        cout << " | ";
-    };
-    cout << "\n   ----+---+---+---+---+---+---+----\n";
-    cout << "     a   b   c   d   e   f   g   h\n\n\n" << boardToFen() << "\n" << endl;
-}
-
 
 string ChessBoard::boardToFen() {
     string fen;
@@ -109,9 +82,9 @@ string ChessBoard::boardToFen() {
         strcpy(row, "");
         for(x = 0; x < 8; x++) {
             sq = (y * 8) + x;
-            q = getPieceAt <BLACK> (POW2[63 - sq]);
+            q = getPieceAt<BLACK> (POW2[63 - sq]);
             if(q == SQUARE_FREE) {
-                q = getPieceAt <WHITE> (POW2[63 - sq]);
+                q = getPieceAt<WHITE> (POW2[63 - sq]);
             }
             if(q == SQUARE_FREE) {
                 l++;
@@ -195,7 +168,6 @@ char ChessBoard::decodeBoard(string a) {
             return i;
         }
     }
-    cout << "\n" << a << endl;
     ASSERT(0);
     return -1;
 }
@@ -270,7 +242,7 @@ int ChessBoard::loadFen(string fen) {
         };
     };
     friendKing[WHITE] = BITScanForward(chessboard[KING_WHITE]);
-    friendKing[BLACK] = BITScanForward(chessboard[KING_BLACK]);
+    friendKing[BLACK] = BITScanForward(chessboard[KING_BLACK ]);
     enpassantPosition = NO_ENPASSANT;
     for(int i = 0; i < 64; i++) {
         if(enpassant == BOARD[i]) {
@@ -286,3 +258,4 @@ int ChessBoard::loadFen(string fen) {
     makeZobristKey();
     return sideToMove;
 }
+

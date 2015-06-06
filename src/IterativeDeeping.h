@@ -20,37 +20,28 @@
 #define ITERATIVEDEEPING_H_
 #include <cstring>
 #include <string.h>
-#include "String.h"
+
 #include "Search.h"
-#include "Thread.h"
-#include "OpenBook.h"
-#include <mutex>
+
+
 #include <stdio.h>
 #include <stdlib.h>
 
-class IterativeDeeping:public Thread, public Search {
+class IterativeDeeping: public Search {
 public:
     IterativeDeeping();
-    virtual ~ IterativeDeeping();
-    mutex mutex1;
-    virtual void run();
-    bool getPonderEnabled();
-    bool getGtbAvailable();
-    bool getUseBook();
-    void setUseBook(bool);
-    void enablePonder(bool);
-    void setMaxDepth(int);
-    void loadBook(string);
-    int printDtm();
-    bool setParameter(String param, int value);
-    Tablebase& getGtb();
+    virtual ~IterativeDeeping();
+
+    string run();
+
+
 private:
 
     int maxDepth;
     STATIC_CONST int VAL_WINDOW = 50;
-    bool useBook;
 
-    OpenBook* openBook;
-    bool ponderEnabled;
+
+
 };
 #endif
+

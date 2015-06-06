@@ -1,0 +1,29 @@
+<html><head></head>
+<body>
+<p><a href="http://cinnamonchess.altervista.org/">Cinnamon chess engine</a> and 
+<a href="https://github.com/kripken/emscripten/wiki">emscripten compiler</a></p>
+<code>
+&lt;script src="./cinnamon_engine_1_2b.js"&gt;&lt;/script&gt;<br>
+&lt;script&gt;<br>
+cinnamonCommand = Module.cwrap('command', 'string', ['string','string'])<br>
+cinnamonCommand("setMaxTimeMillsec","1000")<br>
+cinnamonCommand("position","rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR
+w KQkq - 0 1")<br>
+var move=cinnamonCommand("go","")<br>
+&lt;/script&gt;<br>
+</code>
+<div>
+<script src="./cinnamon_engine_1_2b.js"></script>
+<script>
+alert("wrap engine (only once)")
+cinnamonCommand = Module.cwrap('command', 'string', ['string','string'])
+alert("set time to 1 sec")
+cinnamonCommand("setMaxTimeMillsec","1000")
+alert("set fen position rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1")
+cinnamonCommand("position","rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1")
+alert("get result...")
+var move=cinnamonCommand("go","")
+alert("result from engine: "+move)
+</script>
+</div>
+</body></html>
