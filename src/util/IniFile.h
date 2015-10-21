@@ -37,7 +37,7 @@ public:
         } else {
             warn("file not found: ", fileName);
         }
-        rgxLine.assign("^(\\w+)=(.*)$");
+        rgxLine.assign("^(.+?)=(.*)$");
         rgxTag.assign("^\\[.+]$");
     }
 
@@ -58,10 +58,8 @@ public:
     }
 
     pair<string, string> *get() {
-
         std::smatch match;
         string line;
-
         while (!endFile) {
             if (inData.eof()) {
                 endFile = true;
@@ -70,15 +68,18 @@ public:
             getline(inData, line);
             trace(line);
             if (!line.size())continue;
-            if (line.at(0) == '#')continue;
+            if (line.at(0) == '#'||line.at(0) == ';')continue;
 
             const string line2 = line;
             if (std::regex_search(line2.begin(), line2.end(), match, rgxTag)) {
                 params.first = line;
                 params.second = "";
             } else if (std::regex_search(line2.begin(), line2.end(), match, rgxLine)) {
-                params.first = match[1];
+                params.first = String(match[1]).trim();
+                if(!params.first.size())continue;
                 params.second = match[2];
+            }else{
+                continue;
             }
             return &params;
         }
