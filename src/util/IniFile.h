@@ -37,7 +37,7 @@ public:
         } else {
             warn("file not found: ", fileName);
         }
-        rgxLine.assign("^(\\w*)=(.*)$");
+        rgxLine.assign("^(\\w+)=(.*)$");
         rgxTag.assign("^\\[.+]$");
     }
 
