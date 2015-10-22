@@ -22,14 +22,17 @@
 #include <algorithm>
 #include <regex>
 #include "../namespaces/debug.h"
+#include "logger.h"
 
 using namespace std;
 using namespace _debug;
+using namespace _logger;
 
 class IniFile {
 public:
 
     IniFile(const string &fileName) {
+        if (FileUtil::fileSize(fileName) <= 0)return;
         endFile = true;
         inData.open(fileName);
         if (inData.is_open()) {
@@ -68,7 +71,7 @@ public:
             getline(inData, line);
             trace(line);
             if (!line.size())continue;
-            if (line.at(0) == '#'||line.at(0) == ';')continue;
+            if (line.at(0) == '#' || line.at(0) == ';')continue;
 
             const string line2 = line;
             if (std::regex_search(line2.begin(), line2.end(), match, rgxTag)) {
@@ -76,9 +79,9 @@ public:
                 params.second = "";
             } else if (std::regex_search(line2.begin(), line2.end(), match, rgxLine)) {
                 params.first = String(match[1]).trim();
-                if(!params.first.size())continue;
+                if (!params.first.size())continue;
                 params.second = match[2];
-            }else{
+            } else {
                 continue;
             }
             return &params;
