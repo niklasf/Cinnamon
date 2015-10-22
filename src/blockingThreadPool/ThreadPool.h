@@ -27,9 +27,11 @@
 #include "../util/Bits.h"
 #include <condition_variable>
 #include "../namespaces/debug.h"
+#include "../util/logger.h"
 
 using namespace _debug;
 using namespace _def;
+using namespace _logger;
 
 template<typename T, typename = typename std::enable_if<std::is_base_of<Thread, T>::value, T>::type>
 class ThreadPool : public ObserverThread {

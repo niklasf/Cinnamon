@@ -22,11 +22,9 @@
 #include <algorithm>
 #include <regex>
 #include "../namespaces/debug.h"
-#include "logger.h"
 
 using namespace std;
 using namespace _debug;
-using namespace _logger;
 
 class IniFile {
 public:
