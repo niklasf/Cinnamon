@@ -18,23 +18,6 @@
 
 #pragma once
 
-#include <unistd.h>
-#include <string.h>
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <netdb.h>
-#include <iostream>
-#include "../blockingThreadPool/Thread.h"
-#include<arpa/inet.h>
-#include "../namespaces/def.h"
-#include <iostream>
-
-#include <sstream>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
-#include <string.h>
 #include "../util/Singleton.h"
 
 using namespace std;
