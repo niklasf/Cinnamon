@@ -31,10 +31,11 @@ using namespace _logger;
 class IniFile {
 public:
 
-    IniFile(const string &fileName) {
+    IniFile(const string &fileName1) {
+        fileName=fileName1;
         if (FileUtil::fileSize(fileName) <= 0)return;
         endFile = true;
-        inData.open(fileName);
+        inData.open(fileName,std::ofstream::in);
         if (inData.is_open()) {
             endFile = false;
         } else {
@@ -51,8 +52,9 @@ public:
     }
 
     string getValue(const string &value) {
+        IniFile file(fileName);
         while (true) {
-            pair<string, string> *parameters = get();
+            pair<string, string> *parameters = file.get();
             if (!parameters)return "";
             if (parameters->first == value) {
                 return parameters->second;
@@ -95,6 +97,7 @@ private:
     std::regex rgxTag;
     bool endFile = true;
     ifstream inData;
+    string fileName;
     pair<string, string> params;
 };
 
