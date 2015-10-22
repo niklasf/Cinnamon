@@ -48,9 +48,9 @@ public:
 
 private:
 
-    static mutex MUTEX_HASH;
+    static Mutex MUTEX_HASH;
 
-    static mutex mutexPrint;
+    static Mutex mutexPrint;
     u64 tot = 0;
 
     template<int side, bool useHash, bool smp>
