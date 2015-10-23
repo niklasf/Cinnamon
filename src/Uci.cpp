@@ -150,7 +150,7 @@ void Uci::listner(IterativeDeeping *it) {
             uciMode = true;
             cout << "id name " << NAME << "\n";
             cout << "id author Giuseppe Cannella\n";
-            cout << "option name Hash type spin default 64 min 1\n";
+            cout << "option name Hash type spin default 64 min 1 max 100000\n";
             cout << "option name Clear Hash type button\n";
             cout << "option name Nullmove type check default true\n";
             cout << "option name Book File type string default cinnamon.bin\n";
@@ -166,7 +166,7 @@ void Uci::listner(IterativeDeeping *it) {
             cout << "option name TB Restart type button\n";
 
             cout << "option name PerftThreads type spin default 1 min 1 max 64\n";
-            cout << "option name PerftHashSize type spin default 0 min 0\n";
+            cout << "option name PerftHashSize type spin default 0 min 0 max 100000\n";
             cout << "uciok\n";
         } else if (token == "score") {
             int side = searchManager.getSide();
