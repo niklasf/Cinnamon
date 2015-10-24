@@ -23,14 +23,8 @@
 //mutex on windows are slow
 //https://msdn.microsoft.com/en-us/library/ms682530%28VS.85%29.aspx
 
-#ifndef NOMINMAX
-#  define NOMINMAX // Disable macros min() and max()
-#endif
-
-#define WIN32_LEAN_AND_MEAN
 #include <windows.h>
-#undef WIN32_LEAN_AND_MEAN
-#undef NOMINMAX
+
 
 class Mutex {
 public:

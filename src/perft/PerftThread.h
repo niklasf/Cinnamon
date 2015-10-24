@@ -50,7 +50,7 @@ private:
 
     static Mutex MUTEX_HASH;
 
-    static Mutex mutexPrint;
+    static mutex mutexPrint;
     u64 tot = 0;
 
     template<int side, bool useHash, bool smp>

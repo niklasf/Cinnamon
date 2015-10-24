@@ -20,7 +20,7 @@
 #include "Perft.h"
 
 Mutex PerftThread::MUTEX_HASH;
-Mutex PerftThread::mutexPrint;
+mutex PerftThread::mutexPrint;
 
 PerftThread::PerftThread() { }
 
