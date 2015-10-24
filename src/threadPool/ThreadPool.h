@@ -20,7 +20,6 @@
 
 #include "Thread.h"
 #include <atomic>
-#include <mutex>
 #include <unistd.h>
 #include "ObserverThread.h"
 #include "../namespaces/def.h"
@@ -81,7 +80,7 @@ public:
             threadPool.push_back(x);
         }
         registerThreads();
-//        cout << "ThreadPool size: " << getNthread() << "\n";
+        trace ("ThreadPool size: ", getNthread())
         return true;
     }
 

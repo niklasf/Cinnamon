@@ -23,7 +23,7 @@
 #include "namespaces/def.h"
 #include "namespaces/board.h"
 #include "util/Singleton.h"
-#include "util/Mutex.h"
+#include "threadPool/Mutex.h"
 
 using namespace _board;
 
