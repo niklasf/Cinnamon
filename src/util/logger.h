@@ -22,6 +22,13 @@
 
 using namespace std;
 
+
+namespace _logger {
+
+    static enum LOG_LEVEL {
+        TRACE = 0, DEBUG = 1, INFO = 2, WARN = 3, ERROR = 4, FATAL = 5, OFF = 6, ALWAYS = 7
+    } _LOG_LEVEL;
+
 #if !defined DLOG_LEVEL
 #if defined DEBUG_MODE
 #define DLOG_LEVEL TRACE
@@ -29,12 +36,6 @@ using namespace std;
 #define DLOG_LEVEL OFF
 #endif
 #endif
-
-namespace _logger {
-
-    static enum LOG_LEVEL {
-        TRACE = 0, DEBUG = 1, INFO = 2, WARN = 3, ERROR = 4, FATAL = 5, OFF = 6, ALWAYS = 7
-    } _LOG_LEVEL;
 
     static const string LOG_LEVEL_STRING[] = {"TRACE", "DEBUG", "INFO", "WARN", "ERROR", "FATAL", "OFF", "LOG"};
 
@@ -97,3 +98,5 @@ namespace _logger {
 #define fatal(...) if (FATAL >= DLOG_LEVEL) {logger._log<LOG_LEVEL::FATAL>( LINE_INFO,__VA_ARGS__);}
 
 }
+
+using namespace _logger;
