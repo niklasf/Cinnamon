@@ -48,16 +48,17 @@ namespace _logger {
 
         template<LOG_LEVEL type, typename T, typename... Args>
         void _log(T t, Args... args) {
-            lock_guard<mutex> lock1(_CoutSyncMutex);
+            _CoutSyncMutex.lock();
             cout << Time::getLocalTime() << " " << LOG_LEVEL_STRING[type] << " ";
             *this << Time::getLocalTime() << " " << LOG_LEVEL_STRING[type] << " ";
             __log(t, args...);
             cout << endl;
             *this << endl;
+            _CoutSyncMutex.unlock();
         }
 
     private:
-        mutex _CoutSyncMutex;
+        Mutex _CoutSyncMutex;
 
         template<typename T>
         void __log(T t) {
