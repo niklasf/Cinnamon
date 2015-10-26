@@ -1,5 +1,5 @@
 /*
-    https://github.com/gekomad/Auriga
+    Cinnamon UCI chess engine
     Copyright (C) Giuseppe Cannella
 
     This program is free software: you can redistribute it and/or modify
@@ -19,21 +19,21 @@
 #pragma once
 
 #include "../util/Singleton.h"
+#include "../threadPool/Mutex.h"
 
 using namespace std;
-
 
 namespace _logger {
 
     static enum LOG_LEVEL {
-        TRACE = 0, DEBUG = 1, INFO = 2, WARN = 3, ERROR = 4, FATAL = 5, OFF = 6, ALWAYS = 7
+        _TRACE = 0, _DEBUG = 1, _INFO = 2, _WARN = 3, _ERROR = 4, _FATAL = 5, _OFF = 6, _ALWAYS = 7
     } _LOG_LEVEL;
 
 #if !defined DLOG_LEVEL
-#if defined DEBUG_MODE
-#define DLOG_LEVEL TRACE
+    #if defined DEBUG_MODE
+#define DLOG_LEVEL _TRACE
 #else
-#define DLOG_LEVEL OFF
+#define DLOG_LEVEL _OFF
 #endif
 #endif
 
@@ -89,13 +89,13 @@ namespace _logger {
 
 #define LINE_INFO __FILENAME__,":",__LINE__," "
 
-#define log(...)                            {logger._log<LOG_LEVEL::ALWAYS>(LINE_INFO,__VA_ARGS__);}
-#define trace(...) if (TRACE >= DLOG_LEVEL) {logger._log<LOG_LEVEL::TRACE>( LINE_INFO,__VA_ARGS__);}
-#define debug(...) if (DEBUG >= DLOG_LEVEL) {logger._log<LOG_LEVEL::DEBUG>( LINE_INFO,__VA_ARGS__);}
-#define info(...)  if (INFO  >= DLOG_LEVEL) {logger._log<LOG_LEVEL::INFO> ( LINE_INFO,__VA_ARGS__);}
-#define warn(...)  if (WARN  >= DLOG_LEVEL) {logger._log<LOG_LEVEL::WARN> ( LINE_INFO,__VA_ARGS__);}
-#define error(...) if (ERROR >= DLOG_LEVEL) {logger._log<LOG_LEVEL::ERROR>( LINE_INFO,__VA_ARGS__);}
-#define fatal(...) if (FATAL >= DLOG_LEVEL) {logger._log<LOG_LEVEL::FATAL>( LINE_INFO,__VA_ARGS__);}
+#define log(...)                             {logger._log<LOG_LEVEL::_ALWAYS>(LINE_INFO,__VA_ARGS__);}
+#define trace(...) if (_TRACE >= DLOG_LEVEL) {logger._log<LOG_LEVEL::_TRACE>( LINE_INFO,__VA_ARGS__);}
+#define debug(...) if (_DEBUG >= DLOG_LEVEL) {logger._log<LOG_LEVEL::_DEBUG>( LINE_INFO,__VA_ARGS__);}
+#define info(...)  if (_INFO  >= DLOG_LEVEL) {logger._log<LOG_LEVEL::_INFO> ( LINE_INFO,__VA_ARGS__);}
+#define warn(...)  if (_WARN  >= DLOG_LEVEL) {logger._log<LOG_LEVEL::_WARN> ( LINE_INFO,__VA_ARGS__);}
+#define error(...) if (_ERROR >= DLOG_LEVEL) {logger._log<LOG_LEVEL::_ERROR>( LINE_INFO,__VA_ARGS__);}
+#define fatal(...) if (_FATAL >= DLOG_LEVEL) {logger._log<LOG_LEVEL::_FATAL>( LINE_INFO,__VA_ARGS__);}
 
 }
 
