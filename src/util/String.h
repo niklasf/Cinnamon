@@ -25,15 +25,21 @@
 #include <string.h>
 
 using namespace std;
+#if UINTPTR_MAX == 0xffffffffffffffff
+//64 bit
+typedef __int128_t i128;
+#else
+//32 bit
+    typedef unsigned long long i128;
+#endif
 
 class String : public string {
 public:
-    String();
-
     String(const string &s) : string(s) { };
 
-    static string toString(const __int128_t value) {
-        __uint128_t tmp = value < 0 ? -value : value;
+    static string toString(const i128 value) {
+        i128 tmp = value < 0 ? -value : value;
+
         char buffer[128];
         int p = 0;
         char *d = std::end(buffer);
@@ -52,6 +58,11 @@ public:
         return d;
     }
 
+    bool endsWith(const string &ending) {
+        if (ending.size() > this->size()) return false;
+        return std::equal(ending.rbegin(), ending.rend(), this->rbegin());
+    }
+
     String(const char *s) : string(s) { };
 
     template<class T>
@@ -66,17 +77,50 @@ public:
         return std::stoi(s);
     }
 
-    String &trim();
+    String() {
+    }
 
-    String &trimLeft();
+    String &trim() {
+        trimLeft();
+        trimRight();
+        return *this;
+    }
 
-    String &trimRight();
+    String &trimLeft() {
+        this->erase(this->begin(), std::find_if(this->begin(), this->end(), std::not1(std::ptr_fun<int, int>(std::isspace))));
+        return *this;
+    }
 
-    String &replace(const string &s1, const string &s2);
+    String &trimRight() {
+        this->erase(std::find_if(this->rbegin(), this->rend(), std::not1(std::ptr_fun<int, int>(std::isspace))).base(), this->end());
+        return *this;
+    }
 
-    String &replace(char c1, char c2);
+    String &replace(char c1, char c2) {
+        for (unsigned i = 0; i < size(); i++) {
+            if (at(i) == c1) {
+                at(i) = c2;
+            }
+        }
+        return *this;
+    }
 
-    String &toUpper();
+    String &replace(const string &s1, const string &s2) {
+        unsigned long a;
+        while ((a = find(s1)) != string::npos) {
+            string::replace(a, s1.size(), s2);
+        }
+        return *this;
+    }
 
-    String &toLower();
+    String &toUpper() {
+        transform(begin(), end(), begin(), ::toupper);
+        return *this;
+    }
+
+    String &toLower() {
+        transform(begin(), end(), begin(), ::tolower);
+        return *this;
+    }
+
 };

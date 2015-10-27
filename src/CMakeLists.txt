@@ -19,8 +19,6 @@ set(SOURCE_FILES
         util/Bits.h
         ObserverSearch.h
         util/Singleton.h
-        util/String.cpp
-        util/String.h
         threadPool/Thread.h
         threadPool/ThreadPool.h
         threadPool/ObserverThread.h
