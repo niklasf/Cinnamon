@@ -109,7 +109,7 @@ void printHeader() {
 #elif defined(__SUNPRO_C) || defined(__SUNPRO_CC)
     cout << "Oracle Solaris Studio "<<__SUNPRO_CC;
 #else
-    cout << "Unknow compiler";
+    cout << "Unknown compiler";
 #endif
     cout << "\nLicense GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>\n\n";
 #ifdef CLOP
