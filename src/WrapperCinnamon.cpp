@@ -31,7 +31,7 @@ pair<int,int> WrapperCinnamon::getNtasks(const string &fen, const int reduce, co
         tasks = a.getSuccessorsFen(fen, i).size();
         if(tasks>=maxTasks)return pair<int,int>(i,tasks);
     }
-    pair<int,int>(reduce,tasks);
+    return pair<int,int>(reduce,tasks);
 }
 
 bool WrapperCinnamon::isValid(const string &fen) {
