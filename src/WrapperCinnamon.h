@@ -29,7 +29,7 @@ class WrapperCinnamon {
 public:
     vector<string> getSuccessorsFen(const string &, const int depth);
 
-    int getNtasks(const string &fen, const int reduce);
+    pair<int,int> getNtasks(const string &fen, const int reduce);
 
     bool isValid(const string &fen);
 };
