@@ -68,8 +68,8 @@ vector<string> PerftThread::getSuccessorsFen(const int depthx) {
         u64 keyold = chessboard[ZOBRISTKEY_IDX];
         makemove(move, false, false);
         setSide(side ^ 1);
-        vector<string> b = getSuccessorsFen<side ^ 1>(depthx - 1);
-        n_perft.insert(n_perft.end(), b.begin(), b.end());
+        vector<string> bb = getSuccessorsFen<side ^ 1>(depthx - 1);
+        n_perft.insert(n_perft.end(), bb.begin(), bb.end());
         takeback(move, keyold, false);
         setSide(side ^ 1);
     }

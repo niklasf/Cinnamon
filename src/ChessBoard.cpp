@@ -21,8 +21,9 @@
 ChessBoard::ChessBoard() {
     fenString = string(STARTPOS);
     memset(&structure, 0, sizeof(_Tboard));
-    chessboard[SIDETOMOVE_IDX] = loadFen(fenString);
-    if(chessboard[SIDETOMOVE_IDX]==-1)std::_Exit(0);
+    int x = loadFen(fenString);
+    if (x == -1)std::_Exit(0);
+    chessboard[SIDETOMOVE_IDX] = x;
 }
 
 ChessBoard::~ChessBoard() {
@@ -185,7 +186,7 @@ int ChessBoard::loadFen(const string &fen) {
     if (fen.empty()) {
         return loadFen();
     }
-    fenString=fen;
+    fenString = fen;
     memset(chessboard, 0, sizeof(_Tchessboard));
     istringstream iss(fen);
     string pos, castle, enpassant, side;
