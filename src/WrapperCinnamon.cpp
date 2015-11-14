@@ -28,7 +28,7 @@ pair<int,int> WrapperCinnamon::getNtasks(const string &fen, const int reduce) {
     PerftThread a;
     int tasks =0;
     for(int i=1;i<=reduce;i++) {
-        int tasks = a.getSuccessorsFen(fen, i).size();
+        tasks = a.getSuccessorsFen(fen, i).size();
         if(tasks>=5000)return pair<int,int>(i,tasks);
     }
     pair<int,int>(reduce,tasks);
