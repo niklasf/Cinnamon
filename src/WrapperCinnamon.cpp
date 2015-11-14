@@ -19,8 +19,18 @@
 
 #include "WrapperCinnamon.h"
 
-vector<string> WrapperCinnamon::getSuccessorsFen(const string& fen,const int depth) {
+vector<string> WrapperCinnamon::getSuccessorsFen(const string &fen, const int depth) {
     PerftThread a;
-    return a.getSuccessorsFen(fen,depth);
+    return a.getSuccessorsFen(fen, depth);
 }
 
+int WrapperCinnamon::getNtasks(const string &fen, const int reduce) {
+    PerftThread a;
+    return a.getSuccessorsFen(fen, reduce).size();
+}
+
+bool WrapperCinnamon::isValid(const string &fen) {
+    ChessBoard a;
+    if (a.loadFen(fen) == -1)return false;
+    return true;
+}

@@ -22,6 +22,7 @@ ChessBoard::ChessBoard() {
     fenString = string(STARTPOS);
     memset(&structure, 0, sizeof(_Tboard));
     chessboard[SIDETOMOVE_IDX] = loadFen(fenString);
+    if(chessboard[SIDETOMOVE_IDX]==-1)std::_Exit(0);
 }
 
 ChessBoard::~ChessBoard() {
@@ -179,6 +180,7 @@ int ChessBoard::loadFen() {
     return loadFen(fenString);
 }
 
+//return BLACK or WHITE or -1 if error
 int ChessBoard::loadFen(const string &fen) {
     if (fen.empty()) {
         return loadFen();
@@ -204,13 +206,13 @@ int ChessBoard::loadFen(const string &fen) {
                 }
             } else {
                 cout << "Bad FEN position format (" << (char) ch << ") " << fen << endl;
-                std::_Exit(0);
+                return -1;
             };
         }
     }
     if (ix != 64) {
         cout << "Bad FEN position format " << fen << endl;
-        std::_Exit(0);
+        return -1;
     }
     if (side == "b") {
         chessboard[SIDETOMOVE_IDX] = BLACK;
@@ -218,7 +220,7 @@ int ChessBoard::loadFen(const string &fen) {
         chessboard[SIDETOMOVE_IDX] = WHITE;
     } else {
         cout << "Bad FEN position format " << fen << endl;
-        std::_Exit(0);
+        return -1;
     }
 
     for (int i = 0; i < 64; i++) {

@@ -17,13 +17,19 @@
 */
 
 #pragma once
+
 #include <string>
 #include <iostream>
 #include "perft/PerftThread.h"
 
 using namespace std;
+
 class WrapperCinnamon {
 
 public:
-    vector<string> getSuccessorsFen(const string&,const int depth);
+    vector<string> getSuccessorsFen(const string &, const int depth);
+
+    int getNtasks(const string &fen, const int reduce);
+
+    bool isValid(const string &fen);
 };
