@@ -24,12 +24,12 @@ vector<string> WrapperCinnamon::getSuccessorsFen(const string &fen, const int de
     return a.getSuccessorsFen(fen, depth);
 }
 
-pair<int,int> WrapperCinnamon::getNtasks(const string &fen, const int reduce) {
+pair<int,int> WrapperCinnamon::getNtasks(const string &fen, const int reduce, const int maxTasks) {
     PerftThread a;
     int tasks =0;
     for(int i=1;i<=reduce;i++) {
         tasks = a.getSuccessorsFen(fen, i).size();
-        if(tasks>=5000)return pair<int,int>(i,tasks);
+        if(tasks>=maxTasks)return pair<int,int>(i,tasks);
     }
     pair<int,int>(reduce,tasks);
 }
