@@ -122,6 +122,10 @@ void printHeader() {
 }
 
 int main(int argc, char **argv) {
+
+//    PerftThread aa;
+//    vector<string> a=aa.getSuccessorsFen("r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq - 0 1",7);
+//    cout <<a.size();
     printHeader();
     cout << "Log level: " << LOG_LEVEL_STRING[DLOG_LEVEL] << " " << endl;
     GetOpt::parse(argc, argv);

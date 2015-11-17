@@ -27,7 +27,7 @@ vector<string> WrapperCinnamon::getSuccessorsFen(const string &fen, const int de
 pair<int,int> WrapperCinnamon::getNtasks(const string &fen, const int reduce, const int maxTasks) {
     PerftThread a;
     int tasks =0;
-    for(int i=1;i<=reduce;i++) {
+    for(int i=1;i<=reduce;i++) {//TODO usare perft e non getSuccessorsFen
         tasks = a.getSuccessorsFen(fen, i).size();
         if(tasks>=maxTasks)return pair<int,int>(i,tasks);
     }
