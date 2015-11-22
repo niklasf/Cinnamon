@@ -51,6 +51,7 @@ void Uci::listner(IterativeDeeping *it) {
     uciMode = false;
     int perftThreads = 1;
     int perftHashSize = 0;
+    string dumpFile;
     static const string BOOLEAN[] = {"false", "true"};
     while (!stop) {
         if (runPerft) {
@@ -65,8 +66,6 @@ void Uci::listner(IterativeDeeping *it) {
         if (token == "perft") {
             int perftDepth = -1;
 //            int nCpu = 1;
-            string dumpFile;
-
             string fen;
             getToken(uip, token);
             //  while (!uip.eof()) {
@@ -167,6 +166,7 @@ void Uci::listner(IterativeDeeping *it) {
 
             cout << "option name PerftThreads type spin default 1 min 1 max 64\n";
             cout << "option name PerftHashSize type spin default 0 min 0 max 100000\n";
+            cout << "option name PerftDumpFile type string\n";
             cout << "uciok\n";
         } else if (token == "score") {
             int side = searchManager.getSide();
@@ -222,7 +222,14 @@ void Uci::listner(IterativeDeeping *it) {
                         knowCommand = true;
                     }
                 }
-
+                else if (token == "perftdumpfile") {
+                    getToken(uip, token);
+                    if (token == "value") {
+                        getToken(uip, token);
+                        dumpFile = token;
+                        knowCommand = true;
+                    }
+                }
                 else if (token == "gaviotatbcache") {
                     getToken(uip, token);
                     if (token == "value") {
