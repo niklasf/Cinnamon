@@ -43,7 +43,7 @@ public:
 
     u64 getPartial();
 
-
+    unsigned perft(const string &fen, const int depth);
     vector<string> getSuccessorsFen(const string &fen1, const int depth);
 
 private:

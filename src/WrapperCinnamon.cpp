@@ -24,14 +24,9 @@ vector<string> WrapperCinnamon::getSuccessorsFen(const string &fen, const int de
     return a.getSuccessorsFen(fen, depth);
 }
 
-pair<int,int> WrapperCinnamon::getNtasks(const string &fen, const int reduce, const int maxTasks) {
+unsigned WrapperCinnamon::perft(const string &fen, const int depth) {
     PerftThread a;
-    int tasks =0;
-    for(int i=1;i<=reduce;i++) {//TODO usare perft e non getSuccessorsFen
-        tasks = a.getSuccessorsFen(fen, i).size();
-        if(tasks>=maxTasks)return pair<int,int>(i,tasks);
-    }
-    return pair<int,int>(reduce,tasks);
+    return a.perft(fen, depth);
 }
 
 bool WrapperCinnamon::isValid(const string &fen) {

@@ -29,7 +29,7 @@ class WrapperCinnamon {
 public:
     vector<string> getSuccessorsFen(const string &, const int depth);
 
-    pair<int, int> getNtasks(const string &fen, const int reduce, const int maxTasks);
+    unsigned perft(const string &fen, const int depth);
 
     bool isValid(const string &fen);
 };

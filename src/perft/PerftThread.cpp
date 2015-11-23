@@ -32,6 +32,12 @@ void PerftThread::setParam(string fen1, int from1, int to1, _TPerftRes *perft1) 
     this->to = to1;
 }
 
+unsigned PerftThread::perft(const string &fen, const int depth){
+    loadFen(fen);
+    if (getSide()) return search<WHITE,false,false>(depth);
+    return search<BLACK,false,false>(depth);
+}
+
 vector<string> PerftThread::getSuccessorsFen(const string &fen1, const int depth) {
     loadFen(fen1);
     if (getSide()) return getSuccessorsFen<WHITE>(depth);
