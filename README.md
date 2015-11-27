@@ -17,10 +17,10 @@ Version
 Features
 ----------
           
-- Available for both Unix, Windows, Mac, Android, Raspberry Pi and Javascript
+- Available for both Unix, Windows, Mac, Android, ARM and Javascript
 - UCI protocol
 - GPL 3 License
-- C++14 source
+- C++11 source
 - Rotated bitboards
 - Null moves
 - Futility pruning
