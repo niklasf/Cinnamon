@@ -138,6 +138,6 @@ private:
     void dispose();
 
     _Thash *hashArray[2];
-    mutex mutexHash[2];
+    Mutex mutexHash[2];
 };
 
