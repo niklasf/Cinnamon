@@ -18,33 +18,25 @@
 
 #pragma once
 
-
 #ifdef _WIN32
-//mutex on windows are slow
-//https://msdn.microsoft.com/en-us/library/ms682530%28VS.85%29.aspx
 
 #include <windows.h>
 
-
 class Mutex {
+private:
+    volatile LONG _lock;
+
 public:
 
-    void lock() { _lock(); }
-
-    void unlock() { LeaveCriticalSection(&cs); }
-
-private:
-    volatile LONG *hPtr;
-
-    #define _unlock()        (hPtr[0] = 0)
-
-    __forceinline void _lock() {
-        for (; ;) {
-            if (0 == _InterlockedExchange((LPLONG) hPtr, 1))
+    void lock() {
+        while (true) {
+            if (!_InterlockedExchange((LPLONG)(&_lock), 1))
                 return;
-            while (*hPtr);
+            while (_lock);
         }
     }
+
+    void unlock() { _lock = 0; }
 
 };
 
