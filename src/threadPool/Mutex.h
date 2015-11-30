@@ -27,19 +27,19 @@
 
 class Mutex {
 private:
-    volatile LONG _lock;
+    volatile long _lock;
 
 public:
 
     __forceinline void lock() {
         while (true) {
-            if (!_InterlockedExchange((LPLONG)(&_lock), 1))
+            if (!_InterlockedExchange(&_lock, 1))
                 return;
             while (_lock);//TODO Sleep(1)
         }
     }
 
-    __forceinline void unlock() { _InterlockedExchange((LPLONG)(&_lock), 0); }
+    __forceinline void unlock() { _InterlockedExchange(&_lock, 0); }
 
 };
 
