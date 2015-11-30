@@ -31,7 +31,7 @@ private:
 
 public:
 
-    void lock() {
+    __forceinline void lock() {
         while (true) {
             if (!_InterlockedExchange((LPLONG)(&_lock), 1))
                 return;
@@ -39,7 +39,7 @@ public:
         }
     }
 
-    void unlock() { _lock = 0; }
+    __forceinline void unlock() { _InterlockedExchange((LPLONG)(&_lock), 0); }
 
 };
 
