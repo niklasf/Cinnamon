@@ -39,15 +39,30 @@ public:
         }
     }
 
-    __forceinline void unlock() { _InterlockedExchange(&_lock, 0); }
+    inline void unlock() { _InterlockedExchange(&_lock, 0); }
 
 };
 
 #else
 
 #include <mutex>
+//class Mutex : public mutex {
+//
+//};
 
-class Mutex : public mutex {
+class Mutex {
+private:
+    volatile int _lock;
+public:
+    inline void lock() {
+        while (true) {
+            if (!__sync_lock_test_and_set(&_lock, 1))
+                return;
+            while (_lock);//TODO Sleep(1)
+        }
+    }
+
+    inline void unlock() { __sync_lock_release(&_lock); }
 
 };
 
