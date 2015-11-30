@@ -32,7 +32,7 @@ public:
         while (true) {
             if (!_InterlockedExchange((LPLONG)(&_lock), 1))
                 return;
-            while (_lock);//TODO usleep(1)
+            while (_lock);//TODO Sleep(1)
         }
     }
 
