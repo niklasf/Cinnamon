@@ -21,6 +21,9 @@
 #ifdef _WIN32
 
 #include <windows.h>
+#include <intrin.h>
+
+#pragma intrinsic(_InterlockedExchange)
 
 class Mutex {
 private:
