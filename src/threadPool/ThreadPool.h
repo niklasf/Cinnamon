@@ -1,5 +1,5 @@
 /*
-    https://github.com/gekomad/BlockingThreadPool
+    https://github.com/gekomad/ThreadPool
     Copyright (C) Giuseppe Cannella
 
     This program is free software: you can redistribute it and/or modify
@@ -43,12 +43,11 @@ public:
     ThreadPool() : ThreadPool(thread::hardware_concurrency()) { }
 
     T &getNextThread() {
-        
-		mxRel.lock();
+//		mxRel.lock();
         unique_lock<mutex> lck(mtx);
         cv.wait(lck, [this] { return Bits::bitCount(threadsBits) != nThread; });
-		T& x=getThread();
-		mxRel.unlock();
+        T& x=getThread();
+//		mxRel.unlock();
         return x;
     }
 
@@ -116,28 +115,28 @@ private:
     atomic<u64> threadsBits;
     int nThread = 0;
     condition_variable cv;
-    Mutex mxGet;
-    Mutex mxRel;
+//    Mutex mxGet;
+//    Mutex mxRel;
 
     T &getThread() {
-        mxGet.lock();
+//        mxGet.lock();
         int i = Bits::BITScanForwardUnset(threadsBits);
         threadPool[i]->join();
         ASSERT(!(threadsBits & POW2[i]));
         threadsBits |= POW2[i];
         T &x=*threadPool[i];
-        mxGet.unlock();
+//        mxGet.unlock();
         return x;
     }
 
     void releaseThread(const int threadID) {
         ASSERT_RANGE(threadID, 0, 63);
-        mxGet.lock();
+//        mxGet.lock();
         ASSERT(threadsBits & POW2[threadID]);
         threadsBits &= ~POW2[threadID];
         cv.notify_all();
         debug( "ThreadPool::releaseThread #", threadID);
-		mxGet.unlock();
+//		mxGet.unlock();
     }
 
     void observerEndThread(int threadID) {
