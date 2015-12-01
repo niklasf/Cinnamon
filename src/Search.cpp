@@ -237,7 +237,7 @@ void Search::setMaxTimeMillsec(int n) {
     maxTimeMillsec = n;
 }
 
-int Search::getMaxTimeMillsec() {
+unsigned Search::getMaxTimeMillsec() {
     return maxTimeMillsec;
 }
 

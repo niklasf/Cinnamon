@@ -71,7 +71,7 @@ void IterativeDeeping::setUseBook(bool b) {
 }
 
 void IterativeDeeping::run() {
-    lock_guard<mutex> lock(commandMutex);
+    spinlockCommand.lock();
     int timeTaken = 0;
     searchManager.setRunning(2);
     searchManager.setRunningThread(true);
@@ -84,14 +84,13 @@ void IterativeDeeping::run() {
             searchManager.getMoveFromSan(obMove, &move);
             searchManager.makemove(&move);
             cout << "bestmove " << obMove << endl;
+            spinlockCommand.unlock();
             return;
         }
     }
     int sc = 0;
     u64 totMoves;
-
     mply = 0;
-
     searchManager.startClock();
     searchManager.clearKillerHeuristic();
     searchManager.clearAge();
@@ -229,5 +228,5 @@ void IterativeDeeping::run() {
         cout << " ponder " << ponderMove;
     }
     cout << "\n" << flush;
-
+    spinlockCommand.unlock();
 }

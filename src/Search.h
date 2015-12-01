@@ -49,7 +49,7 @@ public:
 
     bool setParameter(String param, int value);
 
-    int getMaxTimeMillsec();
+    unsigned getMaxTimeMillsec();
 
     void startClock();
 
@@ -151,7 +151,7 @@ private:
 
     int checkTime();
 
-    int maxTimeMillsec;
+    unsigned maxTimeMillsec;
     bool nullSearch;
     static high_resolution_clock::time_point startTime;
 

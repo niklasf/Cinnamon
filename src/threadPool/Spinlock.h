@@ -27,10 +27,8 @@
 
 class Spinlock {
 private:
-    volatile long _lock;
-
+    volatile long _lock = 0;
 public:
-
     __forceinline void lock() {
         while (true) {
             if (!_InterlockedExchange(&_lock, 1))
@@ -47,7 +45,7 @@ public:
 
 class Spinlock {
 private:
-    volatile int _lock;
+    volatile int _lock = 0;
 public:
     inline void lock() {
         while (true) {
