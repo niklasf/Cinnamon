@@ -861,7 +861,7 @@ void GenMoves::setRepetitionMapCount(int i) {
 int GenMoves::loadFen(const string &fen) {
     repetitionMapCount = 0;
     int side = ChessBoard::loadFen(fen);
-    if(side==-1)std::_Exit(0);
+    if (side == -1)std::_Exit(0);
     return side;
 }
 

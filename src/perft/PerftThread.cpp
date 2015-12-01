@@ -19,10 +19,10 @@
 #include "PerftThread.h"
 #include "Perft.h"
 
-Mutex PerftThread::MUTEX_HASH;
-mutex PerftThread::mutexPrint;
+Spinlock PerftThread::SPINLOCK_HASH;
+Spinlock PerftThread::spinlockPrint;
 
-PerftThread::PerftThread() { perftMode = true;}
+PerftThread::PerftThread() { perftMode = true; }
 
 void PerftThread::setParam(string fen1, int from1, int to1, _TPerftRes *perft1) {
 
@@ -32,10 +32,10 @@ void PerftThread::setParam(string fen1, int from1, int to1, _TPerftRes *perft1) 
     this->to = to1;
 }
 
-unsigned PerftThread::perft(const string &fen, const int depth){
+unsigned PerftThread::perft(const string &fen, const int depth) {
     loadFen(fen);
-    if (getSide()) return search<WHITE,false,false>(depth);
-    return search<BLACK,false,false>(depth);
+    if (getSide()) return search<WHITE, false, false>(depth);
+    return search<BLACK, false, false>(depth);
 }
 
 vector<string> PerftThread::getSuccessorsFen(const string &fen1, const int depth) {
@@ -60,7 +60,7 @@ vector<string> PerftThread::getSuccessorsFen(const int depthx) {
     incListId();
     u64 friends = getBitBoard<side>();
     u64 enemies = getBitBoard<side ^ 1>();
-    bool b=generateCaptures<side>(enemies, friends);
+    bool b = generateCaptures<side>(enemies, friends);
     ASSERT(!b);
     generateMoves<side>(friends | enemies);
     listcount = getListSize();
@@ -98,22 +98,22 @@ u64 PerftThread::search(const int depthx) {
 
     if (useHash) {
         zobristKeyR = chessboard[ZOBRISTKEY_IDX] ^ _random::RANDSIDE[side];
-        if (smp)MUTEX_HASH.lock();
+        if (smp)SPINLOCK_HASH.lock();
         phashe = &(tPerftRes->hash[depthx][zobristKeyR % tPerftRes->sizeAtDepth[depthx]]);
         if (zobristKeyR == phashe->key) {
             partialTot += phashe->nMoves;
             u64 r = phashe->nMoves;
-            if (smp)MUTEX_HASH.unlock();
+            if (smp)SPINLOCK_HASH.unlock();
             return r;
         }
-        if (smp)MUTEX_HASH.unlock();
+        if (smp)SPINLOCK_HASH.unlock();
     }
     int listcount;
     _Tmove *move;
     incListId();
     u64 friends = getBitBoard<side>();
     u64 enemies = getBitBoard<side ^ 1>();
-    bool b=generateCaptures<side>(enemies, friends);
+    bool b = generateCaptures<side>(enemies, friends);
     ASSERT(!b);
     generateMoves<side>(friends | enemies);
     listcount = getListSize();
@@ -130,10 +130,10 @@ u64 PerftThread::search(const int depthx) {
     }
     decListId();
     if (useHash) {
-        if (smp) MUTEX_HASH.lock();
+        if (smp) SPINLOCK_HASH.lock();
         phashe->key = zobristKeyR;
         phashe->nMoves = n_perft;
-        if (smp) MUTEX_HASH.unlock();
+        if (smp) SPINLOCK_HASH.unlock();
     }
     return n_perft;
 }
@@ -187,20 +187,21 @@ void PerftThread::run() {
         } else {
             y = '-';
         }
-        {
-            lock_guard<mutex> lock(mutexPrint);
-            cout << "\n";
-            string h;
-            if ((decodeBoardinv(move->type, move->to, chessboard[SIDETOMOVE_IDX])).length() > 2) {
-                //castle
-                h = decodeBoardinv(move->type, move->to, chessboard[SIDETOMOVE_IDX]);
-            } else {
-                h = h + x + decodeBoardinv(move->type, move->from, chessboard[SIDETOMOVE_IDX]) + y + decodeBoardinv(move->type, move->to, chessboard[SIDETOMOVE_IDX]);
-            }
-            cout << setw(6) << h;
-            cout << setw(20) << n_perft;
-            cout << setw(8) << (Perft::count--);
+
+        spinlockPrint.lock();
+        cout << "\n";
+        string h;
+        if ((decodeBoardinv(move->type, move->to, chessboard[SIDETOMOVE_IDX])).length() > 2) {
+            //castle
+            h = decodeBoardinv(move->type, move->to, chessboard[SIDETOMOVE_IDX]);
+        } else {
+            h = h + x + decodeBoardinv(move->type, move->from, chessboard[SIDETOMOVE_IDX]) + y + decodeBoardinv(move->type, move->to, chessboard[SIDETOMOVE_IDX]);
         }
+        cout << setw(6) << h;
+        cout << setw(20) << n_perft;
+        cout << setw(8) << (Perft::count--);
+        spinlockPrint.unlock();
+
         cout << flush;
         tot += n_perft;
     }

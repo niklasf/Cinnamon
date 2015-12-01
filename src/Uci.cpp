@@ -213,24 +213,21 @@ void Uci::listner(IterativeDeeping *it) {
                         perftThreads = stoi(token);
                         knowCommand = true;
                     }
-                }
-                else if (token == "perfthashsize") {
+                } else if (token == "perfthashsize") {
                     getToken(uip, token);
                     if (token == "value") {
                         getToken(uip, token);
                         perftHashSize = stoi(token);
                         knowCommand = true;
                     }
-                }
-                else if (token == "perftdumpfile") {
+                } else if (token == "perftdumpfile") {
                     getToken(uip, token);
                     if (token == "value") {
                         getToken(uip, token);
                         dumpFile = token;
                         knowCommand = true;
                     }
-                }
-                else if (token == "gaviotatbcache") {
+                } else if (token == "gaviotatbcache") {
                     getToken(uip, token);
                     if (token == "value") {
                         getToken(uip, token);

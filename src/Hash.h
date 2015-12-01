@@ -23,7 +23,7 @@
 #include "namespaces/def.h"
 #include "namespaces/board.h"
 #include "util/Singleton.h"
-#include "threadPool/Mutex.h"
+#include "threadPool/Spinlock.h"
 
 using namespace _board;
 
@@ -73,12 +73,12 @@ public:
         bool b = false;
         _Thash *hash = phashe[type] = &(hashArray[type][zobristKeyR % HASH_SIZE]);
 
-        if (smp)mutexHash[type].lock();
+        if (smp)spinlockHash[type].lock();
         if (hash->key == zobristKeyR) {
             b = true;
             memcpy(hashMini, hash, sizeof(_Thash));
         }
-        if (smp)mutexHash[type].unlock();
+        if (smp)spinlockHash[type].unlock();
 
         return b;
     }
@@ -105,9 +105,9 @@ public:
             tmp.from = tmp.to = 0;
         }
 
-        if (smp)mutexHash[HASH_GREATER].lock();
+        if (smp)spinlockHash[HASH_GREATER].lock();
         memcpy(rootHash[HASH_GREATER], &tmp, sizeof(_Thash));
-        if (smp)mutexHash[HASH_GREATER].unlock();
+        if (smp)spinlockHash[HASH_GREATER].unlock();
 
 
 #ifdef DEBUG_MODE
@@ -121,14 +121,14 @@ public:
 #endif
         tmp.entryAge = 1;
 
-        if (smp)mutexHash[HASH_ALWAYS].lock();
+        if (smp)spinlockHash[HASH_ALWAYS].lock();
         if (rootHash[HASH_ALWAYS]->key && rootHash[HASH_ALWAYS]->depth >= depth && rootHash[HASH_ALWAYS]->entryAge) {
             INC(collisions);
-            if (smp)mutexHash[HASH_ALWAYS].unlock();
+            if (smp)spinlockHash[HASH_ALWAYS].unlock();
             return;
         }
         memcpy(rootHash[HASH_ALWAYS], &tmp, sizeof(_Thash));
-        if (smp)mutexHash[HASH_ALWAYS].unlock();
+        if (smp)spinlockHash[HASH_ALWAYS].unlock();
 
     }
 
@@ -138,6 +138,6 @@ private:
     void dispose();
 
     _Thash *hashArray[2];
-    Mutex mutexHash[2];
+    Spinlock spinlockHash[2];
 };
 

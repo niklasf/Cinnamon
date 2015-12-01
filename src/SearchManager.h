@@ -18,7 +18,6 @@
 
 #pragma once
 
-#include <mutex>
 #include <unistd.h>
 #include "Search.h"
 #include "threadPool/ThreadPool.h"
@@ -208,7 +207,7 @@ private:
     int valWindow;
     _TpvLine lineWin;
     u64 totCountWin;
-    Mutex mutexSearch;
+    Spinlock spinlockSearch;
 
     void setMainPly(int r);
 

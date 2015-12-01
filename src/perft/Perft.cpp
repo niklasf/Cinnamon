@@ -229,8 +229,8 @@ void Perft::endRun() {
     int t = Time::diffTime(end1, start1) / 1000;
 
     cout << endl << endl << "Perft moves: " << perftRes.totMoves;
-    string timetot=Time::diffTimeToString(start1,end1);
-    cout << " in "<<timetot;
+    string timetot = Time::diffTimeToString(start1, end1);
+    cout << " in " << timetot;
 
     if (t) {
         cout << " (" << (perftRes.totMoves / t) / 1000 - ((perftRes.totMoves / t) / 1000) % 1000 << "k nodes per seconds" << ")";

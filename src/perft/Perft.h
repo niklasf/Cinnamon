@@ -24,7 +24,6 @@
 #include <fstream>
 #include <unistd.h>
 #include "../util/Timer.h"
-#include <mutex>
 #include "PerftThread.h"
 #include "../threadPool/ThreadPool.h"
 #include "_TPerftRes.h"
@@ -79,7 +78,6 @@ public:
     static int count;
 
     void status();
-
 
 
 private:

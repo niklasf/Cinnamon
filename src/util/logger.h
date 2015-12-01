@@ -19,7 +19,7 @@
 #pragma once
 
 #include "../util/Singleton.h"
-#include "../threadPool/Mutex.h"
+#include "../threadPool/Spinlock.h"
 
 using namespace std;
 
@@ -30,7 +30,7 @@ namespace _logger {
     } _LOG_LEVEL;
 
 #if !defined DLOG_LEVEL
-    #if defined DEBUG_MODE
+#if defined DEBUG_MODE
 #define DLOG_LEVEL _TRACE
 #else
 #define DLOG_LEVEL _OFF
@@ -49,17 +49,17 @@ namespace _logger {
 
         template<LOG_LEVEL type, typename T, typename... Args>
         void _log(T t, Args... args) {
-            _CoutSyncMutex.lock();
+            _CoutSyncSpinlock.lock();
             cout << Time::getLocalTime() << " " << LOG_LEVEL_STRING[type] << " ";
             *this << Time::getLocalTime() << " " << LOG_LEVEL_STRING[type] << " ";
             __log(t, args...);
             cout << endl;
             *this << endl;
-            _CoutSyncMutex.unlock();
+            _CoutSyncSpinlock.unlock();
         }
 
     private:
-        Mutex _CoutSyncMutex;
+        Spinlock _CoutSyncSpinlock;
 
         template<typename T>
         void __log(T t) {

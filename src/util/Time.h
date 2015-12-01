@@ -43,7 +43,7 @@ public:
         int hours = (t / 60 / 60) % 24;
         int minutes = (t / 60) % 60;
         int seconds = t % 60;
-        int millsec =Time::diffTime(stop, start)%1000;
+        int millsec = Time::diffTime(stop, start) % 1000;
 
         if (days) {
             res.append(String(days)).append(" days ");

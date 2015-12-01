@@ -30,10 +30,10 @@ class IniFile {
 public:
 
     IniFile(const string &fileName1) {
-        fileName=fileName1;
+        fileName = fileName1;
         if (FileUtil::fileSize(fileName) <= 0)return;
         endFile = true;
-        inData.open(fileName,std::ofstream::in);
+        inData.open(fileName, std::ofstream::in);
         if (inData.is_open()) {
             endFile = false;
         } else {
