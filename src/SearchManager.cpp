@@ -21,7 +21,7 @@
 
 Hash *SearchManager::hash;
 
-SearchManager::SearchManager() : ThreadPool(1) {//TODO 1
+SearchManager::SearchManager() : ThreadPool(8) {//TODO 1
     nThreads = getNthread();
     hash = &Hash::getInstance();
     setNthread(nThreads);
@@ -138,7 +138,9 @@ void SearchManager::parallelSearch(int mply) {
             startThread(SMP_YES, idThread1, mply, alpha, beta);
         }
         debug("end loop2 ---------------------------");
-        joinAll();
+        waitAll();
+//        joinAll();
+
         ASSERT(!getBitCount());
         if (lineWin.cmove <= 0) {
 
@@ -149,7 +151,8 @@ void SearchManager::parallelSearch(int mply) {
             startThread(SMP_NO, idThread1, mply, -_INFINITE, _INFINITE);
 //            }
             debug("end loop3 -------------------------------");
-            idThread1.join();
+            waitAll();
+//            idThread1.join();
         }
     }
 }
