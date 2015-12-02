@@ -18,6 +18,7 @@
 
 #pragma once
 
+#include "Mutex.h"
 #include "Thread.h"
 #include <atomic>
 #include <unistd.h>
@@ -31,7 +32,7 @@
 using namespace _debug;
 using namespace _def;
 
-template<typename T, typename = typename std::enable_if<std::is_base_of<Thread, T>::value, T>::type>
+template<typename T, typename = typename std::enable_if<std::is_base_of<ThreadBase, T>::value, T>::type>
 class ThreadPool : public ObserverThread {
 
 public:
@@ -43,11 +44,21 @@ public:
     ThreadPool() : ThreadPool(thread::hardware_concurrency()) { }
 
     T &getNextThread() {
-//        mxRel.lock();
+        mxRel.lock();
         unique_lock<mutex> lck(mtx);
         cv.wait(lck, [this] { return Bits::bitCount(threadsBits) != nThread; });
-        T &x = getThread();
-//        mxRel.unlock();
+
+//getThread
+        mxGet.lock();
+        int i = Bits::BITScanForwardUnset(threadsBits);
+        //threadPool[i]->join();
+        ASSERT(!(threadsBits & POW2[i]));
+        threadsBits |= POW2[i];
+        T &x = *threadPool[i];
+        mxGet.unlock();
+//
+
+        mxRel.unlock();
         return x;
     }
 
@@ -82,11 +93,11 @@ public:
         return true;
     }
 
-//    void joinAll() {
-//        for (int i = 0; i < nThread; i++) {
-//            threadPool[i]->join();
-//        }
-//    }
+    void joinAll() {
+        for (int i = 0; i < nThread; i++) {
+            threadPool[i]->join();
+        }
+    }
 
     void sleepAll(bool b) {
         for (int i = 0; i < nThread; i++) {
@@ -106,15 +117,11 @@ public:
     ~ThreadPool() {
         //removeAllThread();
     }
-
+int pippo(){return threadsBits;}//TODO eliminare
     void waitAll() {
-        while(threadsBits){usleep(1);}
-//        cout <<"threadsBits "<<Bits::bitCount(threadsBits)<<endl;
-//        for (int i = 0; i < nThread; i++)getNextThread();
-//        cout <<"OK "<<endl;
-//        mainLock=true;
-//        threadsBits=0;
+        while (threadsBits) { usleep(1);}
     }
+
 protected:
     vector<T *> threadPool;
 private:
@@ -124,29 +131,19 @@ private:
     volatile atomic<u64> threadsBits;
     int nThread = 0;
     condition_variable cv;
-//    Mutex mxGet;
-//    Mutex mxRel;
+    Spinlock mxGet;
+    Mutex mxRel;
 
-    T &getThread() {
-//        mxGet.lock();
-        int i = Bits::BITScanForwardUnset(threadsBits);
-        //threadPool[i]->join();
-        ASSERT(!(threadsBits & POW2[i]));
-        threadsBits |= POW2[i];
-        T &x = *threadPool[i];
-//        mxGet.unlock();
-        return x;
-    }
 
     void releaseThread(const int threadID) {
         debug ("bit: ", Bits::bitCount(threadsBits));
         ASSERT_RANGE(threadID, 0, 63);
-//        mxGet.lock();
+        mxGet.lock();
         ASSERT(threadsBits & POW2[threadID]);
         threadsBits &= ~POW2[threadID];
-        cv.notify_all();
         debug("ThreadPool::releaseThread #", threadID, " ", Bits::bitCount(threadsBits));
-//        mxGet.unlock();
+        cv.notify_all();
+        mxGet.unlock();
     }
 
     void observerEndThread(int threadID) {

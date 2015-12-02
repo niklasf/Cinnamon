@@ -20,15 +20,15 @@
 
 #include <thread>
 #include <mutex>
-#include "ThreadBase.h"
 #include "ObserverThread.h"
 #include "../namespaces/def.h"
 #include <condition_variable>
+#include "ThreadBase.h"
 
 using namespace std;
 
 
-class Thread : public ThreadBase {
+class ThreadReuse : public ThreadBase {
 
 private:
     bool running = true;
@@ -36,19 +36,25 @@ private:
     ObserverThread *observer = nullptr;
     condition_variable cv;
     thread theThread;
+    bool started = false;
+
     Runnable *execRunnable;
-
+protected:
     static void *__run(void *cthis) {
-        static_cast<Runnable *>(cthis)->run();
-        static_cast<Runnable *>(cthis)->endRun();
-        static_cast<Thread *>(cthis)->notifyEndThread((static_cast<Thread *>(cthis))->getId());
+        while (true) {
+            static_cast<Runnable *>(cthis)->run();
 
-        return nullptr;
+            static_cast<Runnable *>(cthis)->endRun();
+
+            static_cast<ThreadReuse *>(cthis)->notifyEndThread((static_cast<ThreadReuse *>(cthis))->getId());
+
+        }
     }
 
 public:
+    bool reuse;
 
-    Thread() {
+    ThreadReuse() {
         execRunnable = this;
     }
 
@@ -57,12 +63,18 @@ public:
     }
 
     void notifyEndThread(int i) {
+        ASSERT(observer);
         if (observer != nullptr) {
             observer->observerEndThread(i);
+            mutex mtx;
+
+            unique_lock<mutex> lck(mtx);
+            cv.wait(lck);
+
         }
     }
 
-    virtual ~Thread() {
+    virtual ~ThreadReuse() {
         join();
     }
 
@@ -79,14 +91,17 @@ public:
     }
 
     void start() {
-        ASSERT(!isJoinable());
-        theThread = thread(__run, execRunnable);
+        if (!started) {
+            started = true;
+            ASSERT(!isJoinable());
+            theThread = thread(__run, execRunnable);
+        } else {
+            cv.notify_all();
+        }
     }
 
     void join() {
-        if (theThread.joinable()) {
-            theThread.join();
-        }
+
     }
 
     void detach() {
@@ -99,6 +114,10 @@ public:
 
     void setId(int id) {
         threadID = id;
+    }
+
+    void threadSleep(bool b) {
+        running = !b;
     }
 
     bool isJoinable() {

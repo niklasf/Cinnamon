@@ -17,7 +17,7 @@
 */
 #include "IterativeDeeping.h"
 
-IterativeDeeping::IterativeDeeping() : maxDepth(MAX_PLY), openBook(nullptr), ponderEnabled(false) {
+IterativeDeeping::IterativeDeeping() : maxDepth(MAX_PLY), openBook(nullptr), ponderEnabled(false){
     setUseBook(false);
 }
 
@@ -106,7 +106,7 @@ void IterativeDeeping::run() {
     string pvv;
     _Tmove resultMove;
     while (searchManager.getRunning(0) /*&& mateIn == INT_MAX && mply < maxDepth*/) {
-//        mateIn = INT_MAX;
+//      mateIn = INT_MAX;
         totMoves = 0;
         ++mply;
         searchManager.init();
@@ -222,11 +222,12 @@ void IterativeDeeping::run() {
             inMate = true;
         }
     }
-
     cout << "bestmove " << bestmove;
     if (ponderEnabled && ponderMove.size()) {
         cout << " ponder " << ponderMove;
     }
     cout << "\n" << flush;
+    ASSERT(searchManager. pippo()==0);
+
     spinlockCommand.unlock();
 }
