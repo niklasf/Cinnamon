@@ -221,7 +221,8 @@ void Perft::run() {
     PerftThread &perftThread = getNextThread();
     perftThread.setParam(fen, s, listcount, &perftRes);
     startAll();
-    joinAll();
+    waitAll();
+  //  joinAll();
 }
 
 void Perft::endRun() {

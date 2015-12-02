@@ -43,9 +43,13 @@ public:
     ThreadPool() : ThreadPool(thread::hardware_concurrency()) { }
 
     T &getNextThread() {
+//        mxRel.lock();
         unique_lock<mutex> lck(mtx);
+
         cv.wait(lck, [this] { return Bits::bitCount(threadsBits) != nThread; });
+
         T &x = getThread();
+//        mxRel.unlock();
         return x;
     }
 
@@ -66,7 +70,7 @@ public:
             warn("invalid value");
             return false;
         }
-        joinAll();
+        //joinAll();
         removeAllThread();
         nThread = t;
         ASSERT(threadsBits == 0);
@@ -76,15 +80,15 @@ public:
             threadPool.push_back(x);
         }
         registerThreads();
-        trace ("ThreadPool size: ", getNthread())
+
         return true;
     }
 
-    void joinAll() {
-        for (int i = 0; i < nThread; i++) {
-            threadPool[i]->join();
-        }
-    }
+//    void joinAll() {
+//        for (int i = 0; i < nThread; i++) {
+//            threadPool[i]->join();
+//        }
+//    }
 
     void sleepAll(bool b) {
         for (int i = 0; i < nThread; i++) {
@@ -102,9 +106,13 @@ public:
     }
 
     ~ThreadPool() {
-        removeAllThread();
+        //removeAllThread();
     }
 
+    void waitAll() {
+        for (int i = 0; i < nThread; i++)getNextThread();
+        threadsBits=0;
+    }
 protected:
     vector<T *> threadPool;
 private:
@@ -113,22 +121,29 @@ private:
     atomic<u64> threadsBits;
     int nThread = 0;
     condition_variable cv;
+//    Mutex mxGet;
+//    Mutex mxRel;
 
     T &getThread() {
+//        mxGet.lock();
         int i = Bits::BITScanForwardUnset(threadsBits);
-        threadPool[i]->join();
+        //threadPool[i]->join();
         ASSERT(!(threadsBits & POW2[i]));
         threadsBits |= POW2[i];
         T &x = *threadPool[i];
+//        mxGet.unlock();
         return x;
     }
 
     void releaseThread(const int threadID) {
+        debug ("bit: ", Bits::bitCount(threadsBits));
         ASSERT_RANGE(threadID, 0, 63);
+//        mxGet.lock();
         ASSERT(threadsBits & POW2[threadID]);
         threadsBits &= ~POW2[threadID];
         cv.notify_all();
-        debug("ThreadPool::releaseThread #", threadID);
+        debug("ThreadPool::releaseThread #", threadID, " ", Bits::bitCount(threadsBits));
+//        mxGet.unlock();
     }
 
     void observerEndThread(int threadID) {
@@ -142,13 +157,14 @@ private:
     }
 
     void removeAllThread() {
-        joinAll();
+        //joinAll();
         for (T *s:threadPool) {
             delete s;
         }
         threadPool.clear();
         ASSERT(threadsBits == 0);
     }
+
 
 };
 

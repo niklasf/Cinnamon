@@ -41,13 +41,15 @@ private:
     ObserverThread *observer = nullptr;
     condition_variable cv;
     thread theThread;
+    bool started = false;
     Runnable *execRunnable;
 
     static void *__run(void *cthis) {
-        static_cast<Runnable *>(cthis)->run();
-        static_cast<Runnable *>(cthis)->endRun();
-        static_cast<Thread *>(cthis)->notifyEndThread((static_cast<Thread *>(cthis))->getId());
-
+        while (true) {
+            static_cast<Runnable *>(cthis)->run();
+            static_cast<Runnable *>(cthis)->endRun();
+            static_cast<Thread *>(cthis)->notifyEndThread((static_cast<Thread *>(cthis))->getId());
+        }
         return nullptr;
     }
 
@@ -62,13 +64,17 @@ public:
     }
 
     void notifyEndThread(int i) {
+
         if (observer != nullptr) {
             observer->observerEndThread(i);
+            mutex mtx;
+            unique_lock<mutex> lck(mtx);
+            cv.wait(lck);
         }
     }
 
     virtual ~Thread() {
-        join();
+        //join();
     }
 
     void checkWait() {
@@ -84,8 +90,13 @@ public:
     }
 
     void start() {
-        ASSERT(!isJoinable());
-        theThread = thread(__run, execRunnable);
+        if (!started) {
+            started = true;
+            ASSERT(!isJoinable());
+            theThread = thread(__run, execRunnable);
+        } else {
+            cv.notify_all();
+        }
     }
 
     void join() {
@@ -104,6 +115,10 @@ public:
 
     void setId(int id) {
         threadID = id;
+    }
+
+    void threadSleep(bool b) {
+        running = !b;
     }
 
     bool isJoinable() {
