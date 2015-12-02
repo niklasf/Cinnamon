@@ -25,7 +25,7 @@
 using namespace _def;
 namespace _board {
 
-    static const string NAME = "Spinlock";
+    static const string NAME = "cinnamon.x";
     static const string STARTPOS = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 
     static const int MAX_PLY = 96;

@@ -52,7 +52,7 @@ public:
     virtual ~Timer() {
         seconds = 0;
         cv.notify_all();
-//        join();
+        join();
     }
 
 private:
