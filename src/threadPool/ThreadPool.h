@@ -44,21 +44,21 @@ public:
     ThreadPool() : ThreadPool(thread::hardware_concurrency()) { }
 
     T &getNextThread() {
-        mxRel.lock();
+//        mxRel.lock();
         unique_lock<mutex> lck(mtx);
         cv.wait(lck, [this] { return Bits::bitCount(threadsBits) != nThread; });
 
 //getThread
-        mxGet.lock();
+//        mxGet.lock();
         int i = Bits::BITScanForwardUnset(threadsBits);
         //threadPool[i]->join();
         ASSERT(!(threadsBits & POW2[i]));
         threadsBits |= POW2[i];
         T &x = *threadPool[i];
-        mxGet.unlock();
+//        mxGet.unlock();
 //
 
-        mxRel.unlock();
+//        mxRel.unlock();
         return x;
     }
 
@@ -117,7 +117,7 @@ public:
     ~ThreadPool() {
         //removeAllThread();
     }
-int pippo(){return threadsBits;}//TODO eliminare
+
     void waitAll() {
         while (threadsBits) { usleep(1);}
     }
@@ -131,19 +131,19 @@ private:
     volatile atomic<u64> threadsBits;
     int nThread = 0;
     condition_variable cv;
-    Spinlock mxGet;
-    Mutex mxRel;
+//    Spinlock mxGet;
+//    Mutex mxRel;
 
 
     void releaseThread(const int threadID) {
         debug ("bit: ", Bits::bitCount(threadsBits));
         ASSERT_RANGE(threadID, 0, 63);
-        mxGet.lock();
+//        mxGet.lock();
         ASSERT(threadsBits & POW2[threadID]);
         threadsBits &= ~POW2[threadID];
         debug("ThreadPool::releaseThread #", threadID, " ", Bits::bitCount(threadsBits));
         cv.notify_all();
-        mxGet.unlock();
+//        mxGet.unlock();
     }
 
     void observerEndThread(int threadID) {

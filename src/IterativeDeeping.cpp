@@ -227,7 +227,6 @@ void IterativeDeeping::run() {
         cout << " ponder " << ponderMove;
     }
     cout << "\n" << flush;
-    ASSERT(searchManager. pippo()==0);
-
+   
     spinlockCommand.unlock();
 }
