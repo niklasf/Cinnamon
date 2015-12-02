@@ -45,9 +45,7 @@ public:
     T &getNextThread() {
 //        mxRel.lock();
         unique_lock<mutex> lck(mtx);
-
         cv.wait(lck, [this] { return Bits::bitCount(threadsBits) != nThread; });
-
         T &x = getThread();
 //        mxRel.unlock();
         return x;
@@ -110,15 +108,20 @@ public:
     }
 
     void waitAll() {
-        for (int i = 0; i < nThread; i++)getNextThread();
-        threadsBits=0;
+        while(threadsBits){usleep(1);}
+//        cout <<"threadsBits "<<Bits::bitCount(threadsBits)<<endl;
+//        for (int i = 0; i < nThread; i++)getNextThread();
+//        cout <<"OK "<<endl;
+//        mainLock=true;
+//        threadsBits=0;
     }
 protected:
     vector<T *> threadPool;
 private:
 
     mutex mtx;
-    atomic<u64> threadsBits;
+
+    volatile atomic<u64> threadsBits;
     int nThread = 0;
     condition_variable cv;
 //    Mutex mxGet;
