@@ -111,13 +111,12 @@ void SearchManager::parallelSearch(int mply) {
     setMainPly(mply);
     ASSERT(!getBitCount());
 
-    if (mply == 1) {        
+    if (mply == 1) {
         Search &idThread1 = getNextThread();
         debug("start loop1 ------------------------------ run threadid: ", idThread1.getId());
         debug("val: ", valWindow);
         startThread(SMP_NO, idThread1, mply, -_INFINITE, _INFINITE);
-//        idThread1.join();
-        waitAll();
+        idThread1.join();
     } else {
 //  Parallel Aspiration Windows
         debug("start loop2 --------------------------");
@@ -131,35 +130,31 @@ void SearchManager::parallelSearch(int mply) {
 
             if (alpha <= -_INFINITE || beta >= _INFINITE) {
                 break;
-            }            
+            }
+
             Search &idThread1 = getNextThread();
             idThread1.setRunning(1);
             debug("val: ", valWindow);
             startThread(SMP_YES, idThread1, mply, alpha, beta);
         }
         debug("end loop2 ---------------------------");
-        waitAll();
-//        joinAll();
-
+        joinAll();
         ASSERT(!getBitCount());
         if (lineWin.cmove <= 0) {
 
             debug("start loop3 -------------------------------");
 //            for (int i = 0; i < getNthread(); i++) {
-            debug("start loop1 pre3");
             Search &idThread1 = getNextThread();
             idThread1.setRunning(1);
             startThread(SMP_NO, idThread1, mply, -_INFINITE, _INFINITE);
 //            }
             debug("end loop3 -------------------------------");
-            waitAll();
-//            idThread1.join();
+            idThread1.join();
         }
     }
 }
 
 void SearchManager::receiveObserverSearch(int threadID) {
-
     spinlockSearch.lock();
     if (getRunning(threadID)) {
         if (lineWin.cmove == -1) {
@@ -170,12 +165,9 @@ void SearchManager::receiveObserverSearch(int threadID) {
                 ASSERT(mateIn == INT_MAX);
                 totCountWin += threadPool[threadID]->getTotMoves();
                 valWindow = getValue(threadID);
-                debug("win:", threadID);
+                debug("win", threadID);
                 ASSERT(lineWin.cmove);
                 stopAllThread();
-                debug("waitAll");
-
-             //   ASSERT(!pippo());
             }
         }
     }

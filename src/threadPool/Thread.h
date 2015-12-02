@@ -20,15 +20,20 @@
 
 #include <thread>
 #include <mutex>
-#include "ThreadBase.h"
 #include "ObserverThread.h"
 #include "../namespaces/def.h"
 #include <condition_variable>
 
 using namespace std;
 
+class Runnable {
+public:
+    virtual void run() = 0;
 
-class Thread : public ThreadBase {
+    virtual void endRun() = 0;
+};
+
+class Thread : virtual public Runnable {
 
 private:
     bool running = true;

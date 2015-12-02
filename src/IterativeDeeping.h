@@ -54,7 +54,6 @@ public:
 
     IterativeDeeping();
 
-
 private:
 
 #ifdef DEBUG_MODE

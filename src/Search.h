@@ -24,10 +24,10 @@
 #include "namespaces/def.h"
 #include <climits>
 #include "Tablebase.h"
-#include "threadPool/ThreadReuse.h"
+#include "threadPool/Thread.h"
 #include "ObserverSearch.h"
 
-class Search : public Eval, public ThreadReuse, public Subject {
+class Search : public Eval, public Thread, public Subject {
 
 public:
 

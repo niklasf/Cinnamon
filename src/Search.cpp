@@ -115,7 +115,7 @@ int Search::checkTime() {
 }
 
 Search::~Search() {
-//    join();
+    join();
     deleteGtb();
 }
 
