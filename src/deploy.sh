@@ -1,4 +1,4 @@
-array=( 192.168.1.100 192.168.1.101 192.168.1.102 192.168.1.106 192.168.1.108 )
+array=( $IPS )
 
 make clean;make cinnamon64-modern-INTEL
 echo "send to servers ? y/n"
