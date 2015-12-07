@@ -19,6 +19,7 @@
 #include "Uci.h"
 #include "util/GetOpt.h"
 
+
 /*
 
  8| 63 62 61 60 59 58 57 56
@@ -33,10 +34,10 @@
 
 tc="0/0:15+0.05" single thread
 Rank Name            Elo    +    - games score oppo. draws 
-   1 Cinnamon.x.19     6    5    5  5104   52%    -6   31% 
-   2 Cinnamon 1.2b    -6    5    5  5104   48%     6   31%
+   1 cinnamon.x.19    13    4    4 23379   54%   -13   25% 
+   2 Cinnamon 1.2b   -13    4    4 23379   46%    13   25% 
 
-*/
+ */
 
 
 using namespace _board;

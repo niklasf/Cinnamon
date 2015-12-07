@@ -46,16 +46,14 @@ int Eval::evaluatePawn() {
         return -NO_PAWNS;
     }
     structure.isolated[side] = 0;
-    int result =0;
-// commentare    int result = MOB_PAWNS[getMobilityPawns(side, chessboard[ENPASSANT_IDX], ped_friends, side == WHITE ? structure.allPiecesSide[BLACK] : structure.allPiecesSide[WHITE], ~structure.allPiecesSide[BLACK] | ~structure.allPiecesSide[WHITE])];
-//    ADD(SCORE_DEBUG.MOB_PAWNS[side], result);
-
+    int result = MOB_PAWNS[getMobilityPawns(side, chessboard[ENPASSANT_IDX], ped_friends, side == WHITE ? structure.allPiecesSide[BLACK] : structure.allPiecesSide[WHITE], ~structure.allPiecesSide[BLACK] | ~structure.allPiecesSide[WHITE])];
+    ADD(SCORE_DEBUG.MOB_PAWNS[side], result);
     if (Bits::bitCount(structure.pawns[side ^ 1]) == 8) {
         result -= ENEMIES_PAWNS_ALL;
         ADD(SCORE_DEBUG.ENEMIES_PAWNS_ALL[side], -ENEMIES_PAWNS_ALL);
     }
-//   commentare result += ATTACK_KING * Bits::bitCount(ped_friends & structure.kingAttackers[side ^ 1]);
-//    ADD(SCORE_DEBUG.ATTACK_KING_PAWN[side], ATTACK_KING * Bits::bitCount(ped_friends & structure.kingAttackers[side ^ 1]));
+    result += ATTACK_KING * Bits::bitCount(ped_friends & structure.kingAttackers[side ^ 1]);
+    ADD(SCORE_DEBUG.ATTACK_KING_PAWN[side], ATTACK_KING * Bits::bitCount(ped_friends & structure.kingAttackers[side ^ 1]));
     //space
     if (status == OPEN) {
         result += PAWN_CENTER * Bits::bitCount(ped_friends & CENTER_MASK);
@@ -72,10 +70,10 @@ int Eval::evaluatePawn() {
             if (PAWNS_7_2[side] & pos) {
                 result += PAWN_7H;
                 ADD(SCORE_DEBUG.PAWN_7H[side], PAWN_7H);
-//                if (((Bits::shiftForward<side, 8>(pos) & (~structure.allPieces)) || (structure.allPiecesSide[side ^ 1] & PAWN_FORK_MASK[side][o]))) {
-//               commentare     result += PAWN_IN_RACE;
-//                    ADD(SCORE_DEBUG.PAWN_IN_RACE[side], PAWN_IN_RACE);
-//                }
+                if (((Bits::shiftForward<side, 8>(pos) & (~structure.allPieces)) || (structure.allPiecesSide[side ^ 1] & PAWN_FORK_MASK[side][o]))) {
+                    result += PAWN_IN_RACE;
+                    ADD(SCORE_DEBUG.PAWN_IN_RACE[side], PAWN_IN_RACE);
+                }
             }
         }
         /// blocked
@@ -97,21 +95,21 @@ int Eval::evaluatePawn() {
             result -= DOUBLED_PAWNS; //TODO valore in base alla posizione
             ADD(SCORE_DEBUG.DOUBLED_PAWNS[side], -DOUBLED_PAWNS);
             /// doubled and isolated
-//            if (!(structure.isolated[side] & pos)) {
-//                ADD(SCORE_DEBUG.DOUBLED_ISOLATED_PAWNS[side], -DOUBLED_ISOLATED_PAWNS);
-//                commentare result -= DOUBLED_ISOLATED_PAWNS;//TODO valore in base alla posizione
-//            }
+            if (!(structure.isolated[side] & pos)) {
+                ADD(SCORE_DEBUG.DOUBLED_ISOLATED_PAWNS[side], -DOUBLED_ISOLATED_PAWNS);
+                result -= DOUBLED_ISOLATED_PAWNS;//TODO valore in base alla posizione
+            }
         };
         /// backward
-//        if (!(ped_friends & PAWN_BACKWARD_MASK[side][o])) {
-//            ADD(SCORE_DEBUG.BACKWARD_PAWN[side], -BACKWARD_PAWN);
-//           commentare  result -= BACKWARD_PAWN;//TODO valore in base alla posizione
-//        }
+        if (!(ped_friends & PAWN_BACKWARD_MASK[side][o])) {
+            ADD(SCORE_DEBUG.BACKWARD_PAWN[side], -BACKWARD_PAWN);
+            result -= BACKWARD_PAWN;//TODO valore in base alla posizione
+        }
         /// passed
-//        if (!(structure.pawns[side ^ 1] & PAWN_PASSED_MASK[side][o])) {
-//            ADD(SCORE_DEBUG.PAWN_PASSED[side], PAWN_PASSED[side][o]);
-//            result += PAWN_PASSED[side][o];
-//        }
+        if (!(structure.pawns[side ^ 1] & PAWN_PASSED_MASK[side][o])) {
+            ADD(SCORE_DEBUG.PAWN_PASSED[side], PAWN_PASSED[side][o]);
+            result += PAWN_PASSED[side][o];
+        }
         p &= NOTPOW2[o];
     }
     return result;
@@ -382,10 +380,10 @@ int Eval::getScore(const int side, const int alpha, const int beta) {
         INC(lazyEvalCuts);
         return lazyscore;
     }
-// xx   int endGameValue = getEndgameValue(N_PIECE, side);
-// xx   if (abs(endGameValue) != INT_MAX) {
-// xx       return endGameValue;
-// xx   }
+//    int endGameValue = getEndgameValue(N_PIECE, side);
+//    if (abs(endGameValue) != INT_MAX) {
+//        return endGameValue;
+//    }
 
 #ifdef DEBUG_MODE
     evaluationCount[WHITE] = evaluationCount[BLACK] = 0;
