@@ -125,6 +125,7 @@ int Eval::evaluateBishop(u64 enemies, u64 friends) {
     int result = 0;
     if (status != OPEN && Bits::bitCount(x) > 1) {
         result += BONUS2BISHOP;
+        /* TODO the bishop pair is worth less than half a pawn when most or all the pawns are on the board, and more than half a pawn when half or more of the pawns are gone.*/
         ADD(SCORE_DEBUG.BONUS2BISHOP[side], BONUS2BISHOP);
     }
     while (x) {
