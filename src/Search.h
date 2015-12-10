@@ -160,7 +160,7 @@ private:
     template<int side, bool smp>
     int search(int depth, int alpha, int beta, _TpvLine *pline, int N_PIECE, int *mateIn);
 
-    bool checkInsufficientMaterial(int);
+//    bool checkInsufficientMaterial(int);
 
     void sortHashMoves(int listId, Hash::_Thash &);
 
