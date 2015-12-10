@@ -252,7 +252,7 @@ void Search::sortHashMoves(int listId1, Hash::_Thash &phashe) {
     }
 }
 /*
-bool Search::checkInsufficientMaterial(int N_PIECE) {
+bool Search::checkInsufficientMaterial(int N_PIECE) {TODO
     //regexp: KN?B*KB*
     if (N_PIECE > 6) {
         return false;
