@@ -118,12 +118,14 @@ int Eval::evaluatePawn() {
 template<int side, Eval::_Tstatus status>
 int Eval::evaluateBishop(u64 enemies, u64 friends) {
     INC(evaluationCount[side]);
+    //TODO BAD_BISHOP ?
+    //TODO un solo alfiere e meno di 5 pedoni per lato aggiungi circa 12
     u64 x = chessboard[BISHOP_BLACK + side];
     if (!x) {
         return 0;
     }
     int result = 0;
-    if (status != OPEN && Bits::bitCount(x) > 1) {
+    if (status != OPEN && Bits::bitCount(x) > 1) {//TODO vantaggio anche in apertura
         result += BONUS2BISHOP;
         /* TODO the bishop pair is worth less than half a pawn when most or all the pawns are on the board, and more than half a pawn when half or more of the pawns are gone.*/
         ADD(SCORE_DEBUG.BONUS2BISHOP[side], BONUS2BISHOP);
@@ -173,6 +175,7 @@ int Eval::evaluateQueen(int side, u64 enemies, u64 friends) {
     INC(evaluationCount[side]);
     int result = 0;
     u64 queen = chessboard[QUEEN_BLACK + side];
+    //TODO se non c'è la regina e meno di due alfieri sottrai qualcosa
     while (queen) {
         int o = Bits::BITScanForward(queen);
         ASSERT(getMobilityQueen(o, enemies, friends) < (int) (sizeof(MOB_QUEEN[status]) / sizeof(int)));
@@ -205,6 +208,7 @@ template<int side, Eval::_Tstatus status>
 int Eval::evaluateKnight(const u64 enemiesPawns, const u64 squares) {
     INC(evaluationCount[side]);
     int result = 0;
+    //TODO un solo cavallo e almeno 6 pedoni per lato aggiungi circa 11
     u64 x = chessboard[KNIGHT_BLACK + side];
     if (status == OPEN) {
         result -= side ? Bits::bitCount(x & 0x42ULL) * UNDEVELOPED : Bits::bitCount(x & 0x4200000000000000ULL) * UNDEVELOPED;
