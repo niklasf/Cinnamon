@@ -374,7 +374,7 @@ int Eval::evaluateKing(int side, u64 squares) {
     return result;
 }
 
-int Eval::getScore(const int side, const int alpha, const int beta) {
+int Eval::getScore(const int side, const int alpha, const int beta, const bool print) {
     int lazyscore_white = lazyEvalSide<WHITE>();
     int lazyscore_black = lazyEvalSide<BLACK>();
     int lazyscore = lazyscore_black - lazyscore_white;
@@ -485,75 +485,92 @@ int Eval::getScore(const int side, const int alpha, const int beta) {
     int attack_king_black = ATTACK_KING * Bits::bitCount(structure.kingAttackers[WHITE]);
     side == WHITE ? lazyscore_black -= 5 : lazyscore_white += 5;
     int result = (mobBlack + attack_king_black + bonus_attack_black_king + lazyscore_black + pawns_score_black + knights_score_black + bishop_score_black + rooks_score_black + queens_score_black + kings_score_black) - (mobWhite + attack_king_white + bonus_attack_white_king + lazyscore_white + pawns_score_white + knights_score_white + bishop_score_white + rooks_score_white + queens_score_white + kings_score_white);
-#ifdef xDEBUG_MODE
-    cout << "\ntotal..........   " << (double) result / 100 << "\n";
-    cout << "PHASE: ";
-    if(status == OPEN) {
-        cout << " OPEN\n";
-    } else if(status == MIDDLE) {
-        cout << " MIDDLE\n";
-    } else {
-        cout << " END\n";
+#ifdef DEBUG_MODE
+    if (print) {
+        if (side == WHITE) cout << "\nTotal (white)..........   " << (double) -result / 100 << "\n";
+        else
+            cout << "\nTotal (black)..........   " << (double) result / 100 << "\n";
+        cout << "PHASE: ";
+        if (status == OPEN) {
+            cout << " OPEN\n";
+        } else if (status == MIDDLE) {
+            cout << " MIDDLE\n";
+        } else {
+            cout << " END\n";
+        }
+        cout << "VALUES:";
+        cout << "\tPAWN: " << (double) VALUEPAWN / 100;
+        cout << " ROOK: " << (double) VALUEROOK / 100;
+        cout << " BISHOP: " << (double) VALUEBISHOP / 100;
+        cout << " KNIGHT: " << (double) VALUEKNIGHT / 100;
+        cout << " QUEEN: " << (double) VALUEQUEEN / 100 << "\n\n";
+
+        cout << "\t\t\t\t\tTOT (white)\t\tWHITE\t\tBLACK\n";
+        cout << "Material:         " << setw(10) << (double) (lazyscore_white - lazyscore_black) / 100 << setw(15) << (double) (lazyscore_white) / 100 << setw(10) << (double) (lazyscore_black) / 100 << "\n";
+        cout << "Mobility:         " << setw(10) << (double) (mobWhite - mobBlack) / 100 << setw(15) << (double) (mobWhite) / 100 << setw(10) << (double) (mobBlack) / 100 << "\n";
+        cout << "Attack king:      " << setw(10) << (double) (attack_king_white - attack_king_black) / 100 << setw(15) << (double) (attack_king_white) / 100 << setw(10) << (double) (attack_king_black) / 100 << "\n";
+        cout << "Bonus attack king:" << setw(10) << (double) (bonus_attack_white_king - bonus_attack_black_king) / 100 << setw(15) << (double) (bonus_attack_white_king) / 100 << setw(10) << (double) (bonus_attack_black_king) / 100 << "\n";
+
+        cout << "\n\t\t\t\t\tTOT (white)\t\tWHITE\t\tBLACK\n";
+        cout << "Pawn:             " << setw(10) << (double) (pawns_score_white - pawns_score_black) / 100 << setw(15) << (double) (pawns_score_white) / 100 << setw(10) << (double) (pawns_score_black) / 100 << "\n";
+        cout << "       mobility:                 " << setw(10) << (double) (SCORE_DEBUG.MOB_PAWNS[WHITE]) / 100 << setw(10) << (double) (SCORE_DEBUG.MOB_PAWNS[BLACK]) / 100 << "\n";
+        cout << "       attack king:              " << setw(10) << (double) (SCORE_DEBUG.ATTACK_KING_PAWN[WHITE]) / 100 << setw(10) << (double) (SCORE_DEBUG.ATTACK_KING_PAWN[BLACK]) / 100 << "\n";
+        cout << "       center:                   " << setw(10) << (double) (SCORE_DEBUG.PAWN_CENTER[WHITE]) / 100 << setw(10) << (double) (SCORE_DEBUG.PAWN_CENTER[BLACK]) / 100 << "\n";
+        cout << "       7h:                       " << setw(10) << (double) (SCORE_DEBUG.PAWN_7H[WHITE]) / 100 << setw(10) << (double) (SCORE_DEBUG.PAWN_7H[BLACK]) / 100 << "\n";
+        cout << "       in race:                  " << setw(10) << (double) (SCORE_DEBUG.PAWN_IN_RACE[WHITE]) / 100 << setw(10) << (double) (SCORE_DEBUG.PAWN_IN_RACE[BLACK]) / 100 << "\n";
+        cout << "       blocked:                  " << setw(10) << (double) (SCORE_DEBUG.PAWN_BLOCKED[WHITE]) / 100 << setw(10) << (double) (SCORE_DEBUG.PAWN_BLOCKED[BLACK]) / 100 << "\n";
+        cout << "       unprotected:              " << setw(10) << (double) (SCORE_DEBUG.UNPROTECTED_PAWNS[WHITE]) / 100 << setw(10) << (double) (SCORE_DEBUG.UNPROTECTED_PAWNS[BLACK]) / 100 << "\n";
+        cout << "       isolated                  " << setw(10) << (double) (SCORE_DEBUG.PAWN_ISOLATED[WHITE]) / 100 << setw(10) << (double) (SCORE_DEBUG.PAWN_ISOLATED[BLACK]) / 100 << "\n";
+        cout << "       double                    " << setw(10) << (double) (SCORE_DEBUG.DOUBLED_PAWNS[WHITE]) / 100 << setw(10) << (double) (SCORE_DEBUG.DOUBLED_PAWNS[BLACK]) / 100 << "\n";
+        cout << "       double isolated           " << setw(10) << (double) (SCORE_DEBUG.DOUBLED_ISOLATED_PAWNS[WHITE]) / 100 << setw(10) << (double) (SCORE_DEBUG.DOUBLED_ISOLATED_PAWNS[BLACK]) / 100 << "\n";
+        cout << "       backward                  " << setw(10) << (double) (SCORE_DEBUG.BACKWARD_PAWN[WHITE]) / 100 << setw(10) << (double) (SCORE_DEBUG.BACKWARD_PAWN[BLACK]) / 100 << "\n";
+        cout << "       fork:                     " << setw(10) << (double) (SCORE_DEBUG.FORK_SCORE[WHITE]) / 100 << setw(10) << (double) (SCORE_DEBUG.FORK_SCORE[BLACK]) / 100 << "\n";
+        cout << "       passed:                   " << setw(10) << (double) (SCORE_DEBUG.PAWN_PASSED[WHITE]) / 100 << setw(10) << (double) (SCORE_DEBUG.PAWN_PASSED[BLACK]) / 100 << "\n";
+        cout << "       all enemies:              " << setw(10) << (double) (SCORE_DEBUG.ENEMIES_PAWNS_ALL[WHITE]) / 100 << setw(10) << (double) (SCORE_DEBUG.ENEMIES_PAWNS_ALL[BLACK]) / 100 << "\n";
+        cout << "       none:                     " << setw(10) << (double) (SCORE_DEBUG.NO_PAWNS[WHITE]) / 100 << setw(10) << (double) (SCORE_DEBUG.NO_PAWNS[BLACK]) / 100 << "\n";
+
+        cout << "\n\t\t\t\t\tTOT (white)\t\tWHITE\t\tBLACK\n";
+        cout << "Knight:           " << setw(10) << (double) (knights_score_white - knights_score_black) / 100 << setw(15) << (double) (knights_score_white) / 100 << setw(10) << (double) (knights_score_black) / 100 << "\n";
+        cout << "       undevelop:                " << setw(10) << (double) (SCORE_DEBUG.UNDEVELOPED_KNIGHT[WHITE]) / 100 << setw(10) << (double) (SCORE_DEBUG.UNDEVELOPED_KNIGHT[BLACK]) / 100 << "\n";
+        cout << "       trapped:                  " << setw(10) << (double) (SCORE_DEBUG.KNIGHT_TRAPPED[WHITE]) / 100 << setw(10) << (double) (SCORE_DEBUG.KNIGHT_TRAPPED[BLACK]) / 100 << "\n";
+        cout << "       mobility:                 " << setw(10) << (double) (SCORE_DEBUG.MOB_KNIGHT[WHITE]) / 100 << setw(10) << (double) (SCORE_DEBUG.MOB_KNIGHT[BLACK]) / 100 << "\n";
+
+        cout << "\n\t\t\t\t\tTOT (white)\t\tWHITE\t\tBLACK\n";
+        cout << "Bishop:           " << setw(10) << (double) (bishop_score_white - bishop_score_black) / 100 << setw(15) << (double) (bishop_score_white) / 100 << setw(10) << (double) (bishop_score_black) / 100 << "\n";
+        cout << "       bad:                      " << setw(10) << (double) (SCORE_DEBUG.BAD_BISHOP[WHITE]) / 100 << setw(10) << (double) (SCORE_DEBUG.BAD_BISHOP[BLACK]) / 100 << "\n";
+        cout << "       mobility:                 " << setw(10) << (double) (SCORE_DEBUG.MOB_BISHOP[WHITE]) / 100 << setw(10) << (double) (SCORE_DEBUG.MOB_BISHOP[BLACK]) / 100 << "\n";
+        cout << "       undevelop:                " << setw(10) << (double) (SCORE_DEBUG.UNDEVELOPED_BISHOP[WHITE]) / 100 << setw(10) << (double) (SCORE_DEBUG.UNDEVELOPED_BISHOP[BLACK]) / 100 << "\n";
+        cout << "       open diag:                " << setw(10) << (double) (SCORE_DEBUG.OPEN_DIAG_BISHOP[WHITE]) / 100 << setw(10) << (double) (SCORE_DEBUG.OPEN_DIAG_BISHOP[BLACK]) / 100 << "\n";
+        cout << "       bonus 2 bishops:          " << setw(10) << (double) (SCORE_DEBUG.BONUS2BISHOP[WHITE]) / 100 << setw(10) << (double) (SCORE_DEBUG.BONUS2BISHOP[BLACK]) / 100 << "\n";
+
+        cout << "\n\t\t\t\t\tTOT (white)\t\tWHITE\t\tBLACK\n";
+        cout << "Rook:             " << setw(10) << (double) (rooks_score_white - rooks_score_black) / 100 << setw(15) << (double) (rooks_score_white) / 100 << setw(10) << (double) (rooks_score_black) / 100 << "\n";
+        cout << "       7th:                      " << setw(10) << (double) (SCORE_DEBUG.ROOK_7TH_RANK[WHITE]) / 100 << setw(10) << (double) (SCORE_DEBUG.ROOK_7TH_RANK[BLACK]) / 100 << "\n";
+        cout << "       trapped:                  " << setw(10) << (double) (SCORE_DEBUG.ROOK_TRAPPED[WHITE]) / 100 << setw(10) << (double) (SCORE_DEBUG.ROOK_TRAPPED[BLACK]) / 100 << "\n";
+        cout << "       mobility:                 " << setw(10) << (double) (SCORE_DEBUG.MOB_ROOK[WHITE]) / 100 << setw(10) << (double) (SCORE_DEBUG.MOB_ROOK[BLACK]) / 100 << "\n";
+        cout << "       blocked:                  " << setw(10) << (double) (SCORE_DEBUG.ROOK_BLOCKED[WHITE]) / 100 << setw(10) << (double) (SCORE_DEBUG.ROOK_BLOCKED[BLACK]) / 100 << "\n";
+        cout << "       open file:                " << setw(10) << (double) (SCORE_DEBUG.ROOK_OPEN_FILE[WHITE]) / 100 << setw(10) << (double) (SCORE_DEBUG.ROOK_OPEN_FILE[BLACK]) / 100 << "\n";
+        cout << "       connected:                " << setw(10) << (double) (SCORE_DEBUG.CONNECTED_ROOKS[WHITE]) / 100 << setw(10) << (double) (SCORE_DEBUG.CONNECTED_ROOKS[BLACK]) / 100 << "\n";
+
+        cout << "\n\t\t\t\t\tTOT (white)\t\tWHITE\t\tBLACK\n";
+        cout << "Queen:            " << setw(10) << (double) (queens_score_white - queens_score_black) / 100 << setw(15) << (double) (queens_score_white) / 100 << setw(10) << (double) (queens_score_black) / 100 << "\n";
+        cout << "       mobility:                 " << setw(10) << (double) (SCORE_DEBUG.MOB_QUEEN[WHITE]) / 100 << setw(10) << (double) (SCORE_DEBUG.MOB_QUEEN[BLACK]) / 100 << "\n";
+        cout << "       open file:                " << setw(10) << (double) (SCORE_DEBUG.OPEN_FILE_Q[WHITE]) / 100 << setw(10) << (double) (SCORE_DEBUG.OPEN_FILE_Q[BLACK]) / 100 << "\n";
+        cout << "       bishop on queen:          " << setw(10) << (double) (SCORE_DEBUG.BISHOP_ON_QUEEN[WHITE]) / 100 << setw(10) << (double) (SCORE_DEBUG.BISHOP_ON_QUEEN[BLACK]) / 100 << "\n";
+        cout << "       semi open file:           " << setw(10) << (double) (SCORE_DEBUG.HALF_OPEN_FILE_Q[WHITE]) / 100 << setw(10) << (double) (SCORE_DEBUG.HALF_OPEN_FILE_Q[BLACK]) / 100 << "\n";
+
+        cout << "\n\t\t\t\t\tTOT (white)\t\tWHITE\t\tBLACK\n";
+        cout << "King:             " << setw(10) << (double) (kings_score_white - kings_score_black) / 100 << setw(15) << (double) (kings_score_white) / 100 << setw(10) << (double) (kings_score_black) / 100 << "\n";
+        cout << "       distance:                 " << setw(10) << (double) (SCORE_DEBUG.DISTANCE_KING[WHITE]) / 100 << setw(10) << (double) (SCORE_DEBUG.DISTANCE_KING[BLACK]) / 100 << "\n";
+        cout << "       open file:                " << setw(10) << (double) (SCORE_DEBUG.END_OPENING_KING[WHITE]) / 100 << setw(10) << (double) (SCORE_DEBUG.END_OPENING_KING[BLACK]) / 100 << "\n";
+        cout << "       pawn near:                " << setw(10) << (double) (SCORE_DEBUG.PAWN_NEAR_KING[WHITE]) / 100 << setw(10) << (double) (SCORE_DEBUG.PAWN_NEAR_KING[BLACK]) / 100 << "\n";
+        cout << "       mobility:                 " << setw(10) << (double) (SCORE_DEBUG.MOB_KING[WHITE]) / 100 << setw(10) << (double) (SCORE_DEBUG.MOB_KING[BLACK]) / 100 << "\n";
+        cout << "       security bishop:          " << setw(10) << (double) (SCORE_DEBUG.KING_SECURITY_BISHOP[WHITE]) / 100 << setw(10) << (double) (SCORE_DEBUG.KING_SECURITY_BISHOP[BLACK]) / 100 << "\n";
+        cout << "       security queen:           " << setw(10) << (double) (SCORE_DEBUG.KING_SECURITY_QUEEN[WHITE]) / 100 << setw(10) << (double) (SCORE_DEBUG.KING_SECURITY_QUEEN[BLACK]) / 100 << "\n";
+        cout << "       security knight:          " << setw(10) << (double) (SCORE_DEBUG.KING_SECURITY_KNIGHT[WHITE]) / 100 << setw(10) << (double) (SCORE_DEBUG.KING_SECURITY_KNIGHT[BLACK]) / 100 << "\n";
+        cout << "       security rook:            " << setw(10) << (double) (SCORE_DEBUG.KING_SECURITY_ROOK[WHITE]) / 100 << setw(10) << (double) (SCORE_DEBUG.KING_SECURITY_ROOK[BLACK]) / 100 << "\n";
+        cout << endl;
     }
-    cout << "VALUES:";
-    cout << "\tPAWN: " << (double) VALUEPAWN / 100;
-    cout << " ROOK: " << (double) VALUEROOK / 100;
-    cout << " BISHOP: " << (double) VALUEBISHOP / 100;
-    cout << " KNIGHT: " << (double) VALUEKNIGHT / 100;
-    cout << " QUEEN: " << (double) VALUEQUEEN / 100 << "\n";
-    cout << "\t\t\t\tTOT (white)\tWHITE\t\tBLACK" << "\n";
-    cout << "material:\t\t\t\t" << (double)(lazyscore_white - lazyscore_black) / 100 << "\t\t" << (double)(lazyscore_white) / 100 << "\t\t" << (double)(lazyscore_black) / 100 << "\n";
-    cout << "mobility:\t\t\t\t" << (double)(mobWhite - mobBlack) / 100 << "\t\t" << (double)(mobWhite) / 100 << "\t\t" << (double)(mobBlack) / 100 << "\n";
-    cout << "attack king:\t\t\t" << (double)(attack_king_white - attack_king_black) / 100 << "\t\t" << (double)(attack_king_white) / 100 << "\t\t" << (double)(attack_king_black) / 100 << "\n";
-    cout << "bonus attack king:\t\t" << (double)(bonus_attack_white_king - bonus_attack_black_king) / 100 << "\t\t" << (double)(bonus_attack_white_king) / 100 << "\t\t" << (double)(bonus_attack_black_king) / 100 << "\n";
-    cout << "\npawn:\t\t\t\t\t" << (double)(pawns_score_white - pawns_score_black) / 100 << "\t\t" << (double)(pawns_score_white) / 100 << "\t\t" << (double)(pawns_score_black) / 100 << "\n";
-    cout << "\tmobility:\t\t\t\t\t" << (double)(SCORE_DEBUG.MOB_PAWNS[WHITE]) / 100 << "\t\t" << (double)(SCORE_DEBUG.MOB_PAWNS[BLACK]) / 100 << "\n";
-    cout << "\tattack king:\t\t\t\t" << (double)(SCORE_DEBUG.ATTACK_KING_PAWN[WHITE]) / 100 << "\t\t" << (double)(SCORE_DEBUG.ATTACK_KING_PAWN[BLACK]) / 100 << "\n";
-    cout << "\tcenter:\t\t\t\t\t" << (double)(SCORE_DEBUG.PAWN_CENTER[WHITE]) / 100 << "\t\t" << (double)(SCORE_DEBUG.PAWN_CENTER[BLACK]) / 100 << "\n";
-    cout << "\t7h:\t\t\t\t\t\t" << (double)(SCORE_DEBUG.PAWN_7H[WHITE]) / 100 << "\t\t" << (double)(SCORE_DEBUG.PAWN_7H[BLACK]) / 100 << "\n";
-    cout << "\tin race:\t\t\t\t\t" << (double)(SCORE_DEBUG.PAWN_IN_RACE[WHITE]) / 100 << "\t\t" << (double)(SCORE_DEBUG.PAWN_IN_RACE[BLACK]) / 100 << "\n";
-    cout << "\tblocked:\t\t\t\t\t" << (double)(SCORE_DEBUG.PAWN_BLOCKED[WHITE]) / 100 << "\t\t" << (double)(SCORE_DEBUG.PAWN_BLOCKED[BLACK]) / 100 << "\n";
-    cout << "\tunprotected:\t\t\t\t" << (double)(SCORE_DEBUG.UNPROTECTED_PAWNS[WHITE]) / 100 << "\t\t" << (double)(SCORE_DEBUG.UNPROTECTED_PAWNS[BLACK]) / 100 << "\n";
-    cout << "\tisolated\t\t\t\t\t" << (double)(SCORE_DEBUG.PAWN_ISOLATED[WHITE]) / 100 << "\t\t" << (double)(SCORE_DEBUG.PAWN_ISOLATED[BLACK]) / 100 << "\n";
-    cout << "\tdouble\t\t\t\t\t" << (double)(SCORE_DEBUG.DOUBLED_PAWNS[WHITE]) / 100 << "\t\t" << (double)(SCORE_DEBUG.DOUBLED_PAWNS[BLACK]) / 100 << "\n";
-    cout << "\tdouble isolated\t\t\t\t" << (double)(SCORE_DEBUG.DOUBLED_ISOLATED_PAWNS[WHITE]) / 100 << "\t\t" << (double)(SCORE_DEBUG.DOUBLED_ISOLATED_PAWNS[BLACK]) / 100 << "\n";
-    cout << "\tbackward\t\t\t\t\t" << (double)(SCORE_DEBUG.BACKWARD_PAWN[WHITE]) / 100 << "\t\t" << (double)(SCORE_DEBUG.BACKWARD_PAWN[BLACK]) / 100 << "\n";
-    cout << "\tfork:\t\t\t\t\t\t" << (double)(SCORE_DEBUG.FORK_SCORE[WHITE]) / 100 << "\t\t" << (double)(SCORE_DEBUG.FORK_SCORE[BLACK]) / 100 << "\n";
-    cout << "\tpassed:\t\t\t\t\t" << (double)(SCORE_DEBUG.PAWN_PASSED[WHITE]) / 100 << "\t\t" << (double)(SCORE_DEBUG.PAWN_PASSED[BLACK]) / 100 << "\n";
-    cout << "\tall enemies:\t\t\t\t" << (double)(SCORE_DEBUG.ENEMIES_PAWNS_ALL[WHITE]) / 100 << "\t\t" << (double)(SCORE_DEBUG.ENEMIES_PAWNS_ALL[BLACK]) / 100 << "\n";
-    cout << "\tnone:\t\t\t\t\t\t" << (double)(SCORE_DEBUG.NO_PAWNS[WHITE]) / 100 << "\t\t" << (double)(SCORE_DEBUG.NO_PAWNS[BLACK]) / 100 << "\n";
-    cout << "\nknight:\t\t\t\t" << (double)(knights_score_white - knights_score_black) / 100 << "\t\t" << (double)(knights_score_white) / 100 << "\t\t" << (double)(knights_score_black) / 100 << "\n";
-    cout << "\tundevelop:\t\t\t\t\t" << (double)(SCORE_DEBUG.UNDEVELOPED_KNIGHT[WHITE]) / 100 << "\t\t" << (double)(SCORE_DEBUG.UNDEVELOPED_KNIGHT[BLACK]) / 100 << "\n";
-    cout << "\ttrapped:\t\t\t\t\t" << (double)(SCORE_DEBUG.KNIGHT_TRAPPED[WHITE]) / 100 << "\t\t" << (double)(SCORE_DEBUG.KNIGHT_TRAPPED[BLACK]) / 100 << "\n";
-    cout << "\tmobility:\t\t\t\t\t" << (double)(SCORE_DEBUG.MOB_KNIGHT[WHITE]) / 100 << "\t\t" << (double)(SCORE_DEBUG.MOB_KNIGHT[BLACK]) / 100 << "\n";
-    cout << "\nbishop:\t\t\t\t" << (double)(bishop_score_white - bishop_score_black) / 100 << "\t\t" << (double)(bishop_score_white) / 100 << "\t\t" << (double)(bishop_score_black) / 100 << "\n";
-    cout << "\tbad:\t\t\t\t\t\t" << (double)(SCORE_DEBUG.BAD_BISHOP[WHITE]) / 100 << "\t\t" << (double)(SCORE_DEBUG.BAD_BISHOP[BLACK]) / 100 << "\n";
-    cout << "\tmobility:\t\t\t\t\t" << (double)(SCORE_DEBUG.MOB_BISHOP[WHITE]) / 100 << "\t\t" << (double)(SCORE_DEBUG.MOB_BISHOP[BLACK]) / 100 << "\n";
-    cout << "\tundevelop:\t\t\t\t\t" << (double)(SCORE_DEBUG.UNDEVELOPED_BISHOP[WHITE]) / 100 << "\t\t" << (double)(SCORE_DEBUG.UNDEVELOPED_BISHOP[BLACK]) / 100 << "\n";
-    cout << "\topen diag:\t\t\t\t\t" << (double)(SCORE_DEBUG.OPEN_DIAG_BISHOP[WHITE]) / 100 << "\t\t" << (double)(SCORE_DEBUG.OPEN_DIAG_BISHOP[BLACK]) / 100 << "\n";
-    cout << "\tbonus 2 bishops:\t\t\t\t" << (double)(SCORE_DEBUG.BONUS2BISHOP[WHITE]) / 100 << "\t\t" << (double)(SCORE_DEBUG.BONUS2BISHOP[BLACK]) / 100 << "\n";
-    cout << "\nrook:\t\t\t\t\t" << (double)(rooks_score_white - rooks_score_black) / 100 << "\t\t" << (double)(rooks_score_white) / 100 << "\t\t" << (double)(rooks_score_black) / 100 << "\n";
-    cout << "\t7th:\t\t\t\t\t\t" << (double)(SCORE_DEBUG.ROOK_7TH_RANK[WHITE]) / 100 << "\t\t" << (double)(SCORE_DEBUG.ROOK_7TH_RANK[BLACK]) / 100 << "\n";
-    cout << "\ttrapped:\t\t\t\t\t" << (double)(SCORE_DEBUG.ROOK_TRAPPED[WHITE]) / 100 << "\t\t" << (double)(SCORE_DEBUG.ROOK_TRAPPED[BLACK]) / 100 << "\n";
-    cout << "\tmobility:\t\t\t\t\t" << (double)(SCORE_DEBUG.MOB_ROOK[WHITE]) / 100 << "\t\t" << (double)(SCORE_DEBUG.MOB_ROOK[BLACK]) / 100 << "\n";
-    cout << "\tblocked:\t\t\t\t\t" << (double)(SCORE_DEBUG.ROOK_BLOCKED[WHITE]) / 100 << "\t\t" << (double)(SCORE_DEBUG.ROOK_BLOCKED[BLACK]) / 100 << "\n";
-    cout << "\topen file:\t\t\t\t\t" << (double)(SCORE_DEBUG.ROOK_OPEN_FILE[WHITE]) / 100 << "\t\t" << (double)(SCORE_DEBUG.ROOK_OPEN_FILE[BLACK]) / 100 << "\n";
-    cout << "\tconnected:\t\t\t\t\t" << (double)(SCORE_DEBUG.CONNECTED_ROOKS[WHITE]) / 100 << "\t\t" << (double)(SCORE_DEBUG.CONNECTED_ROOKS[BLACK]) / 100 << "\n";
-    cout << "\nqueen:\t\t\t\t" << (double)(queens_score_white - queens_score_black) / 100 << "\t\t" << (double)(queens_score_white) / 100 << "\t\t" << (double)(queens_score_black) / 100 << "\n";
-    cout << "\tmobility:\t\t\t\t\t" << (double)(SCORE_DEBUG.MOB_QUEEN[WHITE]) / 100 << "\t\t" << (double)(SCORE_DEBUG.MOB_QUEEN[BLACK]) / 100 << "\n";
-    cout << "\topen file:\t\t\t\t\t" << (double)(SCORE_DEBUG.OPEN_FILE_Q[WHITE]) / 100 << "\t\t" << (double)(SCORE_DEBUG.OPEN_FILE_Q[BLACK]) / 100 << "\n";
-    cout << "\tbishop on queen:\t\t\t\t" << (double)(SCORE_DEBUG.BISHOP_ON_QUEEN[WHITE]) / 100 << "\t\t" << (double)(SCORE_DEBUG.BISHOP_ON_QUEEN[BLACK]) / 100 << "\n";
-    cout << "\tsemi open file:\t\t\t\t" << (double)(SCORE_DEBUG.HALF_OPEN_FILE_Q[WHITE]) / 100 << "\t\t" << (double)(SCORE_DEBUG.HALF_OPEN_FILE_Q[BLACK]) / 100 << "\n";
-    cout << "\nking:\t\t\t\t\t" << (double)(kings_score_white - kings_score_black) / 100 << "\t\t" << (double)(kings_score_white) / 100 << "\t\t" << (double)(kings_score_black) / 100 << "\n";
-    cout << "\tdistance:\t\t\t\t\t" << (double)(SCORE_DEBUG.DISTANCE_KING[WHITE]) / 100 << "\t\t" << (double)(SCORE_DEBUG.DISTANCE_KING[BLACK]) / 100 << "\n";
-    cout << "\topen file:\t\t\t\t\t" << (double)(SCORE_DEBUG.END_OPENING_KING[WHITE]) / 100 << "\t\t" << (double)(SCORE_DEBUG.END_OPENING_KING[BLACK]) / 100 << "\n";
-    cout << "\tpawn near:\t\t\t\t\t" << (double)(SCORE_DEBUG.PAWN_NEAR_KING[WHITE]) / 100 << "\t\t" << (double)(SCORE_DEBUG.PAWN_NEAR_KING[BLACK]) / 100 << "\n";
-    cout << "\tmobility:\t\t\t\t\t" << (double)(SCORE_DEBUG.MOB_KING[WHITE]) / 100 << "\t\t" << (double)(SCORE_DEBUG.MOB_KING[BLACK]) / 100 << "\n";
-    cout << "\tsecurity bishop:\t\t\t\t" << (double)(SCORE_DEBUG.KING_SECURITY_BISHOP[WHITE]) / 100 << "\t\t" << (double)(SCORE_DEBUG.KING_SECURITY_BISHOP[BLACK]) / 100 << "\n";
-    cout << "\tsecurity queen:\t\t\t\t" << (double)(SCORE_DEBUG.KING_SECURITY_QUEEN[WHITE]) / 100 << "\t\t" << (double)(SCORE_DEBUG.KING_SECURITY_QUEEN[BLACK]) / 100 << "\n";
-    cout << "\tsecurity knight:\t\t\t\t" << (double)(SCORE_DEBUG.KING_SECURITY_KNIGHT[WHITE]) / 100 << "\t\t" << (double)(SCORE_DEBUG.KING_SECURITY_KNIGHT[BLACK]) / 100 << "\n";
-    cout << "\tsecurity rook:\t\t\t\t" << (double)(SCORE_DEBUG.KING_SECURITY_ROOK[WHITE]) / 100 << "\t\t" << (double)(SCORE_DEBUG.KING_SECURITY_ROOK[BLACK]) / 100 << "\n";
-    cout << endl;
 #endif
     return side ? -result : result;
 }

@@ -22,6 +22,7 @@
 #include "Endgame.h"
 #include <fstream>
 #include <string.h>
+#include <iomanip>
 
 using namespace _board;
 
@@ -34,7 +35,7 @@ public:
 
     virtual ~Eval();
 
-    int getScore(const int side, const int alpha = -_INFINITE, const int beta = _INFINITE);
+    int getScore(const int side, const int alpha = -_INFINITE, const int beta = _INFINITE,const bool print = false);
 
     template<int side>
     int lazyEval() {

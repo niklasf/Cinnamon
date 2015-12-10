@@ -336,19 +336,13 @@ int SearchManager::getSide() {
 }
 
 int SearchManager::getScore(int side) {
-    //int N_PIECE;
-    //if (side == WHITE) {
-    //    N_PIECE = threadPool[0]->getScore(Bits::bitCount(threadPool[0]->getBitBoard<WHITE>()), side);
-    //} else {
-    //    N_PIECE = threadPool[0]->getScore(Bits::bitCount(threadPool[0]->getBitBoard<BLACK>()), side);
-    //}
 #ifdef DEBUG_MODE
     int t = threadPool[0]->getScore(side);
     for (Search *s:threadPool) {
         ASSERT(s->getScore(side) == t);
     }
 #endif
-    return threadPool[0]->getScore(side);
+    return threadPool[0]->getScore(side, -_INFINITE, _INFINITE, true);
 }
 
 void SearchManager::clearHash() {
