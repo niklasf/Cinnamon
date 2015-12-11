@@ -62,6 +62,8 @@ namespace _board {
     static const u64 CENTER_MASK = 0x1818000000ULL;
     static const u64 BIG_DIAG_LEFT = 0x102040810204080ULL;
     static const u64 BIG_DIAG_RIGHT = 0x8040201008040201ULL;
+    static const u64 BLACK_MASK = 0x55aa55aa55aa55aaULL;
+    static const u64 WHITE_MASK = 0xaa55aa55aa55aa55ULL;
 
     typedef struct {
         char promotionPiece;
