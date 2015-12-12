@@ -172,6 +172,12 @@ public:
                 help(argv);
                 return;
             }
+            if (opt == 'f') {  // score
+                SearchManager &searchManager = Singleton<SearchManager>::getInstance();
+                searchManager.loadFen(optarg);
+                searchManager.getScore(searchManager.getSide());
+                return;
+            } else
             if (opt == 'p') {  // perft test
                 perft(argc, argv);
                 return;
