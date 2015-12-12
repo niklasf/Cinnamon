@@ -94,22 +94,22 @@ int GenMoves::performRankFileCaptureCount(const int position, const u64 enemies,
     u64 x = allpieces & FILE_[position];
     if (x & enemies) {
         q = x & MASK_BIT_UNSET_UP[position];
-        if (q && enemies & POW2[Bits::BITScanReverse(q)]) {
+        if (q && enemies & Bits::BITScanReversePOW(q)) {
             count++;
         }
         q = x & MASK_BIT_UNSET_DOWN[position];
-        if (q && enemies & POW2[Bits::BITScanForward(q)]) {
+        if (q && enemies & Bits::BITScanReversePOW(q)) {
             count++;
         }
     }
     x = allpieces & RANK[position];
     if (x & enemies) {
         q = x & MASK_BIT_UNSET_RIGHT[position];
-        if (q && enemies & POW2[Bits::BITScanForward(q)]) {
+        if (q && enemies & Bits::BITScanReversePOW(q)) {
             count++;
         }
         q = x & MASK_BIT_UNSET_LEFT[position];
-        if (q && enemies & POW2[Bits::BITScanReverse(q)]) {
+        if (q && enemies & Bits::BITScanReversePOW(q)) {
             count++;
         }
     }
@@ -122,20 +122,20 @@ u64 GenMoves::performDiagCaptureCount(const int position, const u64 allpieces) {
     u64 c = 0;
     ///LEFT
     u64 q = allpieces & MASK_BIT_UNSET_LEFT_UP[position];
-    if (q && ((c = POW2[Bits::BITScanReverse(q)]))) {
+    if (q && ((c = Bits::BITScanReversePOW(q)))) {
         capturated |= c;
     }
     q = allpieces & MASK_BIT_UNSET_LEFT_DOWN[position];
-    if (q && ((c = POW2[Bits::BITScanForward(q)]))) {
+    if (q && ((c = Bits::BITScanReversePOW(q)))) {
         capturated |= c;
     }
     ///RIGHT
     q = allpieces & MASK_BIT_UNSET_RIGHT_UP[position];
-    if (q && ((c = POW2[Bits::BITScanReverse(q)]))) {
+    if (q && ((c = Bits::BITScanReversePOW(q)))) {
         capturated |= c;
     }
     q = allpieces & MASK_BIT_UNSET_RIGHT_DOWN[position];
-    if (q && ((c = POW2[Bits::BITScanForward(q)]))) {
+    if (q && ((c = Bits::BITScanReversePOW(q)))) {
         capturated |= c;
     }
     ///
@@ -624,20 +624,20 @@ bool GenMoves::performKingShiftCapture(int side, const u64 enemies) {
 //    if (LEFT_RIGHT_DIAG[position] & enemies) {
 //        ///LEFT
 //        u64 q = allpieces & MASK_BIT_UNSET_LEFT_UP[position];
-//        if (q && enemies & POW2[Bits::BITScanReverse(q)]) {
+//        if (q && enemies & Bits::BITScanReversePOW(q)) {
 //            return true;
 //        }
 //        q = allpieces & MASK_BIT_UNSET_LEFT_DOWN[position];
-//        if (q && enemies & POW2[Bits::BITScanForward(q)]) {
+//        if (q && enemies & [Bits::BITScanForwardPOW(q)]) {
 //            return true;
 //        }
 //        ///RIGHT
 //        q = allpieces & MASK_BIT_UNSET_RIGHT_UP[position];
-//        if (q && enemies & POW2[Bits::BITScanReverse(q)]) {
+//        if (q && enemies & Bits::BITScanReversePOW(q)) {
 //            return true;
 //        }
 //        q = allpieces & MASK_BIT_UNSET_RIGHT_DOWN[position];
-//        if (q && enemies & POW2[Bits::BITScanForward(q)]) {
+//        if (q && enemies & [Bits::BITScanForwardPOW(q)]) {
 //            return true;
 //        }
 //    }
@@ -646,22 +646,22 @@ bool GenMoves::performKingShiftCapture(int side, const u64 enemies) {
 //    enemies = chessboard[QUEEN_BLACK + (side ^ 1)] | chessboard[ROOK_BLACK + (side ^ 1)];
 //    if (x & enemies) {
 //        u64 q = x & MASK_BIT_UNSET_UP[position];
-//        if (q && enemies & POW2[Bits::BITScanReverse(q)]) {
+//        if (q && enemies & Bits::BITScanReversePOW(q)) {
 //            return true;
 //        }
 //        q = x & MASK_BIT_UNSET_DOWN[position];
-//        if (q && enemies & POW2[Bits::BITScanForward(q)]) {
+//        if (q && enemies & [Bits::BITScanForwardPOW(q)]) {
 //            return true;
 //        }
 //    }
 //    x = allpieces & RANK[position];
 //    if (x & enemies) {
 //        u64 q = x & MASK_BIT_UNSET_RIGHT[position];
-//        if (q && enemies & POW2[Bits::BITScanForward(q)]) {
+//        if (q && enemies & Bits::BITScanForwardPOW(q)]) {
 //            return true;
 //        }
 //        q = x & MASK_BIT_UNSET_LEFT[position];
-//        if (q && enemies & POW2[Bits::BITScanReverse(q)]) {
+//        if (q && enemies & Bits::BITScanReversePOW(q)) {
 //            return true;
 //        }
 //    }

@@ -134,14 +134,19 @@ int Eval::evaluateBishop(u64 enemies, u64 friends) {
     while (x) {
         int o = Bits::BITScanForward(x);
 
-        //TODO BAD_BISHOP ?
-        // 1. The Bishop is blocked or actually locked in by its own pawns.
-        // 2. numero di pedoni nelle case dello stesso colore dell'alfiere
-        int bishopPawnColor = BLACK_MASK & POW2[o] ? Bits::bitCount(chessboard[BLACK]) : Bits::bitCount(chessboard[WHITE]);
-        result -= bishopPawnColor << 3;
-        ADD(SCORE_DEBUG.BAD_BISHOP[side], bishopPawnColor << 3);
+
+        // TODO BAD_BISHOP 2. numero di pedoni nelle case dello stesso colore dell'alfiere
+//        int bishopPawnColor = BLACK_MASK & POW2[o] ? Bits::bitCount(chessboard[BLACK]) : Bits::bitCount(chessboard[WHITE]);
+//        result -= bishopPawnColor << 3;
+//        ADD(SCORE_DEBUG.BAD_BISHOP[side], bishopPawnColor << 3);
         u64 captured = performDiagCaptureCount(o, enemies | friends);
         ASSERT(Bits::bitCount(captured & enemies) + performDiagShiftCount(o, enemies | friends) < (int) (sizeof(MOB_BISHOP) / sizeof(int)));
+
+        // TODO BAD_BISHOP 1. The Bishop is blocked or actually locked in by its own pawns.
+//        int bishopPawnColor = Bits::bitCount(captured & chessboard[side]);
+//        result -= bishopPawnColor << 3;
+//        ADD(SCORE_DEBUG.BAD_BISHOP[side], -(bishopPawnColor << 3));
+
         result += MOB_BISHOP[status][Bits::bitCount(captured & enemies) + performDiagShiftCount(o, enemies | friends)];
         ADD(SCORE_DEBUG.MOB_BISHOP[side], MOB_BISHOP[status][Bits::bitCount(captured & enemies) + performDiagShiftCount(o, enemies | friends)]);
         structure.kingSecurityDistance[side] += BISHOP_NEAR_KING * (NEAR_MASK2[structure.posKing[side]] & POW2[o] ? 1 : 0);
@@ -149,28 +154,29 @@ int Eval::evaluateBishop(u64 enemies, u64 friends) {
         if (status != OPEN) {
             structure.kingSecurityDistance[side] -= NEAR_MASK2[structure.posKing[side ^ 1]] & POW2[o] ? ENEMY_NEAR_KING : 0;
             ADD(SCORE_DEBUG.KING_SECURITY_BISHOP[side ^ 1], -NEAR_MASK2[structure.posKing[side ^ 1]] & POW2[o] ? ENEMY_NEAR_KING : 0);
-        } else
+        } else {
             //attack center
-        if (status == OPEN) {
-            if (side) {
-                if (o == C1 || o == F1) {
-                    ADD(SCORE_DEBUG.UNDEVELOPED_BISHOP[side], -UNDEVELOPED_BISHOP);
-                    result -= UNDEVELOPED_BISHOP;
+            if (status == OPEN) {
+                if (side) {
+                    if (o == C1 || o == F1) {
+                        ADD(SCORE_DEBUG.UNDEVELOPED_BISHOP[side], -UNDEVELOPED_BISHOP);
+                        result -= UNDEVELOPED_BISHOP;
+                    }
+                } else {
+                    if (o == C8 || o == F8) {
+                        ADD(SCORE_DEBUG.UNDEVELOPED_BISHOP[side], -UNDEVELOPED_BISHOP);
+                        result -= UNDEVELOPED_BISHOP;
+                    }
                 }
             } else {
-                if (o == C8 || o == F8) {
-                    ADD(SCORE_DEBUG.UNDEVELOPED_BISHOP[side], -UNDEVELOPED_BISHOP);
-                    result -= UNDEVELOPED_BISHOP;
+                if (BIG_DIAG_LEFT & POW2[o] && !(LEFT_DIAG[o] & structure.allPieces)) {
+                    ADD(SCORE_DEBUG.OPEN_DIAG_BISHOP[side], OPEN_FILE);
+                    result += OPEN_FILE;
                 }
-            }
-        } else {
-            if (BIG_DIAG_LEFT & POW2[o] && !(LEFT_DIAG[o] & structure.allPieces)) {
-                ADD(SCORE_DEBUG.OPEN_DIAG_BISHOP[side], OPEN_FILE);
-                result += OPEN_FILE;
-            }
-            if (BIG_DIAG_RIGHT & POW2[o] && !(RIGHT_DIAG[o] & structure.allPieces)) {
-                ADD(SCORE_DEBUG.OPEN_DIAG_BISHOP[side], OPEN_FILE);
-                result += OPEN_FILE;
+                if (BIG_DIAG_RIGHT & POW2[o] && !(RIGHT_DIAG[o] & structure.allPieces)) {
+                    ADD(SCORE_DEBUG.OPEN_DIAG_BISHOP[side], OPEN_FILE);
+                    result += OPEN_FILE;
+                }
             }
         }
         x &= NOTPOW2[o];
