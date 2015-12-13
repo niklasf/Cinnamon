@@ -1,9 +1,11 @@
-~/workspace/assembla_git/chess-utility/script/remote/bash_async.sh "/home/geko/Kill.sh"
-~/workspace/assembla_git/chess-utility/script/remote/bash_async.sh "rm -fr test"
+#!/usr/bin/env bash
+~/workspace/assembla_git/chess-utility/script/remote/bash.sh "/home/geko/Kill.sh"
+~/workspace/assembla_git/chess-utility/script/remote/bash.sh "rm -fr test"
 
 array=( $IPS )
 
-make clean;make cinnamon64-modern-INTEL
+make clean
+#make cinnamon64-modern-INTEL
 
 rm -fr /tmp/deploy/
 UUID=$(cat /proc/sys/kernel/random/uuid)
