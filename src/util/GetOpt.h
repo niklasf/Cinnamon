@@ -175,6 +175,7 @@ public:
             if (opt == 'f') {  // score
                 SearchManager &searchManager = Singleton<SearchManager>::getInstance();
                 searchManager.loadFen(optarg);
+                searchManager.display();
                 searchManager.getScore(searchManager.getSide());
                 return;
             } else

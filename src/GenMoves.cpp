@@ -116,7 +116,7 @@ int GenMoves::performRankFileCaptureCount(const int position, const u64 enemies,
     return count;
 }
 
-u64 GenMoves::performDiagCaptureCount(const int position, const u64 allpieces) {
+u64 GenMoves::performDiagCaptureBits(const int position, const u64 allpieces) {
     ASSERT_RANGE(position, 0, 63);
     u64 capturated = 0;
     u64 c = 0;
@@ -295,10 +295,10 @@ void GenMoves::generateMoves(const int side, const u64 allpieces) {
     ASSERT_RANGE(side, 0, 1);
     side ? generateMoves<WHITE>(allpieces) : generateMoves<BLACK>(allpieces);
 }
-
+/*
 bool GenMoves::generateCapturesMoves() {
-    u64 w = getBitBoard<WHITE>();// getBitBoardNoPawns<WHITE>() | chessboard[PAWN_WHITE];
-    u64 b = getBitBoard<BLACK>();// getBitBoardNoPawns<BLACK>() | chessboard[PAWN_BLACK];
+    u64 w = getBitBoard<WHITE>();
+    u64 b = getBitBoard<BLACK>();
     ASSERT(w == (getBitBoardNoPawns<WHITE>() | chessboard[PAWN_WHITE]));
     ASSERT(b == (getBitBoardNoPawns<BLACK>() | chessboard[PAWN_BLACK]));
     int side = getSide();
@@ -311,7 +311,7 @@ bool GenMoves::generateCapturesMoves() {
     }
     return false;
 }
-
+*/
 bool GenMoves::generateCaptures(const int side, const u64 enemies, const u64 friends) {
     ASSERT_RANGE(side, 0, 1);
     return side ? generateCaptures<WHITE>(enemies, friends) : generateCaptures<BLACK>(enemies, friends);
@@ -324,7 +324,7 @@ int GenMoves::getMobilityPawns(const int side, const int ep, const u64 ped_frien
 
 int GenMoves::getMobilityQueen(const int position, const u64 enemies, const u64 friends) {
     ASSERT_RANGE(position, 0, 63);
-    return performRankFileCaptureCount(position, enemies, enemies | friends) + Bits::bitCount(enemies & performDiagCaptureCount(position, enemies | friends)) + performRankFileShiftCount(position, enemies | friends) + performDiagShiftCount(position, enemies | friends);
+    return performRankFileCaptureCount(position, enemies, enemies | friends) + Bits::bitCount(enemies & performDiagCaptureBits(position, enemies | friends)) + performRankFileShiftCount(position, enemies | friends) + performDiagShiftCount(position, enemies | friends);
 }
 
 int GenMoves::getMobilityRook(const int position, const u64 enemies, const u64 friends) {

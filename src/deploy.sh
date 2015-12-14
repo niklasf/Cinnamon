@@ -1,11 +1,12 @@
 array=( $IPS )
 
-make clean;make cinnamon64-modern-INTEL
-echo "send to servers ? y/n"
-read send
-if [ "$send" != "y" ]; then
-	exit 0;
-fi
+make clean
+#make cinnamon64-modern-INTEL
+#echo "send to servers ? y/n"
+#read send
+#if [ "$send" != "y" ]; then
+#	exit 0;
+#fi
 rm -fr /tmp/deploy/
 UUID=$(cat /proc/sys/kernel/random/uuid)
 mkdir -p /tmp/deploy/$UUID

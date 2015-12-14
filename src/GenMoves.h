@@ -36,7 +36,7 @@ public:
 
     bool generateCaptures(const int side, u64, u64);
 
-    bool generateCapturesMoves();
+//    bool generateCapturesMoves();
 
     void generateMoves(const int side, const u64);
 
@@ -101,7 +101,7 @@ public:
 
     virtual int loadFen(const string &fen = "");
 
-    u64 performDiagCaptureCount(const int, const u64 allpieces);
+    u64 performDiagCaptureBits(const int, const u64 allpieces);
 
     void takeback(_Tmove *move, const u64 oldkey, bool rep);
 
