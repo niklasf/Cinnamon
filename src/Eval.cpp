@@ -507,7 +507,9 @@ int Eval::getScore(const int side, const int alpha, const int beta, const bool p
     int attack_king_white = ATTACK_KING * Bits::bitCount(structure.kingAttackers[BLACK]);
     int attack_king_black = ATTACK_KING * Bits::bitCount(structure.kingAttackers[WHITE]);
     side == WHITE ? lazyscore_black -= 5 : lazyscore_white += 5;
-    int result = (mobBlack + attack_king_black + bonus_attack_black_king + lazyscore_black + pawns_score_black + knights_score_black + bishop_score_black + rooks_score_black + queens_score_black + kings_score_black) - (mobWhite + attack_king_white + bonus_attack_white_king + lazyscore_white + pawns_score_white + knights_score_white + bishop_score_white + rooks_score_white + queens_score_white + kings_score_white);
+    int halfOpenFileBlack = HALF_OPEN_FILE * Bits::bitCount(structure.semiOpenFile[BLACK] & 0xf);
+    int halfOpenFileWite = HALF_OPEN_FILE * Bits::bitCount(structure.semiOpenFile[WHITE] & 0xf);
+    int result = (halfOpenFileBlack + mobBlack + attack_king_black + bonus_attack_black_king + lazyscore_black + pawns_score_black + knights_score_black + bishop_score_black + rooks_score_black + queens_score_black + kings_score_black) - (halfOpenFileWite + mobWhite + attack_king_white + bonus_attack_white_king + lazyscore_white + pawns_score_white + knights_score_white + bishop_score_white + rooks_score_white + queens_score_white + kings_score_white);
 #ifdef DEBUG_MODE
     if (print) {
         const string HEADER = "\n\t\t\t\t\tTOT (white)\t\t  WHITE\t\tBLACK\n";
@@ -523,8 +525,8 @@ int Eval::getScore(const int side, const int alpha, const int beta, const bool p
             cout << " END\n";
         }
         cout << "OPEN FILE: ";
-        if(!structure.openFile)cout <<"none";else
-        for (int i = 0; i < 8; i++) if (POW2[i] & structure.openFile)cout << (char) (65 + i) << " ";
+        if (!structure.openFile)cout << "none"; else
+            for (int i = 0; i < 8; i++) if (POW2[i] & structure.openFile)cout << (char) (65 + i) << " ";
         cout << "\n";
 
 
