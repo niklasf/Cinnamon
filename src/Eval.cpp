@@ -209,7 +209,7 @@ int Eval::evaluateQueen(u64 enemies, u64 friends) {
             structure.kingSecurityDistance[side] -= ENEMY_NEAR_KING * (NEAR_MASK2[structure.posKing[side ^ 1]] & POW2[o] ? 1 : 0);
             ADD(SCORE_DEBUG.KING_SECURITY_QUEEN[side ^ 1], -ENEMY_NEAR_KING * (NEAR_MASK2[structure.posKing[side ^ 1]] & POW2[o] ? 1 : 0));
         }
-//        if ((chessboard[side ^ 1] & FILE_[o]) && !(chessboard[side] & FILE_[o])) {
+//        if ((chessboard[side ^ 1] & FILE_[o]) && !(chessboard[side] & FILE_[o])) {TODO
 //            ADD(SCORE_DEBUG.HALF_OPEN_FILE_Q[side], HALF_OPEN_FILE_Q);
 //            result += HALF_OPEN_FILE_Q;
 //        }

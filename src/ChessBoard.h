@@ -126,7 +126,7 @@ protected:
         u64 semiOpenFile[2];
         u64 isolated[2];
         u64 allPiecesNoPawns[2];
-        int kingSecurityDistance[2];
+        int kingSecurityDistance[2];//TODO https://chessprogramming.wikispaces.com/King+Safety#Attacking%20King%20Zone-Attack%20Units
         uchar posKing[2];
     } _Tboard;
 
