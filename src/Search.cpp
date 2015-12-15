@@ -251,6 +251,7 @@ void Search::sortHashMoves(int listId1, Hash::_Thash &phashe) {
         }
     }
 }
+
 /*
 bool Search::checkInsufficientMaterial(int N_PIECE) {TODO
     //regexp: KN?B*KB*
@@ -604,14 +605,12 @@ bool Search::setParameter(String param, int value) {
         FRIEND_NEAR_KING = value;
     } else if (param == "BISHOP_NEAR_KING") {
         BISHOP_NEAR_KING = value;
-    } else if (param == "HALF_OPEN_FILE_Q") {
-        HALF_OPEN_FILE_Q = value;
+    } else if (param == "HALF_OPEN_FILE") {
+        HALF_OPEN_FILE = value;
     } else if (param == "KNIGHT_TRAPPED") {
         KNIGHT_TRAPPED = value;
-    } else if (param == "OPEN_FILE") {
-        OPEN_FILE = value;
-    } else if (param == "OPEN_FILE_Q") {
-        OPEN_FILE_Q = value;
+    } else if (param == "OPEN_DIAG") {
+        OPEN_DIAG = value;
     } else if (param == "PAWN_7H") {
         PAWN_7H = value;
     } else if (param == "PAWN_CENTER") {

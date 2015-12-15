@@ -66,13 +66,14 @@ protected:
     STATIC_CONST int ENEMY_NEAR_KING = 2;
     STATIC_CONST int FRIEND_NEAR_KING = 1;
     STATIC_CONST int BISHOP_NEAR_KING = 10;
-    STATIC_CONST int HALF_OPEN_FILE_Q = 3;
+    STATIC_CONST int HALF_OPEN_FILE = 3;
     STATIC_CONST int KNIGHT_TRAPPED = 5;
     STATIC_CONST int END_OPENING = 6;
     STATIC_CONST int BONUS2BISHOP = 18;
     STATIC_CONST int CONNECTED_ROOKS = 7;
-    STATIC_CONST int OPEN_FILE = 10;
-    STATIC_CONST int OPEN_FILE_Q = 3;
+    STATIC_CONST int ROOK_OPEN_FILE = 10;
+    STATIC_CONST int OPEN_DIAG = 10;
+    STATIC_CONST int ROOK_SEMI_OPEN_FILE = 5;
     STATIC_CONST int ROOK_7TH_RANK = 10;
     STATIC_CONST int ROOK_BLOCKED = 13;
     STATIC_CONST int ROOK_TRAPPED = 6;
@@ -112,9 +113,9 @@ protected:
         int MOB_KING[2];
 
         int MOB_QUEEN[2];
-        int OPEN_FILE_Q[2];
+
         int BISHOP_ON_QUEEN[2];
-        int HALF_OPEN_FILE_Q[2];
+        int HALF_OPEN_FILE[2];
 
         int UNDEVELOPED_KNIGHT[2];
         int KNIGHT_TRAPPED[2];
@@ -126,6 +127,7 @@ protected:
         int MOB_ROOK[2];
         int ROOK_BLOCKED[2];
         int ROOK_OPEN_FILE[2];
+        int ROOK_SEMI_OPEN_FILE[2];
         int CONNECTED_ROOKS[2];
     } _TSCORE_DEBUG;
     _TSCORE_DEBUG SCORE_DEBUG;
@@ -187,7 +189,7 @@ private:
     int evaluationCount[2];
 #endif
 
-    void openColumn(int side);
+    void openFile();
 
     template<int side, _Tstatus status>
     int evaluatePawn();
