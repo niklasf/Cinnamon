@@ -358,7 +358,7 @@ int Eval::evaluateRook(const u64 king, u64 enemies, u64 friends) {
     if (firstRook != -1 && secondRook != -1) {
         if ((!(bits.LINK_ROOKS[firstRook][secondRook] & structure.allPieces))) {
             ADD(SCORE_DEBUG.CONNECTED_ROOKS[side], CONNECTED_ROOKS);
-            result += CONNECTED_ROOKS;
+            result += CONNECTED_ROOKS;//TODO se su colonna aperta aggiungere bonus
         }
     }
     return result;
