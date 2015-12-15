@@ -26,8 +26,9 @@ Eval::~Eval() { }
 void Eval::openFile() {
     structure.semiOpenFile[WHITE] = structure.semiOpenFile[BLACK] = 0;
     structure.openFile = 0;
+	u64 allPawns=chessboard[WHITE] | chessboard[BLACK];
     for (int o = 0; o < 8; o++) {
-        if (!(FILE_[o] & (chessboard[WHITE] | chessboard[BLACK]))) {
+        if (!(FILE_[o] & allPawns)) {
             structure.openFile |= FILE_[o];
         } else {
             for (int side = BLACK; side <= WHITE; side++) {
@@ -539,7 +540,7 @@ int Eval::getScore(const int side, const int alpha, const int beta, const bool p
 
         cout << HEADER;
         cout << "Material:         " << setw(10) << (double) (lazyscore_white - lazyscore_black) / 100 << setw(15) << (double) (lazyscore_white) / 100 << setw(10) << (double) (lazyscore_black) / 100 << "\n";
-        cout << "Semi open file:   " << setw(10) << (double) (SCORE_DEBUG.HALF_OPEN_FILE[WHITE] - SCORE_DEBUG.HALF_OPEN_FILE[BLACK]) / 100 << setw(15) << (double) (SCORE_DEBUG.HALF_OPEN_FILE[WHITE]) / 100 << setw(10) << (double) (SCORE_DEBUG.HALF_OPEN_FILE[BLACK]) / 100 << "\n";
+        cout << "Semi-open file:   " << setw(10) << (double) (SCORE_DEBUG.HALF_OPEN_FILE[WHITE] - SCORE_DEBUG.HALF_OPEN_FILE[BLACK]) / 100 << setw(15) << (double) (SCORE_DEBUG.HALF_OPEN_FILE[WHITE]) / 100 << setw(10) << (double) (SCORE_DEBUG.HALF_OPEN_FILE[BLACK]) / 100 << "\n";
         cout << "Mobility:         " << setw(10) << (double) (mobWhite - mobBlack) / 100 << setw(15) << (double) (mobWhite) / 100 << setw(10) << (double) (mobBlack) / 100 << "\n";
         cout << "Attack king:      " << setw(10) << (double) (attack_king_white - attack_king_black) / 100 << setw(15) << (double) (attack_king_white) / 100 << setw(10) << (double) (attack_king_black) / 100 << "\n";
         cout << "Bonus attack king:" << setw(10) << (double) (bonus_attack_white_king - bonus_attack_black_king) / 100 << setw(15) << (double) (bonus_attack_white_king) / 100 << setw(10) << (double) (bonus_attack_black_king) / 100 << "\n";
