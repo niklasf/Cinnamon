@@ -26,7 +26,7 @@ Eval::~Eval() { }
 void Eval::openFile() {
     structure.semiOpenFile[WHITE] = structure.semiOpenFile[BLACK] = 0;
     structure.openFile = 0;
-	u64 allPawns=chessboard[WHITE] | chessboard[BLACK];
+    u64 allPawns = chessboard[WHITE] | chessboard[BLACK];
     for (int o = 0; o < 8; o++) {
         if (!(FILE_[o] & allPawns)) {
             structure.openFile |= FILE_[o];
@@ -228,6 +228,11 @@ int Eval::evaluateQueen(u64 enemies, u64 friends) {
 
 template<int side, Eval::_Tstatus status>
 int Eval::evaluateKnight(const u64 enemiesPawns, const u64 squares) {
+// no knight
+//    Rank Name            Elo    +    - games score oppo. draws
+//    1 Cinnamon.x        1    2    3 35835   50%    -1   24%
+//    2 Cinnamon 1.2b    -1    3    2 35835   50%     1   24%
+
     INC(evaluationCount[side]);
     int result = 0;
     //TODO un solo cavallo e almeno 6 pedoni per lato aggiungi circa 11
@@ -366,6 +371,10 @@ int Eval::evaluateRook(const u64 king, u64 enemies, u64 friends) {
 
 template<Eval::_Tstatus status>
 int Eval::evaluateKing(int side, u64 squares) {
+//    no king
+//    Rank Name            Elo    +    - games score oppo. draws
+//    1 Cinnamon 1.2b     3    3    3 29149   51%    -3   24%
+//    2 Cinnamon.x       -3    3    3 29149   49%     3   24%
     ASSERT(evaluationCount[side] == 5);
     int result = 0;
     uchar pos_king = structure.posKing[side];
