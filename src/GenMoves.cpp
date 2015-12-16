@@ -126,7 +126,7 @@ u64 GenMoves::performDiagCaptureBits(const int position, const u64 allpieces) {
         capturated |= c;
     }
     q = allpieces & MASK_BIT_UNSET_LEFT_DOWN[position];
-    if (q && (c = POW2[Bits::BITScanReverse(q)])) {
+    if (q && (c = POW2[Bits::BITScanForward(q)])) {
         capturated |= c;
     }
     ///RIGHT
@@ -135,7 +135,7 @@ u64 GenMoves::performDiagCaptureBits(const int position, const u64 allpieces) {
         capturated |= c;
     }
     q = allpieces & MASK_BIT_UNSET_RIGHT_DOWN[position];
-    if (q && (c = POW2[Bits::BITScanReverse(q)])) {
+    if (q && (c = POW2[Bits::BITScanForward(q)])) {
         capturated |= c;
     }
     ///
