@@ -126,13 +126,13 @@ protected:
         u64 semiOpenFile[2];
         u64 isolated[2];
         u64 allPiecesNoPawns[2];
-        int kingSecurityDistance[2];//TODO https://chessprogramming.wikispaces.com/King+Safety#Attacking%20King%20Zone-Attack%20Units
+        int kingSecurityDistance[2]; //TODO https://chessprogramming.wikispaces.com/King+Safety#Attacking%20King%20Zone-Attack%20Units
         uchar posKing[2];
     } _Tboard;
 
     static const u64 A7bit = 0x80000000000000ULL;
     static const u64 B7bit = 0x40000000000000ULL;
-    static const u64 C6bit = 0x200000000000ULL;
+//    static const u64 C6bit = 0x200000000000ULL;
     static const u64 H7bit = 0x1000000000000ULL;
     static const u64 G7bit = 0x2000000000000ULL;
     static const u64 F6bit = 0x40000000000ULL;
@@ -167,11 +167,11 @@ protected:
     static const int F1 = 2;
     static const int C8 = 61;
     static const int F8 = 58;
-    static const int D8 = 60;
-    static const int A8 = 63;
-    static const int H8 = 56;
-    static const int G8 = 57;
-    static const u64 BLACK_SQUARES = 0x55AA55AA55AA55AAULL;
+//    static const int D8 = 60;
+//    static const int A8 = 63;
+//    static const int H8 = 56;
+//    static const int G8 = 57;
+//    static const u64 BLACK_SQUARES = 0x55AA55AA55AA55AAULL;
     static const u64 WHITE_SQUARES = 0xAA55AA55AA55AA55ULL;
 
     _Tboard structure;
