@@ -242,9 +242,9 @@ public:
     int performPawnShiftCount(int side, const u64 xallpieces);
 
     void performDiagShift(const int piece, const int side, const u64 allpieces);
-
+    u64 getDiagShift(const int piece, const int side, const u64 allpieces);
     void performRankFileShift(const int piece, const int side, const u64 allpieces);
-
+    u64 getRankFileShift(const int piece, const int side, const u64 allpieces);
     bool makemove(_Tmove *move, bool rep = true, bool = false);
 
     void incListId() {

@@ -119,14 +119,19 @@ protected:
     _Tchessboard chessboard;
 
     typedef struct {
-        u64 allPieces;
         u64 kingAttackers[2];
+        int attackingPiecesCount[2];
+        int valueOfAttacks[2];
+    } _TkingSafety;
+
+    typedef struct {
+        u64 allPieces;
         u64 allPiecesSide[2];
         u64 openFile;
         u64 semiOpenFile[2];
         u64 isolated[2];
         u64 allPiecesNoPawns[2];
-        int kingSecurityDistance[2]; //TODO https://chessprogramming.wikispaces.com/King+Safety#Attacking%20King%20Zone-Attack%20Units
+        _TkingSafety kingSafety;
         uchar posKing[2];
     } _Tboard;
 

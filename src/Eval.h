@@ -63,17 +63,17 @@ protected:
     STATIC_CONST int PAWN_NEAR_KING = 2;
     STATIC_CONST int PAWN_BLOCKED = 5;
     STATIC_CONST int UNPROTECTED_PAWNS = 5;
-    STATIC_CONST int ENEMY_NEAR_KING = 2;
-    STATIC_CONST int FRIEND_NEAR_KING = 1;
+//    STATIC_CONST int ENEMY_NEAR_KING = 2;
+//    STATIC_CONST int FRIEND_NEAR_KING = 1;
     STATIC_CONST int BISHOP_NEAR_KING = 10;
     STATIC_CONST int HALF_OPEN_FILE = 3;
     STATIC_CONST int KNIGHT_TRAPPED = 5;
     STATIC_CONST int END_OPENING = 6;
     STATIC_CONST int BONUS2BISHOP = 18;
     STATIC_CONST int CONNECTED_ROOKS = 7;
-    STATIC_CONST int ROOK_OPEN_FILE = 10;
+    STATIC_CONST int OPEN_FILE = 10;
     STATIC_CONST int OPEN_DIAG = 10;
-    STATIC_CONST int ROOK_SEMI_OPEN_FILE = 5;
+//    STATIC_CONST int SEMI_OPEN_FILE = 5;
     STATIC_CONST int ROOK_7TH_RANK = 10;
     STATIC_CONST int ROOK_BLOCKED = 13;
     STATIC_CONST int ROOK_TRAPPED = 6;
@@ -103,13 +103,14 @@ protected:
         int ENEMIES_PAWNS_ALL[2];
         int NO_PAWNS[2];
 
-        int KING_SECURITY_BISHOP[2];
-        int KING_SECURITY_QUEEN[2];
-        int KING_SECURITY_KNIGHT[2];
-        int KING_SECURITY_ROOK[2];
+//        int KING_SECURITY_BISHOP[2];
+//        int KING_SECURITY_QUEEN[2];
+//        int KING_SECURITY_KNIGHT[2];
+//        int KING_SECURITY_ROOK[2];
         int DISTANCE_KING[2];
         int END_OPENING_KING[2];
         int PAWN_NEAR_KING[2];
+        int PAWN_STORM[2];
         int MOB_KING[2];
 
         int MOB_QUEEN[2];
@@ -159,7 +160,7 @@ private:
     const int MOB_CASTLE[3][3] = {{-50, 30, 50},
                                   {-1,  10, 10},
                                   {0,   0,  0}};
-
+    const int ATTACK_WEIGHT[8] = {0, 0, 50, 75, 88, 94, 97, 99};
     const int MOB_PAWNS[34] = {-1, 2, 3, 4, 5, 10, 12, 14, 18, 22, 25, 30, 32, 34, 36, 38, 40, 42, 44, 46, 48, 50, 52, 54, 56, 58, 60, 70, 75, 80, 90, 95, 100, 110};
 
     const int BONUS_ATTACK_KING[18] = {-1, 2, 8, 64, 128, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512};

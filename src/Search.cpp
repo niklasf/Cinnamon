@@ -581,9 +581,11 @@ bool Search::setParameter(String param, int value) {
         EXT_FUTILY_MARGIN = value;
     } else if (param == "RAZOR_MARGIN") {
         RAZOR_MARGIN = value;
-    } else if (param == "ATTACK_KING") {
-        ATTACK_KING = value;
-    } else if (param == "BACKWARD_PAWN") {
+    }
+//    else if (param == "ATTACK_KING") {
+//        ATTACK_KING = value;
+//    }
+    else if (param == "BACKWARD_PAWN") {
         BACKWARD_PAWN = value;
     } else if (param == "BISHOP_ON_QUEEN") {
         BISHOP_ON_QUEEN = value;
@@ -599,11 +601,13 @@ bool Search::setParameter(String param, int value) {
         DOUBLED_PAWNS = value;
     } else if (param == "END_OPENING") {
         END_OPENING = value;
-    } else if (param == "ENEMY_NEAR_KING") {
-        ENEMY_NEAR_KING = value;
-    } else if (param == "FRIEND_NEAR_KING") {
-        FRIEND_NEAR_KING = value;
-    } else if (param == "BISHOP_NEAR_KING") {
+    }
+//    else if (param == "ENEMY_NEAR_KING") {
+//        ENEMY_NEAR_KING = value;
+//    } else if (param == "FRIEND_NEAR_KING") {
+//        FRIEND_NEAR_KING = value;
+//    }
+    else if (param == "BISHOP_NEAR_KING") {
         BISHOP_NEAR_KING = value;
     } else if (param == "HALF_OPEN_FILE") {
         HALF_OPEN_FILE = value;
