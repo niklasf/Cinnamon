@@ -31,7 +31,7 @@ void Eval::openFile() {
             structure.openFile |= FILE_[o];
         } else {
             for (int side = BLACK; side <= WHITE; side++) {
-                if (FILE_[o] & chessboard[side ^ 1] && !FILE_[o] & chessboard[side]) {
+                if (FILE_[o] & chessboard[side ^ 1] && !(FILE_[o] & chessboard[side])) {
                     structure.semiOpenFile[side] |= FILE_[o];
                     ADD(SCORE_DEBUG.HALF_OPEN_FILE[side], HALF_OPEN_FILE);
                 }
