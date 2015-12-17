@@ -63,8 +63,8 @@ protected:
     STATIC_CONST int PAWN_NEAR_KING = 2;
     STATIC_CONST int PAWN_BLOCKED = 5;
     STATIC_CONST int UNPROTECTED_PAWNS = 5;
-//    STATIC_CONST int ENEMY_NEAR_KING = 2;
-//    STATIC_CONST int FRIEND_NEAR_KING = 1;
+    STATIC_CONST int ENEMY_NEAR_KING = 2;
+    STATIC_CONST int FRIEND_NEAR_KING = 1;
     STATIC_CONST int BISHOP_NEAR_KING = 10;
     STATIC_CONST int HALF_OPEN_FILE = 3;
     STATIC_CONST int KNIGHT_TRAPPED = 5;
@@ -103,10 +103,16 @@ protected:
         int ENEMIES_PAWNS_ALL[2];
         int NO_PAWNS[2];
 
-//        int KING_SECURITY_BISHOP[2];
-//        int KING_SECURITY_QUEEN[2];
-//        int KING_SECURITY_KNIGHT[2];
-//        int KING_SECURITY_ROOK[2];
+        int BISHOP_NEAR_KING[2];
+        int QUEEN_NEAR_KING[2];
+        int KNIGHT_NEAR_KING[2];
+        int ROOK_NEAR_KING[2];
+
+        int XBISHOP_NEAR_KING[2];
+        int XQUEEN_NEAR_KING[2];
+        int XKNIGHT_NEAR_KING[2];
+        int XROOK_NEAR_KING[2];
+
         int DISTANCE_KING[2];
         int END_OPENING_KING[2];
         int PAWN_NEAR_KING[2];

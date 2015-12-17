@@ -122,6 +122,7 @@ protected:
         u64 kingAttackers[2];
         int attackingPiecesCount[2];
         int valueOfAttacks[2];
+        int kingSecurityDistance[2];
     } _TkingSafety;
 
     typedef struct {
