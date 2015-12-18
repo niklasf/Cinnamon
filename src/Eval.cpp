@@ -488,8 +488,8 @@ int Eval::getScore(const int side, const int alpha, const int beta, const bool p
     structure.posKing[BLACK] = (uchar) Bits::BITScanForward(chessboard[KING_BLACK]);
     structure.posKing[WHITE] = (uchar) Bits::BITScanForward(chessboard[KING_WHITE]);
     //if (status != OPEN) {
-        structure.kingSafety.kingAttackers[WHITE] = getAllAttackers<WHITE>(structure.posKing[WHITE], structure.allPieces);
-        structure.kingSafety.kingAttackers[BLACK] = getAllAttackers<BLACK>(structure.posKing[BLACK], structure.allPieces);
+    structure.kingSafety.kingAttackers[WHITE] = getAllAttackers<WHITE>(structure.posKing[WHITE], structure.allPieces);
+    structure.kingSafety.kingAttackers[BLACK] = getAllAttackers<BLACK>(structure.posKing[BLACK], structure.allPieces);
     //}
 
     openFile();
@@ -505,8 +505,9 @@ int Eval::getScore(const int side, const int alpha, const int beta, const bool p
     int knights_score_white;
     int kings_score_black;
     int kings_score_white;
-    int bonus_attack_black_king = 0;
-    int bonus_attack_white_king = 0;
+    int bonus_attack_king_black = BONUS_ATTACK_KING[Bits::bitCount(structure.kingSafety.kingAttackers[WHITE])];
+    int bonus_attack_king_white = BONUS_ATTACK_KING[Bits::bitCount(structure.kingSafety.kingAttackers[BLACK])];
+
     if (status == OPEN) {
         pawns_score_black = evaluatePawn<BLACK, OPEN>();
         pawns_score_white = evaluatePawn<WHITE, OPEN>();
@@ -521,8 +522,6 @@ int Eval::getScore(const int side, const int alpha, const int beta, const bool p
         kings_score_black = evaluateKing<OPEN>(BLACK, ~structure.allPiecesSide[BLACK]);
         kings_score_white = evaluateKing<OPEN>(WHITE, ~structure.allPiecesSide[WHITE]);
     } else {
-        bonus_attack_black_king = BONUS_ATTACK_KING[Bits::bitCount(structure.kingSafety.kingAttackers[WHITE])];
-        bonus_attack_white_king = BONUS_ATTACK_KING[Bits::bitCount(structure.kingSafety.kingAttackers[BLACK])];
 
         if (status == END) {
             pawns_score_black = evaluatePawn<BLACK, END>();
@@ -559,15 +558,15 @@ int Eval::getScore(const int side, const int alpha, const int beta, const bool p
     int attack_king_white = 0;
     int attack_king_black = 0;
     //if (status != OPEN) {
-        ASSERT_RANGE(structure.kingSafety.attackingPiecesCount[WHITE], 0, 7);
-        ASSERT_RANGE(structure.kingSafety.attackingPiecesCount[BLACK], 0, 7);
-        attack_king_white = (structure.kingSafety.valueOfAttacks[WHITE] * ATTACK_WEIGHT[structure.kingSafety.attackingPiecesCount[WHITE]]) / 100.0;
-        attack_king_black = (structure.kingSafety.valueOfAttacks[BLACK] * ATTACK_WEIGHT[structure.kingSafety.attackingPiecesCount[BLACK]]) / 100.0;
+    ASSERT_RANGE(structure.kingSafety.attackingPiecesCount[WHITE], 0, 7);
+    ASSERT_RANGE(structure.kingSafety.attackingPiecesCount[BLACK], 0, 7);
+    attack_king_white = (structure.kingSafety.valueOfAttacks[WHITE] * ATTACK_WEIGHT[structure.kingSafety.attackingPiecesCount[WHITE]]) / 100.0;
+    attack_king_black = (structure.kingSafety.valueOfAttacks[BLACK] * ATTACK_WEIGHT[structure.kingSafety.attackingPiecesCount[BLACK]]) / 100.0;
     //}
     side == WHITE ? lazyscore_black -= 5 : lazyscore_white += 5;
     int halfOpenFileBlack = HALF_OPEN_FILE * Bits::bitCount(structure.semiOpenFile[BLACK] & 0xf);
     int halfOpenFileWite = HALF_OPEN_FILE * Bits::bitCount(structure.semiOpenFile[WHITE] & 0xf);
-    int result = (halfOpenFileBlack + mobBlack + attack_king_white + lazyscore_black + pawns_score_black + knights_score_black + bishop_score_black + rooks_score_black + queens_score_black + kings_score_black) - (halfOpenFileWite + mobWhite + attack_king_black + lazyscore_white + pawns_score_white + knights_score_white + bishop_score_white + rooks_score_white + queens_score_white + kings_score_white);
+    int result = (halfOpenFileBlack + mobBlack + bonus_attack_king_white + attack_king_white + lazyscore_black + pawns_score_black + knights_score_black + bishop_score_black + rooks_score_black + queens_score_black + kings_score_black) - (halfOpenFileWite + mobWhite + bonus_attack_king_black + attack_king_black + lazyscore_white + pawns_score_white + knights_score_white + bishop_score_white + rooks_score_white + queens_score_white + kings_score_white);
 
 #ifdef DEBUG_MODE
     if (print) {
@@ -601,7 +600,7 @@ int Eval::getScore(const int side, const int alpha, const int beta, const bool p
         cout << "Semi-open file:   " << setw(10) << (double) (SCORE_DEBUG.HALF_OPEN_FILE[WHITE] - SCORE_DEBUG.HALF_OPEN_FILE[BLACK]) / 100.0 << setw(15) << (double) (SCORE_DEBUG.HALF_OPEN_FILE[WHITE]) / 100.0 << setw(10) << (double) (SCORE_DEBUG.HALF_OPEN_FILE[BLACK]) / 100.0 << "\n";
         cout << "Mobility:         " << setw(10) << (double) (mobWhite - mobBlack) / 100.0 << setw(15) << (double) (mobWhite) / 100.0 << setw(10) << (double) (mobBlack) / 100.0 << "\n";
         cout << "Attack king:      " << setw(10) << (double) (attack_king_white - attack_king_black) / 100.0 << setw(15) << (double) (attack_king_white) / 100.0 << setw(10) << (double) (attack_king_black) / 100.0 << "\n";
-        cout << "Bonus attack king:" << setw(10) << (double) (bonus_attack_white_king - bonus_attack_black_king) / 100.0 << setw(15) << (double) (bonus_attack_white_king) / 100.0 << setw(10) << (double) (bonus_attack_black_king) / 100.0 << "\n";
+        cout << "Bonus attack king:" << setw(10) << (double) (bonus_attack_king_white - bonus_attack_king_black) / 100.0 << setw(15) << (double) (bonus_attack_king_white) / 100.0 << setw(10) << (double) (bonus_attack_king_black) / 100.0 << "\n";
 
         cout << HEADER;
         cout << "Pawn:             " << setw(10) << (double) (pawns_score_white - pawns_score_black) / 100.0 << setw(15) << (double) (pawns_score_white) / 100.0 << setw(10) << (double) (pawns_score_black) / 100.0 << "\n";
