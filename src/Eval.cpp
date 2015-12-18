@@ -487,10 +487,10 @@ int Eval::getScore(const int side, const int alpha, const int beta, const bool p
     structure.allPieces = structure.allPiecesSide[BLACK] | structure.allPiecesSide[WHITE];
     structure.posKing[BLACK] = (uchar) Bits::BITScanForward(chessboard[KING_BLACK]);
     structure.posKing[WHITE] = (uchar) Bits::BITScanForward(chessboard[KING_WHITE]);
-    if (status != OPEN) {
+    //if (status != OPEN) {
         structure.kingSafety.kingAttackers[WHITE] = getAllAttackers<WHITE>(structure.posKing[WHITE], structure.allPieces);
         structure.kingSafety.kingAttackers[BLACK] = getAllAttackers<BLACK>(structure.posKing[BLACK], structure.allPieces);
-    }
+    //}
 
     openFile();
     int pawns_score_black;
@@ -558,12 +558,12 @@ int Eval::getScore(const int side, const int alpha, const int beta, const bool p
     int mobBlack = MOB_CASTLE[status][getMobilityCastle(BLACK, structure.allPieces)];
     int attack_king_white = 0;
     int attack_king_black = 0;
-    if (status != OPEN) {
+    //if (status != OPEN) {
         ASSERT_RANGE(structure.kingSafety.attackingPiecesCount[WHITE], 0, 7);
         ASSERT_RANGE(structure.kingSafety.attackingPiecesCount[BLACK], 0, 7);
         attack_king_white = (structure.kingSafety.valueOfAttacks[WHITE] * ATTACK_WEIGHT[structure.kingSafety.attackingPiecesCount[WHITE]]) / 100.0;
         attack_king_black = (structure.kingSafety.valueOfAttacks[BLACK] * ATTACK_WEIGHT[structure.kingSafety.attackingPiecesCount[BLACK]]) / 100.0;
-    }
+    //}
     side == WHITE ? lazyscore_black -= 5 : lazyscore_white += 5;
     int halfOpenFileBlack = HALF_OPEN_FILE * Bits::bitCount(structure.semiOpenFile[BLACK] & 0xf);
     int halfOpenFileWite = HALF_OPEN_FILE * Bits::bitCount(structure.semiOpenFile[WHITE] & 0xf);
