@@ -17,6 +17,7 @@
 */
 
 #include "Eval.h"
+#include "ChessBoard.h"
 
 Eval::Eval() { }
 
@@ -43,6 +44,97 @@ void Eval::openFile() {
 template<int side, Eval::_Tstatus status>
 int Eval::evaluatePawn() {
     INC(evaluationCount[side]);
+    int result = 0;
+    u64 pedFriends = chessboard[side];
+    u64 p = chessboard[side];
+    u64 allPawns = chessboard[WHITE] | chessboard[BLACK];
+    while (p) {
+        int o = Bits::BITScanForward(p);
+        u64 pos = POW2[o];
+        //SPACE
+        ADD(SCORE_DEBUG.SPACE_PAWNS[side], POSITION_SCORE[status][side][o]);
+        result += POSITION_SCORE[status][side][o];
+
+        // open
+        bool isOpen = false;
+        if (!(MASK_BIT_SET_VERT[side][o] & allPawns)) {
+            result += OPEN_PAWNS;
+            isOpen = true;
+            ADD(SCORE_DEBUG.PAWN_OPEN[side], OPEN_PAWNS);
+        }
+        //candidate
+        if (isOpen) {
+//            the number of hostile pawns on the adjacent files to the left and right in front of the
+//            pawn is not bigger than the number of friendly pawns on the adjacent files left and
+//            right behind or on equal row to the pawn
+            int hostilePawns = Bits::bitCount(BOUND_FILE_UP[side][o] & chessboard[side ^ 1]);
+            int friendPawns = Bits::bitCount((PAWN_FORK_MASK[side ^ 1][o] & chessboard[side]) | (PAWN_FORK_MASK[side][o + (side == BLACK ? 8 : -8)] & chessboard[side]));
+            if (friendPawns >= hostilePawns) {
+//                the number of hostile pawns currently attacking the pawn is not bigger than the
+//                number of friendly pawns defending the pawn
+                int hostilePawns = Bits::bitCount(PAWN_FORK_MASK[side][o] & chessboard[side ^ 1]);
+                int friendPawns = Bits::bitCount((PAWN_FORK_MASK[side ^ 1][o] & chessboard[side]) | (PAWN_FORK_MASK[side][o + (side == BLACK ? 8 : -8)] & chessboard[side]));
+                if (friendPawns >= hostilePawns) {
+                    result += CANDIDATE_PAWNS;
+                    ADD(SCORE_DEBUG.CANDIDATE_PAWNS[side], CANDIDATE_PAWNS);
+                }
+            }
+        }
+
+        /// doubled
+        if (pedFriends & MASK_BIT_SET_VERT[side][o]) {
+            result -= DOUBLED_PAWNS; //TODO valore in base alla posizione
+            ADD(SCORE_DEBUG.DOUBLED_PAWNS[side], -DOUBLED_PAWNS);
+        }
+        /// isolated
+        if (!(pedFriends & PAWN_ISOLATED_MASK[o])) {
+            result -= PAWN_ISOLATED;//TODO valore in base alla posizione
+            ADD(SCORE_DEBUG.PAWN_ISOLATED[side], -PAWN_ISOLATED);
+            structure.isolated[side] |= pos;
+        } else {
+            /// backward
+            //The pawn is not isolated
+            if (!(pedFriends & BOUND_FILE_UP[side][o])) {
+                bool backward = true;
+                //the pawn is still on the second rank
+                if (POW2[o] & PAWNS_7_2[side ^ 1]) {
+                    //a friendly pawn on one of the adjacent files to the left and right is 2 ranks ahead and
+                    if (PAWN_FORK2_MASK[side][o] & chessboard[side]) {
+                        //on the fields 1 and 2 ranks ahead of the pawn is no (friendly or hostile) pawn and
+                        if (SQUARE2_AHEAD[side][o] & allPawns) {
+                            //there is no hostile pawn on the file to the left or right 1, 2 or 3 ranks ahead
+                            backward = false;
+                        }
+
+                    }
+                } else {
+                    //  friendly pawn on a one of the adjacent files to the left and right is more advanced by only one rank
+                    if (PAWN_FORK_MASK[side][o] & pedFriends) {
+                        // field in front of the pawn is no (friendly or hostile) pawn
+                        if (!(POW2[o + (side == WHITE ? 8 : -8)] & allPawns)) {
+                            //there is no hostile pawn on the file to the left or right 1 or 2 ranks ahead
+                            if (!(PAWN_FORK2_MASK[side][o] & chessboard[side ^ 1])) {
+                                backward = false;
+                            }
+
+                        }
+                    }
+                }
+                if (backward) {
+                    ADD(SCORE_DEBUG.BACKWARD_PAWN[side], -BACKWARD_PAWN);
+                    result -= BACKWARD_PAWN;
+                }
+            }
+        }
+        p &= NOTPOW2[o];
+    }
+
+    return result;
+}
+/*
+template<int side, Eval::_Tstatus status>
+int Eval::evaluatePawn2() {
+    INC(evaluationCount[side]);
     u64 ped_friends = chessboard[side];
     if (!ped_friends) {
         ADD(SCORE_DEBUG.NO_PAWNS[side], -NO_PAWNS);
@@ -59,8 +151,8 @@ int Eval::evaluatePawn() {
     ADD(SCORE_DEBUG.ATTACK_KING_PAWN[side], ATTACK_KING * Bits::bitCount(ped_friends & structure.kingSafety.kingAttackers[side ^ 1]));
     //space
     if (status == OPEN) {
-        result += PAWN_CENTER * Bits::bitCount(ped_friends & CENTER_MASK);
-        ADD(SCORE_DEBUG.PAWN_CENTER[side], PAWN_CENTER * Bits::bitCount(ped_friends & CENTER_MASK));
+//        result += PAWN_CENTER * Bits::bitCount(ped_friends & CENTER_MASK);
+//        ADD(SCORE_DEBUG.PAWN_CENTER[side], PAWN_CENTER * Bits::bitCount(ped_friends & CENTER_MASK));
     }
     u64 p = ped_friends;
     while (p) {
@@ -104,20 +196,21 @@ int Eval::evaluatePawn() {
             }
         };
         /// backward
-        if (!(ped_friends & PAWN_BACKWARD_MASK[side][o])) {
-            ADD(SCORE_DEBUG.BACKWARD_PAWN[side], -BACKWARD_PAWN);
-            result -= BACKWARD_PAWN;//TODO valore in base alla posizione
-        }
+//        if (!(ped_friends & PAWN_BACKWARD_MASK[side][o])) {
+//            ADD(SCORE_DEBUG.BACKWARD_PAWN[side], -BACKWARD_PAWN);
+//            result -= BACKWARD_PAWN;//TODO valore in base alla posizione
+//        }
         /// passed
 
-        if (/*(chessboard[SIDETOMOVE_IDX] == side) &&*/ !(chessboard[side ^ 1] & PAWN_PASSED_MASK[side][o])) {
-            ADD(SCORE_DEBUG.PAWN_PASSED[side], PAWN_PASSED[side][o]);
-            result += PAWN_PASSED[side][o];
-        }
-        p &= NOTPOW2[o];
-    }
-    return result;
+        if ( !(chessboard[side ^ 1] & PAWN_PASSED_MASK[side][o])) {
+ADD(SCORE_DEBUG.PAWN_PASSED[side], PAWN_PASSED[side][o]);
+result += PAWN_PASSED[side][o];
 }
+p &= NOTPOW2[o];
+}
+return
+result;
+}*/
 
 template<int side, Eval::_Tstatus status>
 int Eval::evaluateBishop(u64 enemies, u64 friends) {
@@ -478,7 +571,7 @@ int Eval::getScore(const int side, const int alpha, const int beta, const bool p
         status = OPEN;
     }
 
-    memset(&structure.kingSafety, 0, sizeof(structure.kingSafety));
+    memset(&structure.kingSafety.kingSecurityDistance, 0, sizeof(structure.kingSafety.kingSecurityDistance));
 
     structure.allPiecesNoPawns[BLACK] = getBitBoardNoPawns<BLACK>();
     structure.allPiecesNoPawns[WHITE] = getBitBoardNoPawns<WHITE>();
@@ -487,10 +580,9 @@ int Eval::getScore(const int side, const int alpha, const int beta, const bool p
     structure.allPieces = structure.allPiecesSide[BLACK] | structure.allPiecesSide[WHITE];
     structure.posKing[BLACK] = (uchar) Bits::BITScanForward(chessboard[KING_BLACK]);
     structure.posKing[WHITE] = (uchar) Bits::BITScanForward(chessboard[KING_WHITE]);
-    //if (status != OPEN) {
+
     structure.kingSafety.kingAttackers[WHITE] = getAllAttackers<WHITE>(structure.posKing[WHITE], structure.allPieces);
     structure.kingSafety.kingAttackers[BLACK] = getAllAttackers<BLACK>(structure.posKing[BLACK], structure.allPieces);
-    //}
 
     openFile();
     int pawns_score_black;
@@ -505,8 +597,8 @@ int Eval::getScore(const int side, const int alpha, const int beta, const bool p
     int knights_score_white;
     int kings_score_black;
     int kings_score_white;
-    int bonus_attack_king_black = BONUS_ATTACK_KING[Bits::bitCount(structure.kingSafety.kingAttackers[WHITE])];
-    int bonus_attack_king_white = BONUS_ATTACK_KING[Bits::bitCount(structure.kingSafety.kingAttackers[BLACK])];
+    int bonus_attack_king_black = 0;
+    int bonus_attack_king_white = 0;
 
     if (status == OPEN) {
         pawns_score_black = evaluatePawn<BLACK, OPEN>();
@@ -522,7 +614,8 @@ int Eval::getScore(const int side, const int alpha, const int beta, const bool p
         kings_score_black = evaluateKing<OPEN>(BLACK, ~structure.allPiecesSide[BLACK]);
         kings_score_white = evaluateKing<OPEN>(WHITE, ~structure.allPiecesSide[WHITE]);
     } else {
-
+        bonus_attack_king_black = BONUS_ATTACK_KING[Bits::bitCount(structure.kingSafety.kingAttackers[WHITE])];
+        bonus_attack_king_white = BONUS_ATTACK_KING[Bits::bitCount(structure.kingSafety.kingAttackers[BLACK])];
         if (status == END) {
             pawns_score_black = evaluatePawn<BLACK, END>();
             pawns_score_white = evaluatePawn<WHITE, END>();
@@ -555,17 +648,12 @@ int Eval::getScore(const int side, const int alpha, const int beta, const bool p
     ASSERT(getMobilityCastle(BLACK, structure.allPieces) < (int) (sizeof(MOB_CASTLE[status]) / sizeof(int)));
     int mobWhite = MOB_CASTLE[status][getMobilityCastle(WHITE, structure.allPieces)];
     int mobBlack = MOB_CASTLE[status][getMobilityCastle(BLACK, structure.allPieces)];
-    int attack_king_white = 0;
-    int attack_king_black = 0;
-    //if (status != OPEN) {
-    ASSERT_RANGE(structure.kingSafety.attackingPiecesCount[WHITE], 0, 7);
-    ASSERT_RANGE(structure.kingSafety.attackingPiecesCount[BLACK], 0, 7);
-    attack_king_white = (structure.kingSafety.valueOfAttacks[WHITE] * ATTACK_WEIGHT[structure.kingSafety.attackingPiecesCount[WHITE]]) / 100.0;
-    attack_king_black = (structure.kingSafety.valueOfAttacks[BLACK] * ATTACK_WEIGHT[structure.kingSafety.attackingPiecesCount[BLACK]]) / 100.0;
-    //}
+    int attack_king_black = ATTACK_KING * Bits::bitCount(structure.kingSafety.kingAttackers[BLACK]);
+
+    int attack_king_white = ATTACK_KING * Bits::bitCount(structure.kingSafety.kingAttackers[WHITE]);
     side == WHITE ? lazyscore_black -= 5 : lazyscore_white += 5;
-    int halfOpenFileBlack = HALF_OPEN_FILE * Bits::bitCount(structure.semiOpenFile[BLACK] & 0xf);
-    int halfOpenFileWite = HALF_OPEN_FILE * Bits::bitCount(structure.semiOpenFile[WHITE] & 0xf);
+    int halfOpenFileBlack = 0;//TODO HALF_OPEN_FILE * Bits::bitCount(structure.semiOpenFile[BLACK] & 0xf);
+    int halfOpenFileWite = 0;//TODO HALF_OPEN_FILE * Bits::bitCount(structure.semiOpenFile[WHITE] & 0xf);
     int result = (halfOpenFileBlack + mobBlack + bonus_attack_king_white + attack_king_white + lazyscore_black + pawns_score_black + knights_score_black + bishop_score_black + rooks_score_black + queens_score_black + kings_score_black) - (halfOpenFileWite + mobWhite + bonus_attack_king_black + attack_king_black + lazyscore_white + pawns_score_white + knights_score_white + bishop_score_white + rooks_score_white + queens_score_white + kings_score_white);
 
 #ifdef DEBUG_MODE
@@ -606,15 +694,17 @@ int Eval::getScore(const int side, const int alpha, const int beta, const bool p
         cout << "Pawn:             " << setw(10) << (double) (pawns_score_white - pawns_score_black) / 100.0 << setw(15) << (double) (pawns_score_white) / 100.0 << setw(10) << (double) (pawns_score_black) / 100.0 << "\n";
         cout << "       mobility:                 " << setw(10) << (double) (SCORE_DEBUG.MOB_PAWNS[WHITE]) / 100.0 << setw(10) << (double) (SCORE_DEBUG.MOB_PAWNS[BLACK]) / 100.0 << "\n";
         cout << "       attack king:              " << setw(10) << (double) (SCORE_DEBUG.ATTACK_KING_PAWN[WHITE]) / 100.0 << setw(10) << (double) (SCORE_DEBUG.ATTACK_KING_PAWN[BLACK]) / 100.0 << "\n";
-        cout << "       center:                   " << setw(10) << (double) (SCORE_DEBUG.PAWN_CENTER[WHITE]) / 100.0 << setw(10) << (double) (SCORE_DEBUG.PAWN_CENTER[BLACK]) / 100.0 << "\n";
+        cout << "       space:                    " << setw(10) << (double) (SCORE_DEBUG.SPACE_PAWNS[WHITE]) / 100.0 << setw(10) << (double) (SCORE_DEBUG.SPACE_PAWNS[BLACK]) / 100.0 << "\n";
         cout << "       7h:                       " << setw(10) << (double) (SCORE_DEBUG.PAWN_7H[WHITE]) / 100.0 << setw(10) << (double) (SCORE_DEBUG.PAWN_7H[BLACK]) / 100.0 << "\n";
         cout << "       in race:                  " << setw(10) << (double) (SCORE_DEBUG.PAWN_IN_RACE[WHITE]) / 100.0 << setw(10) << (double) (SCORE_DEBUG.PAWN_IN_RACE[BLACK]) / 100.0 << "\n";
         cout << "       blocked:                  " << setw(10) << (double) (SCORE_DEBUG.PAWN_BLOCKED[WHITE]) / 100.0 << setw(10) << (double) (SCORE_DEBUG.PAWN_BLOCKED[BLACK]) / 100.0 << "\n";
         cout << "       unprotected:              " << setw(10) << (double) (SCORE_DEBUG.UNPROTECTED_PAWNS[WHITE]) / 100.0 << setw(10) << (double) (SCORE_DEBUG.UNPROTECTED_PAWNS[BLACK]) / 100.0 << "\n";
-        cout << "       isolated                  " << setw(10) << (double) (SCORE_DEBUG.PAWN_ISOLATED[WHITE]) / 100.0 << setw(10) << (double) (SCORE_DEBUG.PAWN_ISOLATED[BLACK]) / 100.0 << "\n";
-        cout << "       double                    " << setw(10) << (double) (SCORE_DEBUG.DOUBLED_PAWNS[WHITE]) / 100.0 << setw(10) << (double) (SCORE_DEBUG.DOUBLED_PAWNS[BLACK]) / 100.0 << "\n";
-        cout << "       double isolated           " << setw(10) << (double) (SCORE_DEBUG.DOUBLED_ISOLATED_PAWNS[WHITE]) / 100.0 << setw(10) << (double) (SCORE_DEBUG.DOUBLED_ISOLATED_PAWNS[BLACK]) / 100.0 << "\n";
-        cout << "       backward                  " << setw(10) << (double) (SCORE_DEBUG.BACKWARD_PAWN[WHITE]) / 100.0 << setw(10) << (double) (SCORE_DEBUG.BACKWARD_PAWN[BLACK]) / 100.0 << "\n";
+        cout << "       isolated:                 " << setw(10) << (double) (SCORE_DEBUG.PAWN_ISOLATED[WHITE]) / 100.0 << setw(10) << (double) (SCORE_DEBUG.PAWN_ISOLATED[BLACK]) / 100.0 << "\n";
+        cout << "       double:                   " << setw(10) << (double) (SCORE_DEBUG.DOUBLED_PAWNS[WHITE]) / 100.0 << setw(10) << (double) (SCORE_DEBUG.DOUBLED_PAWNS[BLACK]) / 100.0 << "\n";
+        cout << "       open:                     " << setw(10) << (double) (SCORE_DEBUG.PAWN_OPEN[WHITE]) / 100.0 << setw(10) << (double) (SCORE_DEBUG.PAWN_OPEN[BLACK]) / 100.0 << "\n";
+        cout << "       candidate:                " << setw(10) << (double) (SCORE_DEBUG.CANDIDATE_PAWNS[WHITE]) / 100.0 << setw(10) << (double) (SCORE_DEBUG.CANDIDATE_PAWNS[BLACK]) / 100.0 << "\n";
+        cout << "       double isolated:          " << setw(10) << (double) (SCORE_DEBUG.DOUBLED_ISOLATED_PAWNS[WHITE]) / 100.0 << setw(10) << (double) (SCORE_DEBUG.DOUBLED_ISOLATED_PAWNS[BLACK]) / 100.0 << "\n";
+        cout << "       backward:                 " << setw(10) << (double) (SCORE_DEBUG.BACKWARD_PAWN[WHITE]) / 100.0 << setw(10) << (double) (SCORE_DEBUG.BACKWARD_PAWN[BLACK]) / 100.0 << "\n";
         cout << "       fork:                     " << setw(10) << (double) (SCORE_DEBUG.FORK_SCORE[WHITE]) / 100.0 << setw(10) << (double) (SCORE_DEBUG.FORK_SCORE[BLACK]) / 100.0 << "\n";
         cout << "       passed:                   " << setw(10) << (double) (SCORE_DEBUG.PAWN_PASSED[WHITE]) / 100.0 << setw(10) << (double) (SCORE_DEBUG.PAWN_PASSED[BLACK]) / 100.0 << "\n";
         cout << "       all enemies:              " << setw(10) << (double) (SCORE_DEBUG.ENEMIES_PAWNS_ALL[WHITE]) / 100.0 << setw(10) << (double) (SCORE_DEBUG.ENEMIES_PAWNS_ALL[BLACK]) / 100.0 << "\n";
