@@ -94,7 +94,7 @@ int Eval::evaluatePawn() {
         } else {
             /// backward
             //The pawn is not isolated
-            if (!(pedFriends & BOUND_FILE_UP[side][o])) {
+            if (pedFriends & BOUND_FILE_UP[side][o]) {
                 bool backward = true;
                 //the pawn is still on the second rank
                 if (POW2[o] & PAWNS_7_2[side ^ 1]) {
