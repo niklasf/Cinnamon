@@ -617,9 +617,11 @@ bool Search::setParameter(String param, int value) {
         OPEN_DIAG = value;
     } else if (param == "PAWN_7H") {
         PAWN_7H = value;
-    } else if (param == "PAWN_CENTER") {
-        PAWN_CENTER = value;
-    } else if (param == "PAWN_IN_RACE") {
+    }
+//    else if (param == "PAWN_CENTER") {
+//        PAWN_CENTER = value;
+//    }
+    else if (param == "PAWN_IN_RACE") {
         PAWN_IN_RACE = value;
     } else if (param == "PAWN_ISOLATED") {
         PAWN_ISOLATED = value;

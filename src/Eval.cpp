@@ -44,97 +44,6 @@ void Eval::openFile() {
 template<int side, Eval::_Tstatus status>
 int Eval::evaluatePawn() {
     INC(evaluationCount[side]);
-    int result = 0;
-    u64 pedFriends = chessboard[side];
-    u64 p = chessboard[side];
-    u64 allPawns = chessboard[WHITE] | chessboard[BLACK];
-    while (p) {
-        int o = Bits::BITScanForward(p);
-        u64 pos = POW2[o];
-        //SPACE
-        ADD(SCORE_DEBUG.SPACE_PAWNS[side], POSITION_SCORE[status][side][o]);
-        result += POSITION_SCORE[status][side][o];
-
-        // open
-        bool isOpen = false;
-        if (!(MASK_BIT_SET_VERT[side][o] & allPawns)) {
-            result += OPEN_PAWNS;
-            isOpen = true;
-            ADD(SCORE_DEBUG.PAWN_OPEN[side], OPEN_PAWNS);
-        }
-        //candidate
-        if (isOpen) {
-//            the number of hostile pawns on the adjacent files to the left and right in front of the
-//            pawn is not bigger than the number of friendly pawns on the adjacent files left and
-//            right behind or on equal row to the pawn
-            int hostilePawns = Bits::bitCount(BOUND_FILE_UP[side][o] & chessboard[side ^ 1]);
-            int friendPawns = Bits::bitCount((PAWN_FORK_MASK[side ^ 1][o] & chessboard[side]) | (PAWN_FORK_MASK[side][o + (side == BLACK ? 8 : -8)] & chessboard[side]));
-            if (friendPawns >= hostilePawns) {
-//                the number of hostile pawns currently attacking the pawn is not bigger than the
-//                number of friendly pawns defending the pawn
-                int hostilePawns = Bits::bitCount(PAWN_FORK_MASK[side][o] & chessboard[side ^ 1]);
-                int friendPawns = Bits::bitCount((PAWN_FORK_MASK[side ^ 1][o] & chessboard[side]) | (PAWN_FORK_MASK[side][o + (side == BLACK ? 8 : -8)] & chessboard[side]));
-                if (friendPawns >= hostilePawns) {
-                    result += CANDIDATE_PAWNS;
-                    ADD(SCORE_DEBUG.CANDIDATE_PAWNS[side], CANDIDATE_PAWNS);
-                }
-            }
-        }
-
-        /// doubled
-        if (pedFriends & MASK_BIT_SET_VERT[side][o]) {
-            result -= DOUBLED_PAWNS; //TODO valore in base alla posizione
-            ADD(SCORE_DEBUG.DOUBLED_PAWNS[side], -DOUBLED_PAWNS);
-        }
-        /// isolated
-        if (!(pedFriends & PAWN_ISOLATED_MASK[o])) {
-            result -= PAWN_ISOLATED;//TODO valore in base alla posizione
-            ADD(SCORE_DEBUG.PAWN_ISOLATED[side], -PAWN_ISOLATED);
-            structure.isolated[side] |= pos;
-        } else {
-            /// backward
-            //The pawn is not isolated
-            if (pedFriends & BOUND_FILE_UP[side][o]) {
-                bool backward = true;
-                //the pawn is still on the second rank
-                if (POW2[o] & PAWNS_7_2[side ^ 1]) {
-                    //a friendly pawn on one of the adjacent files to the left and right is 2 ranks ahead and
-                    if (PAWN_FORK2_MASK[side][o] & chessboard[side]) {
-                        //on the fields 1 and 2 ranks ahead of the pawn is no (friendly or hostile) pawn and
-                        if (SQUARE2_AHEAD[side][o] & allPawns) {
-                            //there is no hostile pawn on the file to the left or right 1, 2 or 3 ranks ahead
-                            backward = false;
-                        }
-
-                    }
-                } else {
-                    //  friendly pawn on a one of the adjacent files to the left and right is more advanced by only one rank
-                    if (PAWN_FORK_MASK[side][o] & pedFriends) {
-                        // field in front of the pawn is no (friendly or hostile) pawn
-                        if (!(POW2[o + (side == WHITE ? 8 : -8)] & allPawns)) {
-                            //there is no hostile pawn on the file to the left or right 1 or 2 ranks ahead
-                            if (!(PAWN_FORK2_MASK[side][o] & chessboard[side ^ 1])) {
-                                backward = false;
-                            }
-
-                        }
-                    }
-                }
-                if (backward) {
-                    ADD(SCORE_DEBUG.BACKWARD_PAWN[side], -BACKWARD_PAWN);
-                    result -= BACKWARD_PAWN;
-                }
-            }
-        }
-        p &= NOTPOW2[o];
-    }
-
-    return result;
-}
-/*
-template<int side, Eval::_Tstatus status>
-int Eval::evaluatePawn2() {
-    INC(evaluationCount[side]);
     u64 ped_friends = chessboard[side];
     if (!ped_friends) {
         ADD(SCORE_DEBUG.NO_PAWNS[side], -NO_PAWNS);
@@ -158,6 +67,9 @@ int Eval::evaluatePawn2() {
     while (p) {
         int o = Bits::BITScanForward(p);
         u64 pos = POW2[o];
+        //SPACE
+//        ADD(SCORE_DEBUG.SPACE_PAWNS[side], POSITION_SCORE[status][side][o]);
+//        result += POSITION_SCORE[status][side][o];
         if (status != OPEN) {
             structure.kingSafety.kingSecurityDistance[side] += FRIEND_NEAR_KING * (NEAR_MASK2[structure.posKing[side]] & pos ? 1 : 0);
             structure.kingSafety.kingSecurityDistance[side] -= ENEMY_NEAR_KING * (NEAR_MASK2[structure.posKing[side ^ 1]] & pos ? 1 : 0);
@@ -196,21 +108,20 @@ int Eval::evaluatePawn2() {
             }
         };
         /// backward
-//        if (!(ped_friends & PAWN_BACKWARD_MASK[side][o])) {
-//            ADD(SCORE_DEBUG.BACKWARD_PAWN[side], -BACKWARD_PAWN);
-//            result -= BACKWARD_PAWN;//TODO valore in base alla posizione
-//        }
+        if (!(ped_friends & PAWN_BACKWARD_MASK[side][o])) {
+            ADD(SCORE_DEBUG.BACKWARD_PAWN[side], -BACKWARD_PAWN);
+            result -= BACKWARD_PAWN;//TODO valore in base alla posizione
+        }
         /// passed
 
-        if ( !(chessboard[side ^ 1] & PAWN_PASSED_MASK[side][o])) {
-ADD(SCORE_DEBUG.PAWN_PASSED[side], PAWN_PASSED[side][o]);
-result += PAWN_PASSED[side][o];
+        if (/*(chessboard[SIDETOMOVE_IDX] == side) &&*/ !(chessboard[side ^ 1] & PAWN_PASSED_MASK[side][o])) {
+            ADD(SCORE_DEBUG.PAWN_PASSED[side], PAWN_PASSED[side][o]);
+            result += PAWN_PASSED[side][o];
+        }
+        p &= NOTPOW2[o];
+    }
+    return result;
 }
-p &= NOTPOW2[o];
-}
-return
-result;
-}*/
 
 template<int side, Eval::_Tstatus status>
 int Eval::evaluateBishop(u64 enemies, u64 friends) {
@@ -229,6 +140,8 @@ int Eval::evaluateBishop(u64 enemies, u64 friends) {
     }
     while (x) {
         int o = Bits::BITScanForward(x);
+//        ADD(SCORE_DEBUG.SPACE_BISHOP[side], POSITION_SCORE[status][BISHOP_BLACK+side][o]);
+//        result += POSITION_SCORE[status][BISHOP_BLACK+side][o];
         // TODO BAD_BISHOP 2. numero di pedoni nelle case dello stesso colore dell'alfiere
 //        int bishopPawnColor = BLACK_MASK & POW2[o] ? Bits::bitCount(chessboard[BLACK]) : Bits::bitCount(chessboard[WHITE]);
 //        result -= bishopPawnColor << 3;
@@ -302,6 +215,8 @@ int Eval::evaluateQueen(u64 enemies, u64 friends) {
 //    }
     while (queen) {
         int o = Bits::BITScanForward(queen);
+//        result += POSITION_SCORE[status][QUEEN_BLACK+side][o];
+//        ADD(SCORE_DEBUG.SPACE_QUEEN[side], POSITION_SCORE[status][QUEEN_BLACK+side][o]);
         ASSERT(getMobilityQueen(o, enemies, friends) < (int) (sizeof(MOB_QUEEN[status]) / sizeof(int)));
         result += MOB_QUEEN[status][getMobilityQueen(o, enemies, friends)];
         ADD(SCORE_DEBUG.MOB_QUEEN[side], MOB_QUEEN[status][getMobilityQueen(o, enemies, friends)]);
@@ -477,14 +392,45 @@ int Eval::evaluateRook(const u64 king, u64 enemies, u64 friends) {
                 result -= ROOK_BLOCKED;
             };
         }
+        //Rook on closed file
+        if (!(structure.openFile & POW2[o]) && !(structure.semiOpenFile[side] & POW2[o])) {
+            result -= 10;
+        }
+
+
+
+        //Rook on semiopen file adjacent to hostile King
+        if (status != END && (structure.semiOpenFile[side] & POW2[o]) && PAWN_ISOLATED_MASK[o] & structure.posKing[side ^ 1]) {
+            if (status == OPEN)result += 10;
+            if (status == MIDDLE) result += 5;
+        }
+
+        //Rook on semiopen file same as hostile King
+        if (status != END && (structure.semiOpenFile[side] & POW2[o] & structure.posKing[side ^ 1])) {
+            if (status == OPEN)result += 20;
+            if (status == MIDDLE) result += 10;
+        }
+
+        //Rook on open file
         if (structure.openFile & POW2[o]) {
             ADD(SCORE_DEBUG.ROOK_OPEN_FILE[side], OPEN_FILE);
             result += OPEN_FILE;
         }
-        if (structure.semiOpenFile[side] & POW2[o]) {
-            ADD(SCORE_DEBUG.ROOK_SEMI_OPEN_FILE[side], OPEN_FILE / 2);
-            result += OPEN_FILE / 2;
+
+        //Rook on open file adjacent to hostile King
+        if ((structure.openFile & POW2[o]) && PAWN_ISOLATED_MASK[o] & structure.posKing[side ^ 1]) {
+            if (status == OPEN)result += 20;
+            if (status == END)result += 10;
+            if (status == MIDDLE) result += 15;
         }
+
+        //Rook on open file same as hostile King
+        if ((structure.openFile & POW2[o] & structure.posKing[side ^ 1])) {
+            if (status == OPEN)result += 30;
+            if (status == END)result += 10;
+            if (status == MIDDLE) result += 20;
+        }
+
         x &= NOTPOW2[o];
     };
     if (firstRook != -1 && secondRook != -1) {
@@ -723,8 +669,9 @@ int Eval::getScore(const int side, const int alpha, const int beta, const bool p
         cout << "       mobility:                 " << setw(10) << (double) (SCORE_DEBUG.MOB_BISHOP[WHITE]) / 100.0 << setw(10) << (double) (SCORE_DEBUG.MOB_BISHOP[BLACK]) / 100.0 << "\n";
         cout << "       undevelop:                " << setw(10) << (double) (SCORE_DEBUG.UNDEVELOPED_BISHOP[WHITE]) / 100.0 << setw(10) << (double) (SCORE_DEBUG.UNDEVELOPED_BISHOP[BLACK]) / 100.0 << "\n";
         cout << "       open diag:                " << setw(10) << (double) (SCORE_DEBUG.OPEN_DIAG_BISHOP[WHITE]) / 100.0 << setw(10) << (double) (SCORE_DEBUG.OPEN_DIAG_BISHOP[BLACK]) / 100.0 << "\n";
+        cout << "       space    :                " << setw(10) << (double) (SCORE_DEBUG.SPACE_BISHOP[WHITE]) / 100.0 << setw(10) << (double) (SCORE_DEBUG.SPACE_BISHOP[BLACK]) / 100.0 << "\n";
         cout << "       bonus 2 bishops:          " << setw(10) << (double) (SCORE_DEBUG.BONUS2BISHOP[WHITE]) / 100.0 << setw(10) << (double) (SCORE_DEBUG.BONUS2BISHOP[BLACK]) / 100.0 << "\n";
-        cout << "       near enemy king           " << setw(10) << (double) (SCORE_DEBUG.XBISHOP_NEAR_KING[WHITE]) / 100.0 << setw(10) << (double) (SCORE_DEBUG.XBISHOP_NEAR_KING[BLACK]) / 100.0 << "\n";
+        cout << "       near enemy king:          " << setw(10) << (double) (SCORE_DEBUG.XBISHOP_NEAR_KING[WHITE]) / 100.0 << setw(10) << (double) (SCORE_DEBUG.XBISHOP_NEAR_KING[BLACK]) / 100.0 << "\n";
 
         cout << HEADER;
         cout << "Rook:             " << setw(10) << (double) (rooks_score_white - rooks_score_black) / 100.0 << setw(15) << (double) (rooks_score_white) / 100.0 << setw(10) << (double) (rooks_score_black) / 100.0 << "\n";
@@ -735,13 +682,14 @@ int Eval::getScore(const int side, const int alpha, const int beta, const bool p
         cout << "       open file:                " << setw(10) << (double) (SCORE_DEBUG.ROOK_OPEN_FILE[WHITE]) / 100.0 << setw(10) << (double) (SCORE_DEBUG.ROOK_OPEN_FILE[BLACK]) / 100.0 << "\n";
         cout << "       semi open file:           " << setw(10) << (double) (SCORE_DEBUG.ROOK_SEMI_OPEN_FILE[WHITE]) / 100.0 << setw(10) << (double) (SCORE_DEBUG.ROOK_SEMI_OPEN_FILE[BLACK]) / 100.0 << "\n";
         cout << "       connected:                " << setw(10) << (double) (SCORE_DEBUG.CONNECTED_ROOKS[WHITE]) / 100.0 << setw(10) << (double) (SCORE_DEBUG.CONNECTED_ROOKS[BLACK]) / 100.0 << "\n";
-        cout << "       near enemy king           " << setw(10) << (double) (SCORE_DEBUG.XROOK_NEAR_KING[WHITE]) / 100.0 << setw(10) << (double) (SCORE_DEBUG.XROOK_NEAR_KING[BLACK]) / 100.0 << "\n";
+        cout << "       near enemy king:          " << setw(10) << (double) (SCORE_DEBUG.XROOK_NEAR_KING[WHITE]) / 100.0 << setw(10) << (double) (SCORE_DEBUG.XROOK_NEAR_KING[BLACK]) / 100.0 << "\n";
 
         cout << HEADER;
         cout << "Queen:            " << setw(10) << (double) (queens_score_white - queens_score_black) / 100.0 << setw(15) << (double) (queens_score_white) / 100.0 << setw(10) << (double) (queens_score_black) / 100.0 << "\n";
         cout << "       mobility:                 " << setw(10) << (double) (SCORE_DEBUG.MOB_QUEEN[WHITE]) / 100.0 << setw(10) << (double) (SCORE_DEBUG.MOB_QUEEN[BLACK]) / 100.0 << "\n";
         cout << "       bishop on queen:          " << setw(10) << (double) (SCORE_DEBUG.BISHOP_ON_QUEEN[WHITE]) / 100.0 << setw(10) << (double) (SCORE_DEBUG.BISHOP_ON_QUEEN[BLACK]) / 100.0 << "\n";
-        cout << "       near enemy king           " << setw(10) << (double) (SCORE_DEBUG.XQUEEN_NEAR_KING[WHITE]) / 100.0 << setw(10) << (double) (SCORE_DEBUG.XQUEEN_NEAR_KING[BLACK]) / 100.0 << "\n";
+        cout << "       near enemy king:          " << setw(10) << (double) (SCORE_DEBUG.XQUEEN_NEAR_KING[WHITE]) / 100.0 << setw(10) << (double) (SCORE_DEBUG.XQUEEN_NEAR_KING[BLACK]) / 100.0 << "\n";
+        cout << "       space:                    " << setw(10) << (double) (SCORE_DEBUG.SPACE_QUEEN[WHITE]) / 100.0 << setw(10) << (double) (SCORE_DEBUG.SPACE_QUEEN[BLACK]) / 100.0 << "\n";
 
         cout << HEADER;
         cout << "King:             " << setw(10) << (double) (kings_score_white - kings_score_black) / 100.0 << setw(15) << (double) (kings_score_white) / 100.0 << setw(10) << (double) (kings_score_black) / 100.0 << "\n";

@@ -87,7 +87,7 @@ ifeq ($(PROFILE_GCC),yes)
 	@echo "build..."
 	$(MAKE) -j4 EXE=$(EXE) CFLAGS=$(PARAM)$(STATIC)$(PROFILE_USE_THREAD)  all
 else
-	$(MAKE) -j4 EXE=$(EXE) CFLAGS=$(PARAM)$(STATIC) all
+	$(MAKE) EXE=$(EXE) CFLAGS=$(PARAM)$(STATIC) all
 endif
 
 	$(STRIP) $(EXE)

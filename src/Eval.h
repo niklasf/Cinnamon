@@ -57,7 +57,7 @@ protected:
     STATIC_CONST int DOUBLED_PAWNS = 5;
     STATIC_CONST int ENEMIES_PAWNS_ALL = 8;
     STATIC_CONST int PAWN_7H = 32;
-    STATIC_CONST int PAWN_CENTER = 15;
+//    STATIC_CONST int PAWN_CENTER = 15;
     STATIC_CONST int PAWN_IN_RACE = 114;
     STATIC_CONST int PAWN_ISOLATED = 3;
     STATIC_CONST int CANDIDATE_PAWNS = 10;
@@ -86,10 +86,11 @@ protected:
     typedef struct {
         int BAD_BISHOP[2];
         int MOB_BISHOP[2];
+        int SPACE_QUEEN[2];
         int UNDEVELOPED_BISHOP[2];
         int OPEN_DIAG_BISHOP[2];
         int BONUS2BISHOP[2];
-
+        int SPACE_BISHOP[2];
         int MOB_PAWNS[2];
         int ATTACK_KING_PAWN[2];
 
