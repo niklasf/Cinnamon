@@ -1,4 +1,3 @@
-## eliminato alcuni lock in threadPool
 export main_tc="40/4:0+0"
 #export main_tc="0/0:15+0.05"
 export main_tot_match=650
@@ -13,4 +12,4 @@ export main_resign="movecount=2 score=700"
 #export main_draw=""
 #export main_resign=""
 #export second_engine="cinnamon12b"
-export second_engine="cinnamon-16-tris-lazysmp"
+export second_engine="cinnamonRC1"

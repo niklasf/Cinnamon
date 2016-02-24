@@ -24,7 +24,7 @@
 #include "ObserverThread.h"
 #include "../namespaces/def.h"
 #include "../util/Bits.h"
-#include <condition_variable>
+#include "Mutex.h"
 #include "../namespaces/debug.h"
 #include "../util/logger.h"
 
@@ -42,8 +42,9 @@ public:
     ThreadPool() : ThreadPool(thread::hardware_concurrency()) { }
 
     T &getNextThread() {
-        unique_lock<mutex> lck(mtx);
-        cv.wait(lck, [this] { return Bits::bitCount(threadsBits) != nThread; });
+        if(Bits::bitCount(threadsBits) == nThread) {
+            lock.lock();
+        }
         return getThread();
     }
 
@@ -107,10 +108,9 @@ protected:
     vector<T *> threadPool;
 private:
 
-    mutex mtx;
     atomic <u64> threadsBits;
     int nThread = 0;
-    condition_variable cv;
+    Mutex lock;
 
     T &getThread() {
         int i = Bits::BITScanForwardUnset(threadsBits);
@@ -124,7 +124,7 @@ private:
         ASSERT_RANGE(threadID, 0, 63);
         ASSERT(threadsBits & POW2[threadID]);
         threadsBits &= ~POW2[threadID];
-        cv.notify_all();
+        lock.unlock();
         debug("ThreadPool::releaseThread #", threadID);
     }
 
