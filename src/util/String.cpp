@@ -62,6 +62,6 @@ String &String::toUpper() {
 }
 
 String &String::toLower() {
-  //  transform(begin(), end(), begin(), ::tolower);
+    transform(begin(), end(), begin(), ::tolower);
     return *this;
 }
