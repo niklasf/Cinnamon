@@ -196,7 +196,6 @@ public:
 #endif
 
 private:
-    static Hash *hash;
 
     SearchManager();
 
