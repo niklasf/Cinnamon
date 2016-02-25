@@ -28,6 +28,7 @@ TEST(eval, eval1) {
     EXPECT_EQ(5,score);
     score=searchManager.getScore(BLACK,false);
     EXPECT_EQ(-5,score);
+    SearchManager::destroytInstance();
 }
 
 #endif

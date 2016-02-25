@@ -106,6 +106,7 @@ private:
 
         Perft::getInstance().dump();
         if (s < 0)cout << s;
+        Perft::destroytInstance();
         exit(1);
 
     }

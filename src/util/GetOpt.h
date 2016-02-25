@@ -156,6 +156,7 @@ private:
         }
         searchManager.loadFen(fen);
         searchManager.printDtm();
+        SearchManager::destroytInstance();
     }
 
 public:
@@ -210,6 +211,7 @@ public:
                     searchManager.setNthread(thread);
                     searchManager.setMaxTimeMillsec(10000);
                     it->run();
+                    SearchManager::destroytInstance();
                     return;
 
                 } else if (opt == 'd') {  // gtb dtm

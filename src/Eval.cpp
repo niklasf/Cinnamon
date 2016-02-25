@@ -21,7 +21,7 @@
 Eval::Eval() { }
 
 Eval::~Eval() {
-
+    Bits::destroytInstance();
 }
 
 template<int side>

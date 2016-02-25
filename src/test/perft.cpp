@@ -26,6 +26,7 @@ TEST(perftTest, oneCore) {
     perft->start();
     perft->join();
     ASSERT_EQ(97862, perft->getResult());
+    Perft::destroytInstance();
 }
 
 TEST(perftTest, twoCore) {
@@ -34,6 +35,7 @@ TEST(perftTest, twoCore) {
     perft->start();
     perft->join();
     ASSERT_EQ(97862, perft->getResult());
+    Perft::destroytInstance();
 }
 
 #ifdef FULL_TEST

@@ -20,15 +20,26 @@
 
 using namespace std;
 
-template<typename T>
+template<class T>
 class Singleton {
+private:
+    static T *_instance;
 public:
 
     static T &getInstance() {
-
-        static T i;
-        return i;
+        if (!_instance) {
+            _instance = new T;
+        }
+        return *_instance;
     }
 
+    static void destroytInstance() {
+        if (_instance) {
+            delete _instance;
+            _instance = nullptr;
+        }
+    }
 };
 
+template<class T>
+T *Singleton<T>::_instance = nullptr;

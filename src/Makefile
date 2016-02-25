@@ -100,14 +100,14 @@ endif
 	ar rcs libCinnamon.a ChessBoard.o Uci.o WrapperCinnamon.o Search.o Bits.o IterativeDeeping.o Eval.o GenMoves.o Perft.o Hash.o PerftThread.o SearchManager.o OpenBook.o Tablebase.o
 
 drmemory:
-	$(MAKE) -j4 EXE=$(EXE) CFLAGS="-pthread -std=c++11 -g -fno-inline -fno-omit-frame-pointer " all
+	$(MAKE)  EXE=$(EXE) CFLAGS="-pthread -std=c++11 -g -fno-inline -fno-omit-frame-pointer " all
 	@echo "check single core search log in drmmemory_1core.log..."
 	drmemory -show_reachable -- $(PA)$(EXE) -b1 2>drmmemory_1core.log
 	@echo "check quad core search log in drmmemory_4core.log..."
 	drmemory -show_reachable -- $(PA)$(EXE) -b4 2>drmmemory_4core.log
 
 cinnamon-drmemory:
-	$(MAKE) LIBS="$(LIBS) gtb/$(OS)/32/libgtb.a" ARC="$(ARC) -m32" drmemory
+	$(MAKE) LIBS="-Wl,--whole-archive -lpthread -Wl,--no-whole-archive gtb/$(OS)/32/libgtb.a" ARC="$(ARC) -m32" drmemory
 
 cinnamon32-generic:
 	$(MAKE) LIBS="$(LIBS) gtb/$(OS)/32/libgtb.a" ARC="$(ARC) -m32" build

@@ -39,9 +39,9 @@ bool IterativeDeeping::getGtbAvailable() {
 }
 
 IterativeDeeping::~IterativeDeeping() {
-    if (openBook) {
-        delete openBook;
-    }
+    OpenBook::destroytInstance();
+    Hash::destroytInstance();
+    SearchManager::destroytInstance();
 }
 
 void IterativeDeeping::enablePonder(bool b) {

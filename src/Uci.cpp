@@ -34,7 +34,10 @@ Uci::Uci() {
     startListner();
 }
 
-Uci::~Uci() { }
+Uci::~Uci() {
+    SearchManager::destroytInstance();
+    Perft::destroytInstance();
+}
 
 void Uci::getToken(istringstream &uip, String &token) {
     token.clear();

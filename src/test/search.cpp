@@ -48,7 +48,7 @@ TEST(search, twoCore) {
     it.start();
     it.join();
     EXPECT_TRUE(v.end() != v.find(it.getBestmove()));
-    it.setNthread(1);
+    SearchManager::destroytInstance();
 }
 
 #endif

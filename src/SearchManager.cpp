@@ -143,6 +143,8 @@ bool SearchManager::getRes(_Tmove &resultMove, string &ponderMove, string &pvv, 
 }
 
 SearchManager::~SearchManager() {
+    Hash::destroytInstance();
+    Tablebase::destroytInstance();
 }
 
 int SearchManager::loadFen(string fen) {
