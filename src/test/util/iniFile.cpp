@@ -24,14 +24,41 @@
 TEST(IniFile, test1) {
     const string fileName = "inifile.tmp";
     std::ofstream fout(fileName);
-    fout << "Hello#a";
+    fout << "Hello=a";
     fout.close();
 
     IniFile iniFile(fileName);
-    pair<string, string>* p=iniFile.get();
-_assert(p);
+    pair<string, string> *p = iniFile.get();
+
+    ASSERT_TRUE(p);
     ASSERT_EQ("Hello", p->first);
     ASSERT_EQ("a", p->second);
+}
+
+TEST(IniFile, test2) {
+    const string fileName = "inifile.tmp";
+    std::ofstream fout(fileName);
+    fout << "[test]";
+    fout.close();
+
+    IniFile iniFile(fileName);
+    pair<string, string> *p = iniFile.get();
+
+    ASSERT_TRUE(p);
+    ASSERT_EQ("[test]", p->first);
+    ASSERT_TRUE(p->second.empty());
+}
+
+TEST(IniFile, test3) {
+    const string fileName = "inifile.tmp";
+    std::ofstream fout(fileName);
+    fout << "test1";
+    fout.close();
+
+    IniFile iniFile(fileName);
+    pair<string, string> *p = iniFile.get();
+
+    ASSERT_FALSE(p);
 }
 
 #endif
