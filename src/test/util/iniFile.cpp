@@ -19,14 +19,19 @@
 #if defined(DEBUG_MODE) || defined(FULL_TEST)
 
 #include <gtest/gtest.h>
-#include "eval.cpp"
-#include "spinlockShared.cpp"
-#include "spinlock.cpp"
-#include "search.cpp"
-#include "util/fileUtil.cpp"
-#include "util/string.cpp"
-#include "util/singleton.cpp"
-#include "util/iniFile.cpp"
-#include "perft.cpp"
+#include "../../util/IniFile.h"
+
+TEST(IniFile, test1) {
+    const string fileName = "inifile.tmp";
+    std::ofstream fout(fileName);
+    fout << "Hello#a";
+    fout.close();
+
+    IniFile iniFile(fileName);
+    pair<string, string>* p=iniFile.get();
+
+    ASSERT_EQ("Hello", p->first);
+    ASSERT_EQ("a", p->second);
+}
 
 #endif

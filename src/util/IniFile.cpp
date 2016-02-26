@@ -28,8 +28,15 @@ IniFile::IniFile(const string &fileName1) {
     } else {
         warn("file not found: ", fileName);
     }
-    rgxLine.assign("^(.+?)=(.*)$");
-    rgxTag.assign("^\\[.+]$");
+    try {
+        rgxLine.assign("^(.+?)=(.*)$");
+        rgxTag.assign("^\\[.+]$");
+    }
+    catch (std::regex_error &e) {
+        cout << "\n";
+        fatal("Your compiler doesn't support regex");
+        exit(1);
+    }
 }
 
 IniFile::~IniFile() {
