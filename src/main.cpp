@@ -93,11 +93,14 @@ void printHeader() {
     cout << "DEBUG_MODE\n";
     cout << "Log level: " << LOG_LEVEL_STRING[DLOG_LEVEL] << "\n";
 #endif
+#if defined(DEBUG_MODE) || defined(FULL_TEST)
+    cout << "RUN UNIT TEST\n";
+#endif
     cout << flush;
 }
 
 int main(int argc, char **argv) {
-
+    printHeader();
 #if defined(DEBUG_MODE) || defined(FULL_TEST)
     testing::InitGoogleTest(&argc, argv);
     if (RUN_ALL_TESTS())return 1;
@@ -106,7 +109,7 @@ int main(int argc, char **argv) {
 #endif
     cout << "\n\n";
 #endif
-    printHeader();
+
     GetOpt::parse(argc, argv);
     return 0;
 }
