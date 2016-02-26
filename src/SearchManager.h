@@ -206,7 +206,7 @@ private:
     int mateIn;
     int valWindow = INT_MAX;
     _TpvLine lineWin;
-   
+
     Spinlock spinlockSearch;
 
     void setMainPly(const int r);

@@ -150,7 +150,6 @@ int Search::checkTime() {
 Search::~Search() {
     join();
     deleteGtb();
-    Hash::destroytInstance();
 }
 
 template<int side, bool smp>
