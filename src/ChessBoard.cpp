@@ -28,7 +28,7 @@ ChessBoard::ChessBoard() {
 }
 
 ChessBoard::~ChessBoard() {
-    Bits::destroytInstance();
+
 }
 
 #ifdef DEBUG_MODE

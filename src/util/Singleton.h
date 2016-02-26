@@ -24,22 +24,37 @@ template<class T>
 class Singleton {
 private:
     static T *_instance;
+    static bool _pointer;
 public:
 
-    static T &getInstance() {
+    static T &getReference() {
+        if (!_instance) {
+            static T i;
+            _pointer = false;
+            _instance = &i;
+        }
+        return *_instance;
+    }
+
+    static T &getPointer() {
         if (!_instance) {
             _instance = new T;
+            _pointer = true;
         }
         return *_instance;
     }
 
     static void destroytInstance() {
-        if (_instance) {
+        if (_instance && _pointer) {
             delete _instance;
             _instance = nullptr;
+            _pointer = false;
         }
     }
 };
 
 template<class T>
 T *Singleton<T>::_instance = nullptr;
+
+template<class T>
+bool Singleton<T>::_pointer = false;

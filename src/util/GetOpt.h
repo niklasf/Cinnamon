@@ -125,7 +125,7 @@ private:
     }
 
     static void dtm(int argc, char **argv) {
-        SearchManager &searchManager = Singleton<SearchManager>::getInstance();
+        SearchManager &searchManager = Singleton<SearchManager>::getReference();
         searchManager.createGtb();
         string fen, token;
         IterativeDeeping it;
@@ -156,7 +156,7 @@ private:
         }
         searchManager.loadFen(fen);
         searchManager.printDtm();
-        SearchManager::destroytInstance();
+
     }
 
 public:
@@ -174,7 +174,7 @@ public:
                 return;
             }
             if (opt == 'f') {  // score
-                SearchManager &searchManager = Singleton<SearchManager>::getInstance();
+                SearchManager &searchManager = Singleton<SearchManager>::getReference();
                 searchManager.loadFen(optarg);
                 searchManager.display();
                 searchManager.getScore(searchManager.getSide(), true);
@@ -207,11 +207,11 @@ public:
                     int thread = atoi(optarg);
                     unique_ptr<IterativeDeeping> it(new IterativeDeeping());
                     it->setUseBook(false);
-                    SearchManager &searchManager = Singleton<SearchManager>::getInstance();
+                    SearchManager &searchManager = Singleton<SearchManager>::getReference();
                     searchManager.setNthread(thread);
                     searchManager.setMaxTimeMillsec(10000);
                     it->run();
-                    SearchManager::destroytInstance();
+
                     return;
 
                 } else if (opt == 'd') {  // gtb dtm
@@ -224,7 +224,7 @@ public:
                 }
             }
         }
-        Uci::getInstance();
+        Uci::getReference();
     }
 };
 

@@ -43,7 +43,7 @@ TEST(search, twoCore) {
     const set<string> v = {"d2d4", "e2e4"};
     IterativeDeeping it;
     it.setNthread(2);
-    SearchManager &searchManager = Singleton<SearchManager>::getInstance();
+    SearchManager &searchManager = Singleton<SearchManager>::getPointer();
     searchManager.setMaxTimeMillsec(250);
     it.start();
     it.join();

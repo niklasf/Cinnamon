@@ -68,6 +68,7 @@ namespace _logger {
         ~Logger() {
             this->close();
         }
+
     private:
         Spinlock _CoutSyncSpinlock;
 
@@ -86,7 +87,7 @@ namespace _logger {
 
     };
 
-    static Logger logger;
+    static Logger& logger = Logger::getReference();
 
 #ifdef _WIN32
 #define FILE_SEPARATOR '\\'

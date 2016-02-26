@@ -199,7 +199,7 @@ private:
 
     const char DISTANCE_KING_ENDING[64] = {12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 16, 16, 16, 16, 12, 12, 12, 12, 16, 20, 20, 16, 12, 12, 12, 12, 16, 20, 20, 16, 12, 12, 12, 12, 16, 16, 16, 16, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12};
 
-    Bits &bits = Bits::getInstance();
+    Bits &bits = Bits::getReference();
 #ifdef DEBUG_MODE
     int evaluationCount[2];
 #endif

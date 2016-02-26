@@ -187,7 +187,7 @@ void SearchManager::incKillerHeuristic(int from, int to, int value) {
 }
 
 int SearchManager::getHashSize() {
-    return Hash::getInstance().getHashSize();
+    return Hash::getPointer().getHashSize();
 }
 
 void SearchManager::startClock() {
@@ -205,7 +205,7 @@ void SearchManager::clearKillerHeuristic() {
 }
 
 void SearchManager::clearAge() {
-    Hash::getInstance().clearAge();
+    Hash::getPointer().clearAge();
 }
 
 int SearchManager::getForceCheck() {
@@ -243,7 +243,7 @@ string SearchManager::getFen() {
 }
 
 void SearchManager::setHashSize(int s) {
-    Hash::getInstance().setHashSize(s);
+    Hash::getPointer().setHashSize(s);
 }
 
 void SearchManager::setMaxTimeMillsec(int i) {
@@ -277,7 +277,7 @@ int SearchManager::getScore(int side, const bool trace) {
 }
 
 void SearchManager::clearHash() {
-    Hash::getInstance().clearHash();
+    Hash::getPointer().clearHash();
 }
 
 int SearchManager::getMaxTimeMillsec() {
@@ -384,7 +384,7 @@ bool SearchManager::setParameter(String param, int value) {
 
 
 Tablebase &SearchManager::createGtb() {
-    Tablebase &gtb = Tablebase::getInstance();
+    Tablebase &gtb = Tablebase::getPointer();
     setGtb(gtb);
     return gtb;
 }

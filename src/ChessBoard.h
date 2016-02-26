@@ -195,7 +195,7 @@ protected:
     static const u64 WHITE_SQUARES = 0xAA55AA55AA55AA55ULL;
 
     _Tboard structure;
-    Bits &bits = Bits::getInstance();
+    Bits &bits = Bits::getReference();
 
     void makeZobristKey();
 

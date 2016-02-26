@@ -74,10 +74,10 @@ private:
 
 #ifdef DEBUG_MODE
     //for staistics
-    Hash &hash = Hash::getInstance();
+    Hash &hash = Hash::getPointer();
     atomic_int checkSmp2;
 #endif
-    SearchManager &searchManager = Singleton<SearchManager>::getInstance();
+    SearchManager &searchManager = Singleton<SearchManager>::getPointer();
     int maxDepth;
     string bestmove;
     volatile long running;

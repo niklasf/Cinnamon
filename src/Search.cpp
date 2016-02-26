@@ -79,7 +79,7 @@ Search::Search() : ponder(false), nullSearch(false) {
     lazyEvalCuts = cumulativeMovesCount = totGen = 0;
 #endif
     gtb = nullptr;
-    hash = &Hash::getInstance();
+    hash = &Hash::getPointer();
 }
 
 void Search::clone(const Search *s) {

@@ -19,7 +19,7 @@
 #include "Uci.h"
 
 Uci::Uci(const string &fen, int perftDepth, int nCpu, int perftHashSize, const string &dumpFile) {//perft locale
-    perft = &Perft::getInstance();
+    perft = &Perft::getPointer();
     perft->setParam(fen, perftDepth, nCpu, perftHashSize, dumpFile, true);
     runPerft = true;
     startListner();
@@ -81,7 +81,7 @@ void Uci::listner(IterativeDeeping *it) {
                 fen = searchManager.getFen();
             }
             searchManager.setHashSize(hashDepth);
-            perft = &Perft::getInstance();
+            perft = &Perft::getPointer();
             perft->setParam(fen, perftDepth, perftThreads, perftHashSize, dumpFile, false);
             perft->join();
             perft->start();

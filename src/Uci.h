@@ -37,7 +37,7 @@ private:
 
     Perft *perft = nullptr;
 
-    SearchManager &searchManager = Singleton<SearchManager>::getInstance();
+    SearchManager &searchManager = Singleton<SearchManager>::getPointer();
 
     bool uciMode;
     Tablebase *tablebase = nullptr;
