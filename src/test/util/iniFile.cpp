@@ -29,7 +29,7 @@ TEST(IniFile, test1) {
 
     IniFile iniFile(fileName);
     pair<string, string>* p=iniFile.get();
-
+_assert(p);
     ASSERT_EQ("Hello", p->first);
     ASSERT_EQ("a", p->second);
 }

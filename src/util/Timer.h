@@ -18,6 +18,7 @@
 
 #pragma once
 
+#include <vector>
 #include "../threadPool/Thread.h"
 
 class Timer : public Thread {

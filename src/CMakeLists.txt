@@ -52,5 +52,6 @@ set(SOURCE_FILES
         )
 
 set(CMAKE_CXX_COMPILER "g++")
+#set(CMAKE_CXX_COMPILER "/home/geko/app/llvm/clang+llvm-3.7.1-x86_64-linux-gnu-ubuntu-14.04/bin/clang++")
 add_executable(cinnamon ${SOURCE_FILES})
 target_link_libraries(cinnamon ${CMAKE_SOURCE_DIR}/gtb/Linux/64/libgtb.a /usr/local/lib/libgtest.a)
