@@ -65,6 +65,9 @@ namespace _logger {
             _CoutSyncSpinlock.unlock();
         }
 
+        ~Logger() {
+            this->close();
+        }
     private:
         Spinlock _CoutSyncSpinlock;
 
@@ -81,12 +84,9 @@ namespace _logger {
             __log(args...);
         }
 
-        ~Logger() {
-            this->close();
-        }
     };
 
-    static Logger &logger = Logger::getInstance();
+    static Logger logger;
 
 #ifdef _WIN32
 #define FILE_SEPARATOR '\\'
