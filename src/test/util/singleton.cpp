@@ -17,13 +17,17 @@
 */
 
 #if defined(DEBUG_MODE) || defined(FULL_TEST)
+
 #include <gtest/gtest.h>
-#include "eval.cpp"
-#include "spinlockShared.cpp"
-#include "spinlock.cpp"
-#include "search.cpp"
-#include "util/fileUtil.cpp"
-#include "util/string.cpp"
-#include "util/singleton.cpp"
-#include "perft.cpp"
+#include "../../Tablebase.h"
+
+TEST(Singleton, alloc) {
+    Tablebase *tablebaseP = &Tablebase::getPointer();
+    Tablebase &tablebaseR = Tablebase::getReference();
+
+    ASSERT_EQ(tablebaseP, &tablebaseR);
+    Tablebase::destroytInstance();
+
+}
+
 #endif
