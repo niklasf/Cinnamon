@@ -17,6 +17,7 @@
 */
 
 #if defined(DEBUG_MODE) || defined(FULL_TEST)
+
 #include <gtest/gtest.h>
 #include "eval.cpp"
 #include "spinlockShared.cpp"
@@ -26,4 +27,5 @@
 #include "util/string.cpp"
 #include "util/singleton.cpp"
 #include "perft.cpp"
+
 #endif

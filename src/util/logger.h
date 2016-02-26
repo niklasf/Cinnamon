@@ -87,7 +87,7 @@ namespace _logger {
 
     };
 
-    static Logger& logger = Logger::getReference();
+    static Logger &logger = Logger::getReference();
 
 #ifdef _WIN32
 #define FILE_SEPARATOR '\\'
