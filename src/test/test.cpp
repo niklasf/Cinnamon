@@ -19,6 +19,7 @@
 #if defined(DEBUG_MODE) || defined(FULL_TEST)
 
 #include <gtest/gtest.h>
+#include "util/iniFile.cpp"
 #include "eval.cpp"
 #include "spinlockShared.cpp"
 #include "spinlock.cpp"
@@ -26,7 +27,6 @@
 #include "util/fileUtil.cpp"
 #include "util/string.cpp"
 #include "util/singleton.cpp"
-#include "util/iniFile.cpp"
 #include "perft.cpp"
 
 #endif
