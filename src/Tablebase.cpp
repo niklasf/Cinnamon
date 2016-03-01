@@ -16,6 +16,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#ifndef JS_MODE
+
 #include "Tablebase.h"
 
 Tablebase::Tablebase() {
@@ -178,3 +180,6 @@ void Tablebase::setPath(string path1) {
     path = path1;
     load();
 }
+
+
+#endif

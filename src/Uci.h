@@ -18,6 +18,25 @@
 
 #pragma once
 
+#ifdef JS_MODE
+#include "IterativeDeeping.h"
+
+#include <string.h>
+
+class Uci {
+public:
+    Uci();
+    virtual ~Uci();
+    char* command(char* cmd,char* arg);
+private:
+    IterativeDeeping* iterativeDeeping;
+    bool uciMode;
+    SearchManager &searchManager = Singleton<SearchManager>::getInstance();
+
+
+};
+#else
+
 #include "IterativeDeeping.h"
 #include "perft/Perft.h"
 
@@ -52,3 +71,4 @@ private:
 
 };
 
+#endif
