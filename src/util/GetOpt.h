@@ -16,6 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+
 #pragma once
 
 
@@ -24,10 +25,10 @@ class GetOpt {
 private:
     static void help(char **argv) {
         string exe = FileUtil::getFileName(argv[0]);
-        cout << "Perft test:\t\t\t\t\t" << exe << " " << PERFT_HELP << "\n";
-        cout << "Distance to mate:\t\t\t" << exe << " " << DTM_HELP << "\n";
-        cout << "Create .pgn from .epd:\t\t" << exe << " " << EPD2PGN_HELP << endl;
-        cout << "Generate puzzle epd:\t" << exe << " " << PUZZLE_HELP << endl;
+        cout << "Perft test:            " <<exe << " " << PERFT_HELP << "\n";
+        cout << "Distance to mate:      " << exe << " " << DTM_HELP << "\n";
+        cout << "Create .pgn from .epd: " << exe << " " << EPD2PGN_HELP << endl;
+        cout << "Generate puzzle epd:   " << exe << " " << PUZZLE_HELP << endl;
     }
 
     static void perft(int argc, char **argv) {
