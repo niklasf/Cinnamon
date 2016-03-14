@@ -385,10 +385,10 @@ int Eval::getScore(const int side, const int N_PIECE, const int alpha, const int
         INC(lazyEvalCuts);
         return lazyscore;
     }
-//    int endGameValue = getEndgameValue(N_PIECE, side);
-//    if (abs(endGameValue) != INT_MAX) {
-//        return endGameValue;
-//    }
+    int endGameValue = getEndgameValue(N_PIECE, side);
+    if (abs(endGameValue) != INT_MAX) {
+        return endGameValue;
+    }
 
 #ifdef DEBUG_MODE
     evaluationCount[WHITE] = evaluationCount[BLACK] = 0;

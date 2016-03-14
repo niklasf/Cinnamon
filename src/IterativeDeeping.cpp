@@ -72,7 +72,7 @@ void IterativeDeeping::setUseBook(bool b) {
     }
 }
 
-string IterativeDeeping::run1() {
+string IterativeDeeping::go() {
 	run();
 	return getBestmove();
 }

@@ -18,8 +18,8 @@
 
 #pragma once
 
-#include <vector>
 #include "ChessBoard.h"
+#include <vector>
 
 class GenMoves : public virtual ChessBoard {
 

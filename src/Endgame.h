@@ -19,7 +19,7 @@
 #pragma once
 
 #include "ChessBoard.h"
-#include <map>
+#include <unordered_map>
 
 class Endgame : public virtual ChessBoard {
 
@@ -46,8 +46,8 @@ private:
     template<int loserSide>
     int KRKP(int tempo, int winnerKingPos, int loserKingPos, int rookPos, int pawnPos) {
 #ifdef DEBUG_MODE
-        std::map<int, int> pieces1;
-        std::map<int, int> pieces2;
+        std::unordered_map<int, int> pieces1;
+        std::unordered_map<int, int> pieces2;
 
         pieces1[KING_BLACK] = 1;
         pieces1[KING_WHITE] = 1;

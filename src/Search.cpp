@@ -33,10 +33,10 @@ void Search::run() {
 }
 
 void Search::endRun() {
-    notifySearch(getId());
+    SearchManager::getReference().receiveObserverSearch(getId());
 }
 
-int Search::aspirationWindow(const int depth, const int valWin) {
+void Search::aspirationWindow(const int depth, const int valWin) {
     valWindow = valWin;
     init();
 
@@ -71,7 +71,6 @@ int Search::aspirationWindow(const int depth, const int valWin) {
         }
     }
 
-    return valWindow;
 }
 
 Search::Search() : ponder(false), nullSearch(false) {
@@ -347,6 +346,7 @@ bool Search::getGtbAvailable() {
 }
 
 Tablebase &Search::getGtb() const {
+    ASSERT(gtb);
     return *gtb;
 }
 

@@ -23,11 +23,18 @@
 #include "Eval.h"
 #include "namespaces/def.h"
 #include <climits>
-#include "Tablebase.h"
 #include "threadPool/Thread.h"
-#include "ObserverSearch.h"
 
-class Search : public Eval, public Thread, public Subject {
+#ifdef JS_MODE
+#include "js/Tablebase.h"
+#else
+
+#include "Tablebase.h"
+
+#endif
+
+
+class Search : public Eval, public Thread<Search> {
 
 public:
 
@@ -65,9 +72,9 @@ public:
 
     int search(bool smp, int depth, int alpha, int beta);
 
-    virtual void run();
+    void run();
 
-    virtual void endRun();
+    void endRun();
 
     int printDtm();
 
@@ -131,7 +138,7 @@ private:
     static Tablebase *gtb;
     bool ponder;
 
-    int aspirationWindow(const int depth, const int valWindow);
+    void aspirationWindow(const int depth, const int valWindow);
 
     int checkTime();
 
@@ -187,7 +194,7 @@ private:
                             }
                             break;
                         case Hash::hashfBETA:
-                            if (!quies)incKillerHeuristic(phashe->from, phashe->to, 1);//TODO
+                            if (!quies)incKillerHeuristic(phashe->from, phashe->to, 1);
                             if (phashe->score >= beta) {
                                 INC(hash->n_cut_hashB);
                                 checkHashStruct.res = beta;

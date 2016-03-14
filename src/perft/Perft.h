@@ -59,7 +59,7 @@ Depth   Perft
 
 */
 
-class Perft : public Thread, public ThreadPool<PerftThread>, public Singleton<Perft> {
+class Perft : public Thread<Perft>, public ThreadPool<PerftThread>, public Singleton<Perft> {
     friend class Singleton<Perft>;
 
 public:
@@ -70,9 +70,9 @@ public:
 
     void dump();
 
-    virtual void run();
+    void run();
 
-    virtual void endRun();
+    void endRun();
 
     static int count;
 

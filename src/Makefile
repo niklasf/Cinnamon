@@ -16,7 +16,6 @@
 
 COMP=g++
 
-NATIVE_ARCH="32"
 ifndef SystemRoot
 	# *nix
 	ARC=
@@ -27,7 +26,6 @@ ifndef SystemRoot
 		OS=OSX
 	else
 		PROFILE_USE_THREAD=" -fprofile-correction -fprofile-use "
-		STATIC="-static "
 		OS=Linux
 	endif
 
@@ -36,9 +34,6 @@ ifndef SystemRoot
 	EXE="cinnamon"
 	STRIP=strip
 	UNAME_P := $(shell uname -p)
-	ifeq ($(UNAME_P),x86_64)
-		NATIVE_ARCH="64"
-	endif
 else
 	# Windows
 	ARC="-mno-ms-bitfields"
@@ -48,17 +43,13 @@ else
 	LIBS=-static -static-libgcc -static-libstdc++
 	EXE="cinnamon.exe"
 	STRIP=strip.exe
-
-	ifeq ($(PROCESSOR_ARCHITEW6432),AMD64)
-		NATIVE_ARCH="64"
-	endif
 endif
 
-PARAM="-std=c++11 -Ofast -pipe -DNDEBUG -fsigned-char -DDLOG_LEVEL=_FATAL -fno-rtti -fomit-frame-pointer -Wfloat-equal -Wpedantic -Wunreachable-code -Wmissing-include-dirs -Wswitch-enum -Wswitch-default -Wmain -Wundef -Winit-self -Wredundant-decls -Wcast-align -ffast-math -funroll-loops -Wno-long-long -Wcast-qual -Wextra -Wshadow "
+PARAM="-std=c++11 -DDLOG_LEVEL=_FATAL -Ofast -DNDEBUG -fsigned-char -fno-exceptions -fno-rtti -funroll-loops "
 
 help:
 
-	@echo "Makefile for cross-compile Linux/Windows/OSX/ARM"
+	@echo "Makefile for cross-compile Linux/Windows/OSX/ARM/Javascript"
 	@echo ""
 	@echo "make cinnamon64-modern-INTEL     > 64-bit optimized for modern Intel cpu"
 	@echo "make cinnamon64-modern-AMD       > 64-bit optimized for modern Amd cpu"
@@ -69,30 +60,31 @@ help:
 	@echo "make cinnamon32-generic          > Unspecified 32-bit"
 	@echo "make cinnamon32-ARM              > Optimized for arm cpu"
 	@echo ""
-	@echo "make cinnamon-js                 > Compile in Javascript "
-	@echo "make cinnamon-native             > Optimized for native cpu"
+	@echo "make cinnamon-js                 > Javascript build"
 	@echo "make cinnamon-drmemory           > Memory monitor"
 	@echo ""
 	@echo "add:"
 	@echo " COMP=compiler                   > Use another compiler"
 	@echo " PROFILE_GCC=yes                 > PGO build"
 	@echo " FULL_TEST=yes                   > Unit test"
+	@echo " LIBSTDC=-static                 > Link statically libstdc++"
 	@echo ""
 
 build:
 
 ifeq ($(FULL_TEST),yes)
-	$(MAKE) -j4 EXE=$(EXE) LIBS="$(LIBS) /usr/local/lib/libgtest.a " CFLAGS=$(PARAM)$(STATIC)-DFULL_TEST all
+	$(MAKE) -j4 EXE=$(EXE) LIBS="$(LIBS) /usr/local/lib/libgtest.a " CFLAGS=$(PARAM)$(LIBSTDC)-DFULL_TEST all
+	$(PA)$(EXE)
 else
 ifeq ($(PROFILE_GCC),yes)
-	$(MAKE) -j4 EXE=$(EXE) CFLAGS=$(PARAM)$(STATIC)-fprofile-generate all
+	$(MAKE) -j4 EXE=$(EXE) CFLAGS=$(PARAM)$(LIBSTDC)-fprofile-generate all
 	@echo "optimize..."
 	$(PA)$(EXE) -b1 >bench.tmp
 	$(RM) *.o bench.tmp
 	@echo "build..."
-	$(MAKE) -j4 EXE=$(EXE) CFLAGS=$(PARAM)$(STATIC)$(PROFILE_USE_THREAD)  all
+	$(MAKE) -j4 EXE=$(EXE) CFLAGS=$(PARAM)$(LIBSTDC)$(PROFILE_USE_THREAD) all
 else
-	$(MAKE) -j4 EXE=$(EXE) CFLAGS=$(PARAM)$(STATIC) all
+	$(MAKE) -j4 EXE=$(EXE) CFLAGS=$(PARAM)$(LIBSTDC) all
 endif
 endif
 
@@ -101,29 +93,26 @@ endif
 	ar rcs libCinnamon.a ChessBoard.o Uci.o WrapperCinnamon.o Search.o Bits.o IterativeDeeping.o Eval.o GenMoves.o Perft.o Hash.o PerftThread.o SearchManager.o OpenBook.o Tablebase.o
 
 drmemory:
-	$(MAKE) -j4 EXE=$(EXE) CFLAGS="-pthread -std=c++11 -g -fno-inline -fno-omit-frame-pointer " all
+	$(MAKE) -j4 EXE=$(EXE) CFLAGS="-pthread -std=c++11 -g -fsigned-char -fno-inline -fno-omit-frame-pointer " all
 	@echo "check single core search log in drmmemory_1core.log..."
 	drmemory -show_reachable -- $(PA)$(EXE) -b1 2>drmmemory_1core.log
 	@echo "check quad core search log in drmmemory_4core.log..."
 	drmemory -show_reachable -- $(PA)$(EXE) -b4 2>drmmemory_4core.log
 
 cinnamon-js:
-	em++  -std=c++11  -DJS_MODE ChessBoard.cpp  Eval.cpp  GenMoves.cpp  Hash.cpp  IterativeDeeping.cpp Tablebase.cpp main.cpp  OpenBook.cpp  Search.cpp  SearchManager.cpp   Uci.cpp util/String.cpp util/IniFile.cpp util/Bits.cpp -w -s EXPORTED_FUNCTIONS="['_main','_perft','_command']" -s NO_EXIT_RUNTIME=1 -o cinnamon.js -O3 --memory-init-file 0
+	em++ -std=c++11 -DJS_MODE -DDLOG_LEVEL=_FATAL -fsigned-char ChessBoard.cpp Eval.cpp GenMoves.cpp Hash.cpp IterativeDeeping.cpp js/main.cpp OpenBook.cpp Search.cpp SearchManager.cpp perft/Perft.cpp util/String.cpp util/IniFile.cpp util/Bits.cpp util/Timer.cpp perft/PerftThread.cpp -w -s EXPORTED_FUNCTIONS="['_main','_perft','_command','_isvalid']" -s NO_EXIT_RUNTIME=1 -o cinnamon.js -O3 --memory-init-file 0
 
 cinnamon-drmemory:
 	$(MAKE) LIBS="-Wl,--whole-archive -lpthread -Wl,--no-whole-archive gtb/$(OS)/32/libgtb.a" ARC="$(ARC) -m32" drmemory
 
 cinnamon32-generic:
-	$(MAKE) LIBS="$(LIBS) gtb/$(OS)/32/libgtb.a" ARC="$(ARC) -m32" build
+	$(MAKE) LIBS="$(LIBS) gtb/$(OS)/32/libgtb.a" ARC="$(ARC) -m32 -w" build
 
 cinnamon32-modern:
 	$(MAKE) ARC="$(ARC) -mfpmath=sse" cinnamon32-generic
 
 cinnamon32-ARM:
 	$(MAKE) LIBS="$(LIBS) gtb/ARM/32/libgtb.a" ARC="$(ARC) -fno-gcse -w" build
-
-cinnamon-native:
-	$(MAKE) LIBS="$(LIBS) gtb/$(OS)/$(NATIVE_ARCH)/libgtb.a" ARC="$(ARC) -march=native" build
 
 cinnamon64-generic:
 	$(MAKE) LIBS="$(LIBS) gtb/$(OS)/64/libgtb.a" ARC="$(ARC) -m64" build
@@ -137,8 +126,8 @@ cinnamon64-modern-AMD:
 cinnamon64-modern-INTEL:
 	$(MAKE) ARC="$(ARC) -msse4.2 -march=corei7 -mtune=corei7 " cinnamon64-modern
 
-all: main.o ChessBoard.o Eval.o GenMoves.o test.o String.o WrapperCinnamon.o Timer.o IniFile.o IterativeDeeping.o Perft.o PerftThread.o Search.o SearchManager.o Hash.o Uci.o OpenBook.o Tablebase.o Bits.o
-	$(COMP) ${CFLAGS} ${ARC} -o ${EXE} main.o test.o ChessBoard.o WrapperCinnamon.o Timer.o Eval.o IniFile.o GenMoves.o String.o IterativeDeeping.o Perft.o PerftThread.o Search.o SearchManager.o Hash.o Uci.o OpenBook.o Tablebase.o Bits.o ${LIBS}
+all: main.o ChessBoard.o Eval.o Endgame.o GenMoves.o test.o String.o WrapperCinnamon.o Timer.o IniFile.o IterativeDeeping.o Perft.o PerftThread.o Search.o SearchManager.o Hash.o Uci.o OpenBook.o Tablebase.o Bits.o
+	$(COMP) ${CFLAGS} ${ARC} -o ${EXE} main.o Endgame.o test.o ChessBoard.o WrapperCinnamon.o Timer.o Eval.o IniFile.o GenMoves.o String.o IterativeDeeping.o Perft.o PerftThread.o Search.o SearchManager.o Hash.o Uci.o OpenBook.o Tablebase.o Bits.o ${LIBS}
 
 default:
 	help
@@ -197,10 +186,10 @@ Timer.o: util/Timer.cpp
 test.o: test/test.cpp
 	$(COMP) -c test/test.cpp ${CFLAGS} ${ARC}
 
-#Endgame.o: Endgame.cpp
-#	$(COMP) -c Endgame.cpp ${CFLAGS} ${ARC}
+Endgame.o: Endgame.cpp
+	$(COMP) -c Endgame.cpp ${CFLAGS} ${ARC}
 	
 WrapperCinnamon.o: WrapperCinnamon.cpp
 	$(COMP) -c WrapperCinnamon.cpp ${CFLAGS} ${ARC}
 clean:
-	$(RM) *.o $(EXE) *.gcda libCinnamon.a
+	$(RM) *.o $(EXE) *.gcda libCinnamon.a cinnamon.js

@@ -16,34 +16,6 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifdef JS_MODE
-#include <unistd.h>
-#include "Uci.h"
-Uci::Uci() {
-    iterativeDeeping = new IterativeDeeping();
-}
-
-Uci::~Uci() {
-    delete iterativeDeeping;
-}
-
-
-char* Uci::command(char* cmd,char* arg) {
-    string a="";
-    if(strcmp(cmd,"go")==0) {
-        a=iterativeDeeping->run1();
-    } else if(strcmp(cmd,"setMaxTimeMillsec")==0) {
-        searchManager.setMaxTimeMillsec(atoi(arg));
-    } else if(strcmp(cmd,"position")==0) {
-        searchManager.setRepetitionMapCount(0);
-        searchManager.init();
-        searchManager.setSide(iterativeDeeping->loadFen(arg));
-    }
-    return (char*)a.c_str();
-}
-
-
-#else
 #include "Uci.h"
 
 Uci::Uci(const string &fen, int perftDepth, int nCpu, int perftHashSize, const string &dumpFile) {//perft locale
@@ -435,4 +407,3 @@ void Uci::listner(IterativeDeeping *it) {
         cout << flush;
     }
 }
-#endif

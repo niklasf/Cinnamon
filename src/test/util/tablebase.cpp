@@ -16,38 +16,35 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#if defined(DEBUG_MODE) || defined(FULL_TEST)
+#if defined(FULL_TEST)
 
 #include <gtest/gtest.h>
 #include <set>
+#include "../SearchManager.h"
 #include "../IterativeDeeping.h"
+#include "../Tablebase.h"
 
-TEST(search, test1) {
-    IterativeDeeping it;
-    it.loadFen("8/p5p1/k3p1p1/5pP1/5PKP/bP2r3/P7/3RB3 w - f6");
-    it.start();
-    it.join();
-    EXPECT_EQ("g5f6", it.getBestmove());
-}
+TEST(tablebase, test1) {
+    SearchManager &searchManager = Singleton<SearchManager>::getInstance();
+    Tablebase &tablebase = searchManager.createGtb();
+    if (!tablebase.setPath("/gtb4")) {
+        FAIL() << "path error";
+    }
 
-TEST(search, depth1) {
     IterativeDeeping it;
-    it.loadFen("rnb1r1k1/pp3ppp/2p5/3p4/B2P2n1/6qP/PPPBN3/RN1QK2R w KQ -");
-    it.setMaxDepth(1);
-    it.start();
-    it.join();
-    EXPECT_EQ("e1f1", it.getBestmove());
-}
 
-TEST(search, twoCore) {
-    const set<string> v = {"d2d4", "e2e4", "e2e3"};
-    IterativeDeeping it;
-    it.setNthread(2);
-    SearchManager &searchManager = Singleton<SearchManager>::getPointer();
-    searchManager.setMaxTimeMillsec(250);
-    it.start();
-    it.join();
-    EXPECT_TRUE(v.end() != v.find(it.getBestmove()));
+    if (!searchManager.getGtb().setScheme("cp4")) {
+        FAIL() << "set scheme error";
+    }
+    if (!searchManager.getGtb().setInstalledPieces(4)) {
+        FAIL() << "set installed pieces error";
+    }
+    if (!it.getGtbAvailable()) {
+        FAIL() << "error TB not found";
+    }
+    searchManager.loadFen("8/8/8/8/6p1/7p/4kB2/6K1 w - -");
+    EXPECT_EQ(0, searchManager.printDtm());
+    searchManager.deleteGtb();
 }
 
 #endif

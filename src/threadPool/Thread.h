@@ -1,5 +1,5 @@
 /*
-    https://github.com/gekomad/BlockingThreadPool
+    https://github.com/gekomad/ThreadPool
     Copyright (C) Giuseppe Cannella
 
     This program is free software: you can redistribute it and/or modify
@@ -26,14 +26,8 @@
 
 using namespace std;
 
-class Runnable {
-public:
-    virtual void run() = 0;
-
-    virtual void endRun() = 0;
-};
-
-class Thread : virtual public Runnable {
+template<typename T>
+class Thread {
 
 private:
     bool running = true;
@@ -41,30 +35,19 @@ private:
     ObserverThread *observer = nullptr;
     condition_variable cv;
     thread theThread;
-    Runnable *execRunnable;
 
-    static void *__run(void *cthis) {
-        static_cast<Runnable *>(cthis)->run();
-        static_cast<Runnable *>(cthis)->endRun();
-        static_cast<Thread *>(cthis)->notifyEndThread((static_cast<Thread *>(cthis))->getId());
-
-        return nullptr;
+    void _run() {
+        static_cast<T *>(this)->run();
+        static_cast<T *>(this)->endRun();
+        if (observer != nullptr) {
+            observer->observerEndThread(threadID);
+        }
     }
 
 public:
-
-    Thread() {
-        execRunnable = this;
-    }
-
+    template<typename O, typename = typename std::enable_if<std::is_base_of<ObserverThread, O>::value, O>::type>
     void registerObserverThread(ObserverThread *obs) {
-        observer = obs;
-    }
-
-    void notifyEndThread(int i) {
-        if (observer != nullptr) {
-            observer->observerEndThread(i);
-        }
+        observer = static_cast<O *>(obs);
     }
 
     virtual ~Thread() {
@@ -85,7 +68,7 @@ public:
 
     void start() {
         ASSERT(!isJoinable());
-        theThread = thread(__run, execRunnable);
+        theThread = thread(&Thread::_run, this);
     }
 
     void join() {

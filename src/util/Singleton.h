@@ -38,7 +38,7 @@ public:
 
     static T &getPointer() {
         if (!_instance) {
-            _instance = new T;usare smart pointer
+            _instance = new T;//TODO usare smart pointer
             _pointer = true;
         }
         return *_instance;

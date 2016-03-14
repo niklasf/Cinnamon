@@ -117,8 +117,8 @@ int Endgame::getEndgameValue(const int N_PIECE, const int side) {
 
 int Endgame::KQKP(int loserSide, int winnerKingPos, int loserKingPos, int pawnPos) {
 #ifdef DEBUG_MODE
-    std::map<int, int> pieces1;
-    std::map<int, int> pieces2;
+    std::unordered_map<int, int> pieces1;
+    std::unordered_map<int, int> pieces2;
 
     pieces1[KING_BLACK] = 1;
     pieces1[KING_WHITE] = 1;
@@ -144,8 +144,8 @@ int Endgame::KBBKN(int winnerKingPos, int loserKingPos, int knightPos) {
 
 #ifdef DEBUG_MODE
 
-    std::map<int, int> pieces1;
-    std::map<int, int> pieces2;
+    std::unordered_map<int, int> pieces1;
+    std::unordered_map<int, int> pieces2;
 
     pieces1[KING_BLACK] = 1;
     pieces1[KING_WHITE] = 1;
@@ -173,8 +173,8 @@ int Endgame::KBBKN(int winnerKingPos, int loserKingPos, int knightPos) {
 int Endgame::KQKR(int winnerKingPos, int loserKingPos) {
 
 #ifdef DEBUG_MODE
-    std::map<int, int> pieces1;
-    std::map<int, int> pieces2;
+    std::unordered_map<int, int> pieces1;
+    std::unordered_map<int, int> pieces2;
 
     pieces1[KING_BLACK] = 1;
     pieces1[KING_WHITE] = 1;
@@ -197,8 +197,8 @@ int Endgame::KQKR(int winnerKingPos, int loserKingPos) {
 int Endgame::KBNK(int winnerKingPos, int loserKingPos) {
 
 #ifdef DEBUG_MODE
-    std::map<int, int> pieces1;
-    std::map<int, int> pieces2;
+    std::unordered_map<int, int> pieces1;
+    std::unordered_map<int, int> pieces2;
 
     pieces1[KING_BLACK] = 1;
     pieces1[KING_WHITE] = 1;
@@ -222,8 +222,8 @@ int Endgame::KBNK(int winnerKingPos, int loserKingPos) {
 int Endgame::KRKB(int loserKingPos) {
 
 #ifdef DEBUG_MODE
-    std::map<int, int> pieces1;
-    std::map<int, int> pieces2;
+    std::unordered_map<int, int> pieces1;
+    std::unordered_map<int, int> pieces2;
 
     pieces1[KING_BLACK] = 1;
     pieces1[KING_WHITE] = 1;
@@ -245,8 +245,8 @@ int Endgame::KRKB(int loserKingPos) {
 int Endgame::KRKN(int loserKingPos, int knightPos) {
 
 #ifdef DEBUG_MODE
-    std::map<int, int> pieces1;
-    std::map<int, int> pieces2;
+    std::unordered_map<int, int> pieces1;
+    std::unordered_map<int, int> pieces2;
 
     pieces1[KING_BLACK] = 1;
     pieces1[KING_WHITE] = 1;

@@ -31,7 +31,7 @@
 using namespace _debug;
 using namespace _def;
 
-template<typename T, typename = typename std::enable_if<std::is_base_of<Thread, T>::value, T>::type>
+template<typename T, typename = typename std::enable_if<std::is_base_of<Thread<T>, T>::value, T>::type>
 class ThreadPool : public ObserverThread {
 
 public:
@@ -102,11 +102,17 @@ public:
     ~ThreadPool() {
         removeAllThread();
     }
+    const vector<T *> &getPool() const {
+        return threadPool;
+    }
 
-protected:
-    vector<T *> threadPool;
+    T &getThread(int i) const {
+        ASSERT(i < nThread);
+        return *threadPool[i];
+    }
+
 private:
-
+    vector<T *> threadPool;
     mutex mtx;
     atomic<u64> threadsBits;
     int nThread = 0;
@@ -134,7 +140,7 @@ private:
 
     void registerThreads() {
         for (T *s:threadPool) {
-            s->registerObserverThread(this);
+            s->template registerObserverThread<ThreadPool<T>>(this);
         }
     }
 

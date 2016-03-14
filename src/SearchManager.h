@@ -22,18 +22,16 @@
 #include "Search.h"
 #include "threadPool/ThreadPool.h"
 #include <condition_variable>
-#include "ObserverSearch.h"
 #include "util/String.h"
 #include "util/IniFile.h"
 #include <algorithm>
 #include <future>
 #include "namespaces/def.h"
 
-class SearchManager : public Singleton<SearchManager>, public ThreadPool<Search>, public ObserverSearch {
+class SearchManager : public Singleton<SearchManager>, public ThreadPool<Search> {
     friend class Singleton<SearchManager>;
 
 public:
-//    STATIC_CONST int VAL_WINDOW = 50;
 
     bool getRes(_Tmove &resultMove, string &ponderMove, string &pvv, int *mateIn);
 
@@ -131,7 +129,7 @@ public:
 
     unsigned getCumulativeMovesCount() {
         unsigned i = 0;
-        for (Search *s:threadPool) {
+        for (Search *s:getPool()) {
             i += s->cumulativeMovesCount;
         }
         return i;
@@ -139,7 +137,7 @@ public:
 
     unsigned getNCutAB() {
         unsigned i = 0;
-        for (Search *s:threadPool) {
+        for (Search *s:getPool()) {
             i += s->nCutAB;
         }
         return i;
@@ -147,7 +145,7 @@ public:
 
     double getBetaEfficiency() {
         double i = 0;
-        for (Search *s:threadPool) {
+        for (Search *s:getPool()) {
             i += s->betaEfficiency;
         }
         return i;
@@ -155,7 +153,7 @@ public:
 
     unsigned getLazyEvalCuts() {
         unsigned i = 0;
-        for (Search *s:threadPool) {
+        for (Search *s:getPool()) {
             i += s->lazyEvalCuts;
         }
         return i;
@@ -163,7 +161,7 @@ public:
 
     unsigned getNCutFp() {
         unsigned i = 0;
-        for (Search *s:threadPool) {
+        for (Search *s:getPool()) {
             i += s->nCutFp;
         }
         return i;
@@ -171,23 +169,15 @@ public:
 
     unsigned getNCutRazor() {
         unsigned i = 0;
-        for (Search *s:threadPool) {
+        for (Search *s:getPool()) {
             i += s->nCutRazor;
         }
         return i;
     }
 
-//    unsigned getNNullMoveCut() {
-//        unsigned i = 0;
-//        for (Search *s:threadPool) {
-//            i += s->nNullMoveCut;
-//        }
-//        return i;
-//    }
-
     unsigned getTotGen() {
         unsigned i = 0;
-        for (Search *s:threadPool) {
+        for (Search *s:getPool()) {
             i += s->totGen;
         }
         return i;
@@ -196,6 +186,8 @@ public:
 #endif
 
 private:
+
+    static Hash *hash;
 
     SearchManager();
 

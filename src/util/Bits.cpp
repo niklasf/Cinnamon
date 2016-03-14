@@ -18,7 +18,7 @@
 
 #include "Bits.h"
 
-uchar Bits::DISTANCE[64][64];
+array<array<uchar, 64>, 64> Bits::DISTANCE;
 
 Bits::Bits() {
     //LINK_ROOKS
@@ -98,8 +98,7 @@ Bits::Bits() {
         }
     }
     for (int i = 0; i < 64; i++) {
-        for (int j = 0; j < 64; j++) {
-            MASK_BIT_SET_COUNT[i][j] = Bits::bitCount(MASK_BIT_SET[i][j]);
+        for (int j = 0; j < 64; j++) {           
             MASK_BIT_SET_NOBOUND_COUNT[i][j] = Bits::bitCount(MASK_BIT_SET_NOBOUND[i][j]);
         }
     }

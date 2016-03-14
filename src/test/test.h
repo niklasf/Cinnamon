@@ -16,26 +16,17 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#if defined(DEBUG_MODE) || defined(FULL_TEST)
 
-#pragma once
+#include <gtest/gtest.h>
+#include "tablebase.cpp"
+#include "eval.cpp"
+#include "endgame.cpp"
+#include "spinlockShared.cpp"
+#include "spinlock.cpp"
+#include "search.cpp"
+#include "util/fileUtil.cpp"
+#include "util/string.cpp"
+#include "perft.cpp"
 
-class ObserverSearch {
-public:
-    virtual void receiveObserverSearch(int threadID) = 0;
-
-};
-
-class Subject {
-public:
-    void registerObserver(ObserverSearch *obs) {
-        observer = obs;
-    }
-
-    void notifySearch(int threadID) {
-        ASSERT(observer);
-        observer->receiveObserverSearch(threadID);
-    }
-
-private:
-    ObserverSearch *observer = nullptr;
-};
+#endif

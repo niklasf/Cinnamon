@@ -24,6 +24,7 @@
 
 TEST(eval, eval1) {
     SearchManager &searchManager = Singleton<SearchManager>::getPointer();
+	searchManager.loadFen("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
     int score = searchManager.getScore(WHITE, false);
     EXPECT_EQ(5, score);
     score = searchManager.getScore(BLACK, false);
