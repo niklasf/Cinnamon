@@ -24,11 +24,11 @@
 
 TEST(endgame, test1) {
     SearchManager &searchManager = Singleton<SearchManager>::getPointer();
-	searchManager.loadFen("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
+	searchManager.loadFen("k7/8/q7/8/8/8/1P6/1K6 w - - 0 1");
     int score = searchManager.getScore(WHITE, false);
-    EXPECT_EQ(5, score);
+    EXPECT_EQ(-890, score);
     score = searchManager.getScore(BLACK, false);
-    EXPECT_EQ(-51, score);
+    EXPECT_EQ(890, score);
     SearchManager::destroytInstance();
 }
 

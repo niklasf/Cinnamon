@@ -16,7 +16,6 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#if defined(DEBUG_MODE) || defined(FULL_TEST)
 
 #include <gtest/gtest.h>
 #include "tablebase.cpp"
@@ -28,5 +27,3 @@
 #include "util/fileUtil.cpp"
 #include "util/string.cpp"
 #include "perft.cpp"
-
-#endif
