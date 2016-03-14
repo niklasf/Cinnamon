@@ -10,7 +10,7 @@ set(SOURCE_FILES
         perft/PerftThread.cpp
         perft/PerftThread.h
         util/Bits.cpp
-        util/Bits.h       
+        util/Bits.h
         util/Singleton.h
         util/String.h
         threadPool/Thread.h

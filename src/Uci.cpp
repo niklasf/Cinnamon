@@ -139,7 +139,7 @@ void Uci::listner(IterativeDeeping *it) {
             cout << "uciok\n";
         } else if (token == "score") {
             int side = searchManager.getSide();
-            int t = searchManager.getScore(side, true);
+            int t = searchManager.getScore(side, TRACER::TRACE);
 
             if (!searchManager.getSide()) {
                 t = -t;

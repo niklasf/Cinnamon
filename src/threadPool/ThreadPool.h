@@ -44,7 +44,7 @@ public:
     T &getNextThread() {
         unique_lock<mutex> lck(mtx);
         cv.wait(lck, [this] { return Bits::bitCount(threadsBits) != nThread; });
-        return getThread();
+        return _getThread();
     }
 
     int getNthread() const {
@@ -102,6 +102,7 @@ public:
     ~ThreadPool() {
         removeAllThread();
     }
+
     const vector<T *> &getPool() const {
         return threadPool;
     }
@@ -111,6 +112,10 @@ public:
         return *threadPool[i];
     }
 
+    T &getThread() const {
+        return *threadPool[0];
+    }
+
 private:
     vector<T *> threadPool;
     mutex mtx;
@@ -118,7 +123,7 @@ private:
     int nThread = 0;
     condition_variable cv;
 
-    T &getThread() {
+    T &_getThread() {
         int i = Bits::BITScanForwardUnset(threadsBits);
         threadPool[i]->join();
         ASSERT(!(threadsBits & POW2[i]));

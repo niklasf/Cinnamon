@@ -62,11 +62,11 @@ void SearchManager::singleSearch(const int mply) {
     lineWin.cmove = -1;
     setMainPly(mply);
     ASSERT(!getBitCount());
-    getThread(0).setMainParam(SMP_NO, mply);
-    getThread(0).run();
-    valWindow = getThread(0).getValWindow();
-    if (getThread(0).getRunning()) {
-        memcpy(&lineWin, &getThread(0).getPvLine(), sizeof(_TpvLine));
+    getThread().setMainParam(SMP_NO, mply);
+    getThread().run();
+    valWindow = getThread().getValWindow();
+    if (getThread().getRunning()) {
+        memcpy(&lineWin, &getThread().getPvLine(), sizeof(_TpvLine));
         for (int ii = 1; ii < getNthread(); ii++) {
             getThread(ii).setValWindow(valWindow);
         }
@@ -127,9 +127,9 @@ bool SearchManager::getRes(_Tmove &resultMove, string &ponderMove, string &pvv, 
     ASSERT(lineWin.cmove);
     for (int t = 0; t < lineWin.cmove; t++) {
         pvvTmp.clear();
-        pvvTmp += Search::decodeBoardinv(lineWin.argmove[t].type, lineWin.argmove[t].from, getThread(0).getSide());
+        pvvTmp += Search::decodeBoardinv(lineWin.argmove[t].type, lineWin.argmove[t].from, getThread().getSide());
         if (pvvTmp.length() != 4) {
-            pvvTmp += Search::decodeBoardinv(lineWin.argmove[t].type, lineWin.argmove[t].to, getThread(0).getSide());
+            pvvTmp += Search::decodeBoardinv(lineWin.argmove[t].type, lineWin.argmove[t].to, getThread().getSide());
         }
         pvv.append(pvvTmp);
         if (t == 1) {
@@ -146,11 +146,11 @@ SearchManager::~SearchManager() {
 }
 
 int SearchManager::loadFen(string fen) {
-    int res = getThread(0).loadFen(fen);
+    int res = getThread().loadFen(fen);
 
     ASSERT_RANGE(res, 0, 1);
     for (uchar i = 1; i < getPool().size(); i++) {
-        getThread(i).setChessboard(getThread(0).getChessboard());
+        getThread(i).setChessboard(getThread().getChessboard());
     }
     return res;
 }
@@ -171,7 +171,7 @@ void SearchManager::setMainPly(int r) {
 }
 
 int SearchManager::getPieceAt(int side, u64 i) {
-    return side == WHITE ? getThread(0).getPieceAt<WHITE>(i) : getThread(0).getPieceAt<BLACK>(i);
+    return side == WHITE ? getThread().getPieceAt<WHITE>(i) : getThread().getPieceAt<BLACK>(i);
 }
 
 u64 SearchManager::getTotMoves() {
@@ -193,11 +193,11 @@ int SearchManager::getHashSize() {
 }
 
 void SearchManager::startClock() {
-    getThread(0).startClock();// static variable
+    getThread().startClock();// static variable
 }
 
 string SearchManager::boardToFen() {
-    return getThread(0).boardToFen();
+    return getThread().boardToFen();
 }
 
 void SearchManager::clearKillerHeuristic() {
@@ -211,19 +211,19 @@ void SearchManager::clearAge() {
 }
 
 int SearchManager::getForceCheck() {
-    return getThread(0).getForceCheck();// static variable
+    return getThread().getForceCheck();// static variable
 }
 
-u64 SearchManager::getZobristKey(int id) {
-    return getThread(id).getZobristKey();
+u64 SearchManager::getZobristKey() const {
+    return getThread(0).getZobristKey();
 }
 
 void SearchManager::setForceCheck(bool a) {
-    getThread(0).setForceCheck(a);    // static variable
+    getThread().setForceCheck(a);    // static variable
 }
 
 void SearchManager::setRunningThread(bool r) {
-    getThread(0).setRunningThread(r);// static variable
+    getThread().setRunningThread(r);// static variable
 }
 
 void SearchManager::setRunning(int i) {
@@ -237,11 +237,11 @@ int SearchManager::getRunning(int i) {
 }
 
 void SearchManager::display() {
-    getThread(0).display();
+    getThread().display();
 }
 
 string SearchManager::getFen() {
-    return getThread(0).getFen();
+    return getThread().getFen();
 }
 
 void SearchManager::setHashSize(int s) {
@@ -262,20 +262,20 @@ void SearchManager::setPonder(bool i) {
 
 int SearchManager::getSide() {
 #ifdef DEBUG_MODE
-    int t = getThread(0).getSide();
+    int t = getThread().getSide();
     for (Search *s:getPool()) {
         ASSERT(s->getSide() == t);
     }
 #endif
-    return getThread(0).getSide();
+    return getThread().getSide();
 }
 
-int SearchManager::getScore(int side, const bool trace) {
+int SearchManager::getScore(int side, const TRACER trace) {
     int N_PIECE = 0;
 #ifdef DEBUG_MODE
-    N_PIECE = Bits::bitCount(getThread(0).getBitBoard<WHITE>() | getThread(0).getBitBoard<BLACK>());
+    N_PIECE = Bits::bitCount(getThread().getBitBoard<WHITE>() | getThread().getBitBoard<BLACK>());
 #endif
-    return getThread(0).getScore(side, N_PIECE, -_INFINITE, _INFINITE, trace);
+    return getThread().getScore(side, N_PIECE, -_INFINITE, _INFINITE, trace);
 }
 
 void SearchManager::clearHash() {
@@ -283,7 +283,7 @@ void SearchManager::clearHash() {
 }
 
 int SearchManager::getMaxTimeMillsec() {
-    return getThread(0).getMaxTimeMillsec();
+    return getThread().getMaxTimeMillsec();
 }
 
 void SearchManager::setNullMove(bool i) {
@@ -313,25 +313,25 @@ void SearchManager::setSide(bool i) {
 }
 
 bool SearchManager::getGtbAvailable() {
-    return getThread(0).getGtbAvailable();
+    return getThread().getGtbAvailable();
 }
 
 int SearchManager::getMoveFromSan(String string, _Tmove *ptr) {
 #ifdef DEBUG_MODE
-    int t = getThread(0).getMoveFromSan(string, ptr);
+    int t = getThread().getMoveFromSan(string, ptr);
     for (Search *s:getPool()) {
         ASSERT(s->getMoveFromSan(string, ptr) == t);
     }
 #endif
-    return getThread(0).getMoveFromSan(string, ptr);
+    return getThread().getMoveFromSan(string, ptr);
 }
 
 Tablebase &SearchManager::getGtb() {
-    return getThread(0).getGtb();
+    return getThread().getGtb();
 }
 
 int SearchManager::printDtm() {
-    return getThread(0).printDtm();
+    return getThread().printDtm();
 }
 
 void SearchManager::setGtb(Tablebase &tablebase) {
@@ -370,7 +370,7 @@ bool SearchManager::setNthread(int nthread) {
 }
 
 void SearchManager::stopAllThread() {
-    getThread(0).setRunningThread(false);//is static
+    getThread().setRunningThread(false);//is static
 }
 
 bool SearchManager::setParameter(String param, int value) {
@@ -380,7 +380,6 @@ bool SearchManager::setParameter(String param, int value) {
     }
     return b;
 }
-
 
 
 Tablebase &SearchManager::createGtb() {

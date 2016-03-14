@@ -25,7 +25,7 @@ class GetOpt {
 private:
     static void help(char **argv) {
         string exe = FileUtil::getFileName(argv[0]);
-        cout << "Perft test:            " <<exe << " " << PERFT_HELP << "\n";
+        cout << "Perft test:            " << exe << " " << PERFT_HELP << "\n";
         cout << "Distance to mate:      " << exe << " " << DTM_HELP << "\n";
         cout << "Create .pgn from .epd: " << exe << " " << EPD2PGN_HELP << endl;
         cout << "Generate puzzle epd:   " << exe << " " << PUZZLE_HELP << endl;
@@ -178,7 +178,7 @@ public:
                 SearchManager &searchManager = Singleton<SearchManager>::getReference();
                 searchManager.loadFen(optarg);
                 searchManager.display();
-                searchManager.getScore(searchManager.getSide(), true);
+                searchManager.getScore(searchManager.getSide(), TRACER::TRACE);
                 return;
             } else if (opt == 'p') {  // perft test
                 if (string(optarg) == "erft") {

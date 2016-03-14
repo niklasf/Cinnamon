@@ -41,6 +41,10 @@ namespace _board {
     static const int WHITE = 1;
     static const int _INFINITE = 32000;
 
+    enum TRACER {
+        TRACE = true, NO_TRACE = false
+    };
+
     const string EPD2PGN_HELP = "-epd2pgn -f epd_file [-m max_pieces]";
     const string PERFT_HELP = "-perft [-d depth] [-c nCpu] [-h hash size (mb) [-F dump file]] [-f \"fen position\"]";
     const string DTM_HELP = "-dtm -f \"fen position\" [-p path] [-s scheme] [-i installed pieces]";

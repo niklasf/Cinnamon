@@ -73,8 +73,8 @@ void IterativeDeeping::setUseBook(bool b) {
 }
 
 string IterativeDeeping::go() {
-	run();
-	return getBestmove();
+    run();
+    return getBestmove();
 }
 
 void IterativeDeeping::run() {
@@ -194,7 +194,7 @@ void IterativeDeeping::run() {
         bool trace = true;
         if (abs(sc) > _INFINITE - MAX_PLY) {
             bool b = searchManager.getForceCheck();
-            u64 oldKey = searchManager.getZobristKey(0);
+            u64 oldKey = searchManager.getZobristKey();
             searchManager.setForceCheck(true);
             bool valid = searchManager.makemove(&resultMove);
             if (!valid) {

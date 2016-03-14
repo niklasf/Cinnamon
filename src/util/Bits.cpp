@@ -98,7 +98,7 @@ Bits::Bits() {
         }
     }
     for (int i = 0; i < 64; i++) {
-        for (int j = 0; j < 64; j++) {           
+        for (int j = 0; j < 64; j++) {
             MASK_BIT_SET_NOBOUND_COUNT[i][j] = Bits::bitCount(MASK_BIT_SET_NOBOUND[i][j]);
         }
     }

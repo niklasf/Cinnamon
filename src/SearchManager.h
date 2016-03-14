@@ -65,7 +65,7 @@ public:
 
     int getForceCheck();
 
-    u64 getZobristKey(int id);
+    u64 getZobristKey() const;
 
     void setForceCheck(bool a);
 
@@ -90,7 +90,7 @@ public:
 
     int getSide();
 
-    int getScore(int side, const bool trace);
+    int getScore(int side, const TRACER trace);
 
     void clearHash();
 
