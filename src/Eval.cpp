@@ -46,12 +46,16 @@ template<int side, Eval::_Tphase phase>
 int Eval::evaluatePawn() {
     INC(evaluationCount[side]);
     u64 ped_friends = chessboard[side];
+
     if (!ped_friends) {
         ADD(SCORE_DEBUG.NO_PAWNS[side], -NO_PAWNS);
         return -NO_PAWNS;
     }
     structureEval.isolated[side] = 0;
     int result = MOB_PAWNS[getMobilityPawns(side, chessboard[ENPASSANT_IDX], ped_friends, side == WHITE ? structureEval.allPiecesSide[BLACK] : structureEval.allPiecesSide[WHITE], ~structureEval.allPiecesSide[BLACK] | ~structureEval.allPiecesSide[WHITE])];
+    if (structureEval.pinned[side] & ped_friends) {
+        result -= 10;
+    }
     ADD(SCORE_DEBUG.MOB_PAWNS[side], result);
     if (bitCount(chessboard[side ^ 1]) == 8) {
         result -= ENEMIES_PAWNS_ALL;
@@ -128,6 +132,9 @@ int Eval::evaluateBishop(u64 enemies, u64 friends) {
         return 0;
     }
     int result = 0;
+    if (structureEval.pinned[side] & x) {
+        result -= 20;
+    }
     if (phase != OPEN && bitCount(x) > 1) {
         result += BONUS2BISHOP;
         ADD(SCORE_DEBUG.BONUS2BISHOP[side], BONUS2BISHOP);
@@ -177,6 +184,9 @@ int Eval::evaluateQueen(u64 enemies, u64 friends) {
     INC(evaluationCount[side]);
     int result = 0;
     u64 queen = chessboard[QUEEN_BLACK + side];
+    if (structureEval.pinned[side] & queen) {
+        result -= 30;
+    }
     while (queen) {
         int o = BITScanForward(queen);
         ASSERT(getMobilityQueen(o, enemies, friends) < (int) (sizeof(MOB_QUEEN[phase]) / sizeof(int)));
@@ -211,6 +221,9 @@ int Eval::evaluateKnight(const u64 enemiesPawns, const u64 squares) {
     INC(evaluationCount[side]);
     int result = 0;
     u64 x = chessboard[KNIGHT_BLACK + side];
+    if (structureEval.pinned[side] & x) {
+        result -= 20;
+    }
     if (phase == OPEN) {
         result -= side ? bitCount(x & 0x42ULL) * UNDEVELOPED : bitCount(x & 0x4200000000000000ULL) * UNDEVELOPED;
         ADD(SCORE_DEBUG.UNDEVELOPED_KNIGHT[side], side ? -bitCount(x & 0x42ULL) * UNDEVELOPED : -bitCount(x & 0x4200000000000000ULL) * UNDEVELOPED);
@@ -275,6 +288,9 @@ int Eval::evaluateRook(const u64 king, u64 enemies, u64 friends) {
     if (!x) {
         return 0;
     }
+    if (structureEval.pinned[side] & x) {
+        result -= 25;
+    }
     if (phase == MIDDLE) {
         if (!side && (o = bitCount(x & RANK_1))) {
             ADD(SCORE_DEBUG.ROOK_7TH_RANK[side], ROOK_7TH_RANK * o);
@@ -300,6 +316,7 @@ int Eval::evaluateRook(const u64 king, u64 enemies, u64 friends) {
     int secondRook = -1;
     while (x) {
         o = BITScanForward(x);
+
         //mobility
         ASSERT(getMobilityRook(o, enemies, friends) < (int) (sizeof(MOB_ROOK[phase]) / sizeof(int)));
         result += MOB_ROOK[phase][getMobilityRook(o, enemies, friends)];
@@ -407,13 +424,18 @@ int Eval::getScore(const int side, const int N_PIECE, const int alpha, const int
     } else {
         phase = OPEN;
     }
+
     structureEval.allPiecesNoPawns[BLACK] = getBitmapNoPawns<BLACK>();
     structureEval.allPiecesNoPawns[WHITE] = getBitmapNoPawns<WHITE>();
     structureEval.allPiecesSide[BLACK] = structureEval.allPiecesNoPawns[BLACK] | chessboard[PAWN_BLACK];
     structureEval.allPiecesSide[WHITE] = structureEval.allPiecesNoPawns[WHITE] | chessboard[PAWN_WHITE];
-    structureEval.allPieces = structureEval.allPiecesSide[BLACK] | structureEval.allPiecesSide[WHITE];
+    u64 allpieces = structureEval.allPiecesSide[BLACK] | structureEval.allPiecesSide[WHITE];
     structureEval.posKing[BLACK] = (uchar) BITScanForward(chessboard[KING_BLACK]);
     structureEval.posKing[WHITE] = (uchar) BITScanForward(chessboard[KING_WHITE]);
+    structureEval.pinned[BLACK] = getPin<BLACK>(allpieces, structureEval.allPiecesSide[BLACK], structureEval.posKing[BLACK]);
+    structureEval.pinned[WHITE] = getPin<WHITE>(allpieces, structureEval.allPiecesSide[WHITE], structureEval.posKing[WHITE]);
+    structureEval.allPieces = structureEval.allPiecesSide[BLACK] | structureEval.allPiecesSide[WHITE];
+
     structureEval.kingAttackers[WHITE] = getAllAttackers<WHITE>(structureEval.posKing[WHITE], structureEval.allPieces);
     structureEval.kingAttackers[BLACK] = getAllAttackers<BLACK>(structureEval.posKing[BLACK], structureEval.allPieces);
 
