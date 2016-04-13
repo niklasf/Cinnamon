@@ -165,7 +165,7 @@ void Perft::run() {
     if (!fen.empty()) {
         p->loadFen(fen);
     }
-
+    p->setPerft(true);
     int side = p->getSide() ? 1 : 0;
     p->display();
     cout << "fen:\t\t\t" << fen << "\n";
@@ -229,7 +229,6 @@ void Perft::endRun() {
     cout << endl;
     dump();
     cout << Time::getLocalTime() << " end test" << endl;
-
     cerr << flush;
 
 }

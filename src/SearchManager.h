@@ -59,6 +59,8 @@ public:
 
     void clearKillerHeuristic();
 
+    void setKillerHeuristic(const int from, const int to, const int value);
+
     void clearAge();
 
     int getForceCheck();
@@ -70,6 +72,7 @@ public:
     void setRunningThread(bool r);
 
     void search(int mply);
+
 
     void setRunning(int i);
 
@@ -121,16 +124,8 @@ public:
 
     bool setNthread(int);
 
-#if defined(DEBUG_MODE) || defined(FULL_TEST)
-
-    template<int side>
-    u64 getPin(const u64 allpieces, const u64 friends, const int kingPosition) const {
-        return getThread(0).getPin<side>(allpieces, friends, kingPosition);
-    }
-
-#endif
-
 #ifdef DEBUG_MODE
+
 
     unsigned getCumulativeMovesCount() {
         unsigned i = 0;
@@ -186,10 +181,6 @@ public:
             i += s->totGen;
         }
         return i;
-    }
-
-    u64 getBitmap(int side) {
-        return getPool()[0]->getBitmap(side);
     }
 
 #endif

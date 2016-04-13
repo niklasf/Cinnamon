@@ -19,7 +19,6 @@
 #include <unistd.h>
 #include "Search.h"
 #include "SearchManager.h"
-#include "namespaces/board.h"
 
 Tablebase *Search::gtb;
 
@@ -218,9 +217,6 @@ int Search::quiescence(int alpha, int beta, const char promotionPiece, int N_PIE
         sortHashMoves(listId, checkHashStruct.phasheType[Hash::HASH_ALWAYS]);
     }
     while ((move = getNextMove(&gen_list[listId]))) {
-    /*sortList(&gen_list[listId]);
-    for (int k = 0; k < gen_list[listId].size; k++) {
-        move = &gen_list[listId].moveList[k];*/
         if (!makemove(move, false, true)) {
             takeback(move, oldKey, false);
             continue;
@@ -411,13 +407,10 @@ int Search::search(int depth, int alpha, int beta, _TpvLine *pline, int N_PIECE,
     ASSERT(chessboard[KING_WHITE]);
     ASSERT(chessboard[KING_BLACK + side]);
     int extension = 0;
-    u64 friends = getBitmap<side>();
-    u64 enemies = getBitmap<side ^ 1>();
-    u64 allpieces = friends | enemies;
-    int is_incheck_side = inCheck<side>(allpieces);
+    int is_incheck_side = inCheck<side>();
     if (!is_incheck_side && depth != mainDepth) {
         if (checkInsufficientMaterial(N_PIECE)) {
-            if (inCheck<side ^ 1>(allpieces)) {
+            if (inCheck<side ^ 1>()) {
                 return _INFINITE - (mainDepth - depth + 1);
             }
             return -lazyEval<side>() * 2;
@@ -493,7 +486,8 @@ int Search::search(int depth, int alpha, int beta, _TpvLine *pline, int N_PIECE,
     incListId();
     ASSERT_RANGE(KING_BLACK + side, 0, 11);
     ASSERT_RANGE(KING_BLACK + (side ^ 1), 0, 11);
-
+    u64 friends = getBitmap<side>();
+    u64 enemies = getBitmap<side ^ 1>();
     if (generateCaptures<side>(enemies, friends)) {
         decListId();
         score = _INFINITE - (mainDepth - depth + 1);
@@ -521,9 +515,6 @@ int Search::search(int depth, int alpha, int beta, _TpvLine *pline, int N_PIECE,
     int countMove = 0;
     char hashf = Hash::hashfALPHA;
     while ((move = getNextMove(&gen_list[listId]))) {
-   /* sortList(&gen_list[listId]);
-    for (int k = 0; k < gen_list[listId].size; k++) {
-        move = &gen_list[listId].moveList[k];*/
         countMove++;
         INC(betaEfficiencyCount);
         if (!makemove(move, true, checkInCheck)) {
@@ -593,6 +584,10 @@ void Search::updatePv(_TpvLine *pline, const _TpvLine *line, const _Tmove *move)
     memcpy(pline->argmove + 1, line->argmove, line->cmove * sizeof(_Tmove));
     ASSERT(line->cmove >= 0);
     pline->cmove = line->cmove + 1;
+}
+
+_Tchessboard &Search::getChessboard() {
+    return chessboard;
 }
 
 void Search::setChessboard(_Tchessboard &b) {

@@ -23,7 +23,7 @@ set(SOURCE_FILES
         ChessBoard.h
         Eval.cpp
         Eval.h
-        GenMoves.h
+        GenMoves.cpp
         Hash.cpp
         Hash.h
         IterativeDeeping.cpp
