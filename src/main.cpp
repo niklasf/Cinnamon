@@ -38,6 +38,7 @@
  1| 07 06 05 04 03 02 01 00
  ...a  b  c  d  e  f  g  h
 
+tc="40/4:0+0"
  Rank Name                   Elo    +    - games score oppo. draws
    1 Cinnamon v2.1.beta1    2009    5    4  5347   51%  2000   40%
    2 Cinnamon 2.0           2000    4    5  5347   49%  2009   40%
