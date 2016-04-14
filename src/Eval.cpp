@@ -429,12 +429,12 @@ int Eval::getScore(const int side, const int N_PIECE, const int alpha, const int
     structureEval.allPiecesNoPawns[WHITE] = getBitmapNoPawns<WHITE>();
     structureEval.allPiecesSide[BLACK] = structureEval.allPiecesNoPawns[BLACK] | chessboard[PAWN_BLACK];
     structureEval.allPiecesSide[WHITE] = structureEval.allPiecesNoPawns[WHITE] | chessboard[PAWN_WHITE];
-    u64 allpieces = structureEval.allPiecesSide[BLACK] | structureEval.allPiecesSide[WHITE];
+    structureEval.allPieces = structureEval.allPiecesSide[BLACK] | structureEval.allPiecesSide[WHITE];
     structureEval.posKing[BLACK] = (uchar) BITScanForward(chessboard[KING_BLACK]);
     structureEval.posKing[WHITE] = (uchar) BITScanForward(chessboard[KING_WHITE]);
-    structureEval.pinned[BLACK] = getPin<BLACK>(allpieces, structureEval.allPiecesSide[BLACK], structureEval.posKing[BLACK]);
-    structureEval.pinned[WHITE] = getPin<WHITE>(allpieces, structureEval.allPiecesSide[WHITE], structureEval.posKing[WHITE]);
-    structureEval.allPieces = structureEval.allPiecesSide[BLACK] | structureEval.allPiecesSide[WHITE];
+    structureEval.pinned[BLACK] = getPin<BLACK>(structureEval.allPieces, structureEval.allPiecesSide[BLACK], structureEval.posKing[BLACK]);
+    structureEval.pinned[WHITE] = getPin<WHITE>(structureEval.allPieces, structureEval.allPiecesSide[WHITE], structureEval.posKing[WHITE]);
+
 
     structureEval.kingAttackers[WHITE] = getAllAttackers<WHITE>(structureEval.posKing[WHITE], structureEval.allPieces);
     structureEval.kingAttackers[BLACK] = getAllAttackers<BLACK>(structureEval.posKing[BLACK], structureEval.allPieces);
