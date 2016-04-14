@@ -64,7 +64,7 @@ public:
             killerHeuristic[from][to] = value;
         }
     }
-    
+
     void generateMoves(const int side, const u64 allpieces) {
         ASSERT_RANGE(side, 0, 1);
         side ? generateMoves<WHITE>(allpieces) : generateMoves<BLACK>(allpieces);
@@ -90,6 +90,7 @@ public:
         ASSERT_RANGE(side, 0, 1);
         ASSERT(chessboard[KING_BLACK]);
         ASSERT(chessboard[KING_WHITE]);
+        gen_list[listId].nextBestMove = 0;
         u64 allpieces = enemies | friends;
         if (std::is_same<TYPE_MODE, PERFT_MODE>::value) {
             int kingPosition = BITScanForward(chessboard[KING_BLACK + side]);
@@ -795,41 +796,24 @@ protected:
     u64 numMoves = 0;
     u64 numMovesq = 0;
 
-//    void sortList(_TmoveP *list) {
-//        _Tmove *gen_list1 = list->moveList;
-//
-////        for(int i=0;i<list->size;i++)cout <<gen_list1[i].score<<",";
-////        sort(gen_list1, gen_list1 + size, [](const _Tmove &x, const _Tmove &y) { return (x.score > y.score); });
-//        std::sort((u64 *) gen_list1, (u64 *) (gen_list1 + list->size), std::greater<u64>());
-////        cout <<"\n";
-////        for(int i=0;i<list->size;i++)cout <<gen_list1[i].score<<",";
-////        cout <<endl<<endl;
-//    }
-
     _Tmove *getNextMove(_TmoveP *list) {
         _Tmove *gen_list1 = list->moveList;
         ASSERT(gen_list1);
-        int listcount = list->size;
-        int bestId = -1;
-        int j, bestScore;
-        for (j = 0; j < listcount; j++) {
-            if (!gen_list1[j].used) {
-                bestId = j;
-                bestScore = gen_list1[bestId].score;
-                break;
-            }
-        }
-        if (bestId == -1) {
+        if (list->nextBestMove == list->size)
             return nullptr;
-        }
-        for (int i = j + 1; i < listcount; i++) {
-            if (!gen_list1[i].used && gen_list1[i].score > bestScore) {
+
+        int bestId = list->nextBestMove;
+        int bestScore = gen_list1[bestId].score;
+
+        for (int i = list->nextBestMove; i < list->size; i++) {//TODO check se tutti uguali
+            if (gen_list1[i].score > bestScore) {
                 bestId = i;
-                bestScore = gen_list1[bestId].score;
+                bestScore = gen_list1[i].score;
             }
         }
-        gen_list1[bestId].used = true;
-        return &gen_list1[bestId];
+
+        std::swap(gen_list1[list->nextBestMove], gen_list1[bestId]);
+        return &gen_list1[list->nextBestMove++];
     }
 
     template<int side>
@@ -1205,7 +1189,7 @@ protected:
             ASSERT(chessboard[RIGHT_CASTLE_IDX]);
             mos->score = 100;
         }
-        mos->used = false;
+        //mos->used = false;
         ASSERT(getListSize() < MAX_MOVE);
         return res;
     }
