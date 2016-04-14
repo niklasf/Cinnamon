@@ -91,6 +91,7 @@ public:
         ASSERT(chessboard[KING_BLACK]);
         ASSERT(chessboard[KING_WHITE]);
         gen_list[listId].nextBestMove = 0;
+//        gen_list[listId].equal = false;
         u64 allpieces = enemies | friends;
         if (std::is_same<TYPE_MODE, PERFT_MODE>::value) {
             int kingPosition = BITScanForward(chessboard[KING_BLACK + side]);
@@ -797,19 +798,25 @@ protected:
     u64 numMovesq = 0;
 
     _Tmove *getNextMove(_TmoveP *list) {
-        _Tmove *gen_list1 = list->moveList;
-        ASSERT(gen_list1);
+
+        ASSERT(list->moveList);
+
         if (list->nextBestMove == list->size)
             return nullptr;
+
+        _Tmove *gen_list1 = list->moveList;
 
         int bestId = list->nextBestMove;
         int bestScore = gen_list1[bestId].score;
 
         for (int i = list->nextBestMove; i < list->size; i++) {//TODO check se tutti uguali
+
             if (gen_list1[i].score > bestScore) {
                 bestId = i;
+
                 bestScore = gen_list1[i].score;
             }
+
         }
 
         std::swap(gen_list1[list->nextBestMove], gen_list1[bestId]);

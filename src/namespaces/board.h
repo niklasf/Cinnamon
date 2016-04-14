@@ -100,6 +100,7 @@ namespace _board {
         _Tmove *moveList;
         int size;
         int nextBestMove;
+//        bool equal;
     } _TmoveP;
 
     typedef struct {
