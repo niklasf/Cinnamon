@@ -82,25 +82,12 @@ namespace _board {
         char side;
         uchar type;
         int score;
-//        bool used;
     } _Tmove;
-
-   /* typedef struct {
-        char promotionPiece:5;
-        char side:2;
-        char pieceFrom:5;
-        uchar capturedPiece:4;
-        uchar from;
-        uchar to;
-        uchar type;
-        short score;//Last position! (sorting)
-    } _Tmove;*/
 
     typedef struct {
         _Tmove *moveList;
         int size;
         int nextBestMove;
-//        bool equal;
     } _TmoveP;
 
     typedef struct {
