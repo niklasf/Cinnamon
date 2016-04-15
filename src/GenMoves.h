@@ -797,6 +797,9 @@ protected:
     u64 numMoves = 0;
     u64 numMovesq = 0;
 
+#if defined(DEBUG_MODE) || defined(FULL_TEST)
+public:
+
     _Tmove *getNextMove(_TmoveP *list) {
 
         ASSERT(list->moveList);
@@ -822,6 +825,9 @@ protected:
         std::swap(gen_list1[list->nextBestMove], gen_list1[bestId]);
         return &gen_list1[list->nextBestMove++];
     }
+
+protected:
+#endif
 
     template<int side>
     inline bool isAttacked(const int position, const u64 allpieces) const {

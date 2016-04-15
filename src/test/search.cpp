@@ -22,6 +22,32 @@
 #include <set>
 #include "../IterativeDeeping.h"
 
+TEST(search, pickBestMove) {
+
+    const int cont = 10;
+    GenMoves<SEARCH_MODE> mock;
+    _TmoveP p;
+    p.moveList = (_Tmove *) calloc(cont, sizeof(_Tmove));
+    p.nextBestMove = 0;
+    p.size = cont;
+    for (int i = 0; i < cont; i++)p.moveList[i].score = i;
+    for (int i = cont - 1; i >= 0; i--) {
+        int x = (mock.getNextMove(&p))->score;
+        EXPECT_EQ(i, x);
+    }
+
+    p.nextBestMove = 0;
+    for (int i = 0; i < cont; i++)p.moveList[i].score = rand() % 1000;
+    int last = -INT_MAX;
+    for (int i = 0; i < cont; i++) {
+        int x = (mock.getNextMove(&p))->score;
+        EXPECT_GE(x, i);
+        last=x;
+    }
+    free(p.moveList);
+
+}
+
 TEST(search, test1) {
     IterativeDeeping it;
     it.loadFen("8/p5p1/k3p1p1/5pP1/5PKP/bP2r3/P7/3RB3 w - f6");
