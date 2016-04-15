@@ -799,6 +799,7 @@ protected:
 
 #if defined(DEBUG_MODE) || defined(FULL_TEST)
 public:
+#endif
 
     _Tmove *getNextMove(_TmoveP *list) {
 
@@ -821,11 +822,13 @@ public:
             }
 
         }
-
-        std::swap(gen_list1[list->nextBestMove], gen_list1[bestId]);
+        if (list->nextBestMove != bestId) {
+            std::swap(gen_list1[list->nextBestMove], gen_list1[bestId]);
+        }
         return &gen_list1[list->nextBestMove++];
     }
 
+#if defined(DEBUG_MODE) || defined(FULL_TEST)
 protected:
 #endif
 
