@@ -812,7 +812,7 @@ public:
         int bestId = list->nextBestMove;
         int bestScore = gen_list1[bestId].score;
 
-        for (int i = list->nextBestMove; i < list->size; i++) {//TODO check se tutti uguali
+        for (int i = list->nextBestMove; i < list->size; i++) {
 
             if (gen_list1[i].score > bestScore) {
                 bestId = i;
